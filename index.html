@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- STRICT BOT/CRAWLER BLOCKING -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, nocache, noimageindex">
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, nocache, noimageindex">
+  <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, nocache, noimageindex">
+  <!-- END BOT BLOCKING -->
+
+  <title>System Focus</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Light Mode Variables */
+    :root {
+      --bg: #f0f4f8;
+      --panel-bg: rgba(255, 255, 255, 0.7);
+      --border: rgba(0, 0, 0, 0.08);
+      --text: #0f172a;
+      --subtext: #64748b;
+      
+      --core-idle: #ffffff;
+      --core-active: #3b82f6; /* Bright Blue */
+      --success: #10b981; /* Green */
+      --danger: #ef4444; /* Red */
+      
+      --font-main: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+
+    body {
+      background-color: var(--bg);
+      background-image: radial-gradient(circle at 50% 0%, #ffffff, transparent 70%);
+      color: var(--text);
+      font-family: var(--font-main);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      perspective: 1500px;
+    }
+
+    .interface-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 1200px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 2rem;
+      gap: 2rem;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--subtext);
+      letter-spacing: 1px;
+    }
+
+    /* Main Grid */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 300px 1fr 300px;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+      }
+      .side-panel { display: none; } /* Hide sides on mobile to focus on the core */
+    }
+
+    /* Panels */
+    .panel {
+      background: var(--panel-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    }
+
+    .label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--subtext);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 0.5rem;
+    }
+
+    .value-box {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Interactive Hex Buttons */
+    .hex-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hex-btn {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      font-weight: 600;
+      color: var(--subtext);
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
+
+    .hex-btn:active {
+      background: var(--core-active);
+      color: white;
+      transform: scale(0.95);
+    }
+
+    /* Central Stage */
+    .core-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .core-instructions {
+      font-weight: 600;
+      color: var(--subtext);
+      margin-bottom: 2rem;
+      letter-spacing: 1px;
+      animation: pulse-text 2s infinite;
+    }
+
+    /* The Interactive Core */
+    #data-core {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      background: var(--core-idle);
+      border-radius: 50%;
+      box-shadow: 
+        0 20px 50px rgba(0, 0, 0, 0.1),
+        inset 0 0 0 4px rgba(255, 255, 255, 1);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.1s ease;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    /* The liquid fill effect */
+    #core-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 0%;
+      background: linear-gradient(180deg, var(--core-active), #60a5fa);
+      transition: height 0.1s linear, background-color 0.3s ease;
+      z-index: 1;
+    }
+
+    /* Inner circle for depth */
+    .core-inner {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--subtext);
+      backdrop-filter: blur(5px);
+    }
+
+    #data-core:active {
+      transform: scale(0.97);
+    }
+
+    /* Progress Meter Panel */
+    .meter-container {
+      height: 8px;
+      background: rgba(0,0,0,0.05);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--subtext);
+      transition: width 0.1s linear, background-color 0.3s ease;
+    }
+
+    /* Status text colors */
+    .status-idle { color: var(--subtext); }
+    .status-calibrating { color: var(--core-active); }
+    .status-success { color: var(--success); }
+    .status-danger { color: var(--danger); }
+
+    /* Footer Terminal */
+    .terminal {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--subtext);
+      background: var(--panel-bg);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    @keyframes pulse-text {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="interface-container" id="container">
+    
+    <!-- HEADER -->
+    <header class="header">
+      <div>SYS.CALIBRATION_TOOL</div>
+      <div>v2.0.4 // LIGHT_MODE</div>
+    </header>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+      
+      <!-- LEFT PANEL -->
+      <div class="panel side-panel">
+        <div class="label">System Input</div>
+        <div class="hex-grid">
+          <div class="hex-btn">SYS</div>
+          <div class="hex-btn">NET</div>
+          <div class="hex-btn">MEM</div>
+          <div class="hex-btn">DAT</div>
+        </div>
+        <div class="label">Diagnostic Status</div>
+        <div class="value-box" style="font-size: 1rem; color: var(--subtext);">
+          Awaiting manual override sequence. Ensure core is fully stabilized before proceeding.
+        </div>
+      </div>
+
+      <!-- CENTER CORE -->
+      <div class="core-stage">
+        <div class="core-instructions" id="instruction-text">CLICK AND HOLD TO STABILIZE</div>
+        
+        <div id="data-core">
+          <div id="core-fill"></div>
+          <div class="core-inner" id="core-percentage">0%</div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="panel side-panel">
+        <div class="label">Core Status</div>
+        <div class="value-box" id="status-text" class="status-idle">UNSTABLE</div>
+        
+        <div class="label">Stabilization Matrix</div>
+        <div class="meter-container">
+          <div id="progress-bar"></div>
+        </div>
+        
+        <div class="label">Output Log</div>
+        <div class="value-box" style="font-size: 0.85rem; color: var(--subtext);" id="mini-log">
+          >> Ready for input...<br>
+          >> Phase: Inactive
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TERMINAL FOOTER -->
+    <div class="terminal" id="terminal-log">
+      System requires manual calibration. Press and hold the core to begin sequence.
+    </div>
+
+  </div>
+
+  <script>
+    // Grab elements
+    const core = document.getElementById('data-core');
+    const coreFill = document.getElementById('core-fill');
+    const corePercentText = document.getElementById('core-percentage');
+    const progressBar = document.getElementById('progress-bar');
+    const statusText = document.getElementById('status-text');
+    const instructionText = document.getElementById('instruction-text');
+    const terminalLog = document.getElementById('terminal-log');
+    const miniLog = document.getElementById('mini-log');
+    
+    const rootStyles = getComputedStyle(document.documentElement);
+    const colorActive = rootStyles.getPropertyValue('--core-active').trim();
+    const colorSuccess = rootStyles.getPropertyValue('--success').trim();
+    const colorDanger = rootStyles.getPropertyValue('--danger').trim();
+    const colorSubtext = rootStyles.getPropertyValue('--subtext').trim();
+
+    // Game Variables
+    let progress = 0;
+    let isHolding = false;
+    let holdInterval;
+    let decayInterval;
+    let isStabilized = false;
+
+    // Messages to show when you win
+    const successMessages = [
+      "Access Granted. New experience dropping soon.",
+      "Calibration Complete. Prepare for launch.",
+      "System Locked. Welcome to the future."
+    ];
+
+    // Add event listeners for mouse and touch (mobile)
+    core.addEventListener('mousedown', startHold);
+    core.addEventListener('touchstart', startHold, {passive: false});
+
+    window.addEventListener('mouseup', stopHold);
+    window.addEventListener('touchend', stopHold);
+
+    function startHold(e) {
+      if (e.type === 'touchstart') e.preventDefault(); // Stop screen from scrolling on mobile
+      if (isStabilized) return; // If already won, do nothing
+      
+      isHolding = true;
+      clearInterval(decayInterval);
+      
+      instructionText.style.opacity = "0";
+      statusText.innerText = "CALIBRATING...";
+      statusText.style.color = colorActive;
+      terminalLog.innerText = ">> Synchronizing data streams. Do not release connection.";
+      miniLog.innerHTML = ">> Link established...<br>>> Charging...";
+
+      // Increase progress while holding
+      holdInterval = setInterval(() => {
+        progress += 1.5; 
+        if (progress >= 100) {
+          progress = 100;
+          winSequence();
+        }
+        updateUI();
+      }, 30);
+    }
+
+    function stopHold() {
+      if (!isHolding || isStabilized) return;
+      
+      isHolding = false;
+      clearInterval(holdInterval);
+      
+      statusText.innerText = "CONNECTION LOST";
+      statusText.style.color = colorDanger;
+      terminalLog.innerText = ">> Warning: Calibration interrupted. Core integrity dropping.";
+
+      // Decrease progress when released
+      decayInterval = setInterval(() => {
+        progress -= 2.5;
+        if (progress <= 0) {
+          progress = 0;
+          clearInterval(decayInterval);
+          statusText.innerText = "UNSTABLE";
+          statusText.style.color = colorSubtext;
+          instructionText.style.opacity = "1";
+          miniLog.innerHTML = ">> Ready for input...<br>>> Phase: Inactive";
+        }
+        updateUI();
+      }, 30);
+    }
+
+    function updateUI() {
+      const p = Math.floor(progress);
+      coreFill.style.height = `${p}%`;
+      progressBar.style.width = `${p}%`;
+      corePercentText.innerText = `${p}%`;
+
+      // Change colors based on progress
+      if (!isStabilized) {
+        if (progress > 75) {
+          coreFill.style.background = colorActive;
+          progressBar.style.background = colorActive;
+        } else if (progress > 30) {
+          coreFill.style.background = "#94a3b8";
+          progressBar.style.background = "#94a3b8";
+        } else {
+          coreFill.style.background = "#cbd5e1";
+          progressBar.style.background = "#cbd5e1";
+        }
+      }
+    }
+
+    function winSequence() {
+      isStabilized = true;
+      isHolding = false;
+      clearInterval(holdInterval);
+      clearInterval(decayInterval);
+
+      // Lock the UI into a green/success state
+      coreFill.style.height = "100%";
+      coreFill.style.background = colorSuccess;
+      progressBar.style.width = "100%";
+      progressBar.style.background = colorSuccess;
+      
+      corePercentText.innerText = "LOCKED";
+      corePercentText.style.color = colorSuccess;
+      
+      statusText.innerText = "STABLE";
+      statusText.style.color = colorSuccess;
+      
+      const randomMsg = successMessages[Math.floor(Math.random() * successMessages.length)];
+      terminalLog.innerText = `>> SUCCESS: ${randomMsg}`;
+      miniLog.innerHTML = ">> Core sequence locked.<br>>> Awaiting final deployment.";
+
+      // 3D pop effect
+      core.style.transform = "scale(1.05)";
+      core.style.boxShadow = "0 30px 60px rgba(16, 185, 129, 0.2), inset 0 0 0 4px #10b981";
+
+      // Reset after a few seconds so they can play again if they want
+      setTimeout(() => {
+        isStabilized = false;
+        progress = 0;
+        core.style.transform = "scale(1)";
+        core.style.boxShadow = "0 20px 50px rgba(0, 0, 0, 0.1), inset 0 0 0 4px rgba(255, 255, 255, 1)";
+        corePercentText.style.color = colorSubtext;
+        instructionText.style.opacity = "1";
+        statusText.innerText = "UNSTABLE";
+        statusText.style.color = colorSubtext;
+        terminalLog.innerText = "System reset. Ready for new calibration.";
+        updateUI();
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
