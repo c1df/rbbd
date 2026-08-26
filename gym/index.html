@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Pro Gym Ultimate Dashboard</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+ <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+ <style>
+  :root {
+   --bg-base: #0a0c10;
+   --bg-surface: #12161f;
+   --bg-card: #181d28;
+   --border: #262f40;
+   --border-highlight: #3b4760;
+   --text-main: #f0f4fc;
+   --text-muted: #8b99b5;
+   --text-dim: #5a667f;
+   --accent-purple: #9d4edd;
+   --accent-cyan: #00f5d4;
+   --accent-pink: #ff007f;
+   --accent-green: #38b000;
+   --accent-orange: #ff9e00;
+   --danger: #ef4444;
+  }
+
+  [data-theme="light"] {
+   --bg-base: #f4f7f9;
+   --bg-surface: #ffffff;
+   --bg-card: #f8fafc;
+   --border: #e2e8f0;
+   --border-highlight: #cbd5e1;
+   --text-main: #0f172a;
+   --text-muted: #475569;
+   --text-dim: #64748b;
+   --accent-purple: #7e22ce;
+   --accent-cyan: #0d9488;
+   --accent-pink: #be185d;
+   --accent-green: #15803d;
+   --accent-orange: #c2410c;
+   --danger: #ef4444;
+  }
+
+  * {
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+   font-family: 'Plus Jakarta Sans', sans-serif;
+   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  body {
+   background-color: var(--bg-base);
+   color: var(--text-main);
+   min-height: 100vh;
+   padding: 20px;
+  }
+
+  .app-container {
+   width: 1050px;
+   max-width: 100%;
+   margin: 0 auto;
+   padding-bottom: 50px;
+  }
+
+  /* DASHBOARD BANNER */
+  .dashboard-banner {
+   background: linear-gradient(145deg, var(--bg-surface) 0%, var(--bg-card) 100%);
+   border: 1px solid var(--border);
+   border-radius: 16px;
+   padding: 22px 25px;
+   margin-bottom: 25px;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   flex-wrap: wrap;
+   gap: 20px;
+   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .brand h1 {
+   font-size: 1.8rem;
+   font-weight: 800;
+   background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+  }
+
+  .stats-wrapper {
+   display: flex;
+   gap: 12px;
+   flex-wrap: wrap;
+  }
+
+  .stat-box {
+   background: var(--bg-base);
+   border: 1px solid var(--border);
+   padding: 10px 16px;
+   border-radius: 10px;
+   text-align: center;
+   min-width: 110px;
+  }
+
+  .stat-box .lbl {
+   font-size: 0.7rem;
+   color: var(--text-dim);
+   font-weight: 700;
+   text-transform: uppercase;
+   letter-spacing: 0.5px;
+  }
+
+  .stat-box .val {
+   font-size: 1.05rem;
+   font-weight: 800;
+   color: var(--text-main);
+   margin-top: 3px;
+  }
+
+  .top-actions {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+  }
+
+  .icon-btn {
+   background: var(--bg-card);
+   border: 1px solid var(--border);
+   color: var(--text-main);
+   width: 40px;
+   height: 40px;
+   border-radius: 10px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   cursor: pointer;
+   font-size: 1.1rem;
+  }
+
+  .icon-btn:hover {
+   border-color: var(--accent-cyan);
+   color: var(--accent-cyan);
+  }
+
+  /* STICKY CONTROL BAR */
+  .sticky-control-bar {
+   position: sticky;
+   top: 15px;
+   z-index: 900;
+   background: transparent;
+   border: 1px solid var(--border);
+   padding: 12px 20px;
+   border-radius: 12px;
+   margin-bottom: 25px;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: 15px;
+   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+   backdrop-filter: blur(10px);
+   -webkit-backdrop-filter: blur(10px);
+  }
+
+  [data-theme="light"] .sticky-control-bar {
+   background: transparent;
+   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  }
+
+  .day-select-wrapper {
+   display: flex;
+   align-items: center;
+   gap: 12px;
+   flex: 1;
+  }
+
+  .day-dropdown {
+   flex: 1;
+   background: var(--bg-surface);
+   border: 1px solid var(--border);
+   color: var(--text-main);
+   padding: 10px 15px;
+   border-radius: 8px;
+   font-size: 1rem;
+   font-weight: 700;
+   outline: none;
+   cursor: pointer;
+  }
+
+  .day-dropdown:focus {
+   border-color: var(--accent-cyan);
+  }
+
+  .active-day-meta {
+   font-size: 0.8rem;
+   color: var(--accent-green);
+   font-weight: 600;
+   white-space: nowrap;
+  }
+
+  /* BADGES */
+  .count-badge {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   background: var(--accent-purple);
+   color: #ffffff;
+   padding: 2px 10px;
+   border-radius: 20px;
+   font-size: 0.75rem;
+   font-weight: 800;
+   margin-left: 10px;
+   letter-spacing: 0.5px;
+  }
+
+  /* ROUTINE CONTENT */
+  .routine-content {
+   display: none;
+  }
+
+  .routine-content.active {
+   display: block;
+   animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+   from {
+    opacity: 0;
+    transform: translateY(10px);
+   }
+
+   to {
+    opacity: 1;
+    transform: translateY(0);
+   }
+  }
+
+  .group-wrapper {
+   margin-bottom: 30px;
+  }
+
+  .group-header-row {
+   display: flex;
+   align-items: center;
+   gap: 12px;
+   margin-bottom: 12px;
+  }
+
+  .group-header {
+   font-size: 1.05rem;
+   font-weight: 700;
+   background: var(--bg-card);
+   border: 1px solid var(--border);
+   padding: 8px 16px;
+   border-radius: 8px;
+   color: var(--text-main);
+   display: flex;
+   align-items: center;
+  }
+
+  .exercise-card {
+   background: var(--bg-surface);
+   border: 1px solid var(--border);
+   border-radius: 12px;
+   padding: 12px 16px;
+   margin-bottom: 10px;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   flex-wrap: wrap;
+   gap: 15px;
+  }
+
+  .exercise-card:hover {
+   border-color: var(--border-highlight);
+   transform: translateY(-1px);
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .exercise-card.completed {
+   background: rgba(56, 176, 0, 0.08);
+   border-color: rgba(56, 176, 0, 0.3);
+  }
+
+  .card-left {
+   display: flex;
+   align-items: center;
+   gap: 15px;
+   flex: 1;
+   min-width: 230px;
+  }
+
+  .thumb-box {
+   width: 60px;
+   height: 60px;
+   border-radius: 8px;
+   background: var(--bg-base);
+   border: 1px solid var(--border);
+   cursor: pointer;
+   overflow: hidden;
+   flex-shrink: 0;
+  }
+
+  .thumb-box img {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+  }
+
+  .thumb-box .no-img {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   height: 100%;
+   font-size: 0.65rem;
+   color: var(--text-dim);
+  }
+
+  .exercise-title {
+   font-size: 1.05rem;
+   font-weight: 700;
+   color: var(--text-main);
+  }
+
+  .note-tag {
+   font-size: 0.75rem;
+   color: var(--accent-orange);
+   background: rgba(255, 158, 0, 0.1);
+   padding: 3px 8px;
+   border-radius: 4px;
+   margin-left: 8px;
+   font-weight: 600;
+  }
+
+  .last-done {
+   font-size: 0.8rem;
+   color: var(--text-muted);
+   margin-top: 4px;
+  }
+
+  .card-actions {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+  }
+
+  .btn-small {
+   background: var(--bg-card);
+   border: 1px solid var(--border);
+   color: var(--text-muted);
+   width: 34px;
+   height: 34px;
+   border-radius: 8px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   cursor: pointer;
+   font-size: 0.9rem;
+   text-decoration: none;
+  }
+
+  .btn-small:hover {
+   border-color: var(--accent-cyan);
+   color: var(--accent-cyan);
+  }
+
+  .check-btn {
+   background: var(--bg-card);
+   border: 2px solid var(--border);
+   width: 38px;
+   height: 38px;
+   border-radius: 50%;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   color: transparent;
+   font-size: 1.1rem;
+   transition: all 0.2s;
+  }
+
+  .check-btn:hover {
+   border-color: var(--accent-green);
+  }
+
+  .exercise-card.completed .check-btn {
+   background: var(--accent-green);
+   border-color: var(--accent-green);
+   color: white;
+  }
+
+  /* MODALS */
+  .modal-overlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background: rgba(0, 0, 0, 0.85);
+   display: none;
+   align-items: center;
+   justify-content: center;
+   z-index: 1000;
+   padding: 20px;
+  }
+
+  .modal-overlay.active {
+   display: flex;
+  }
+
+  .modal {
+   background: var(--bg-surface);
+   border: 1px solid var(--border);
+   padding: 25px;
+   border-radius: 12px;
+   width: 450px;
+   max-width: 100%;
+   max-height: 90vh;
+   overflow-y: auto;
+  }
+
+  .modal h3 {
+   margin-bottom: 15px;
+   color: var(--text-main);
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   font-size: 1.1rem;
+  }
+
+  .close-modal {
+   background: none;
+   border: none;
+   color: var(--text-muted);
+   font-size: 1.5rem;
+   cursor: pointer;
+  }
+
+  .close-modal:hover {
+   color: var(--danger);
+  }
+
+  .input-group {
+   margin-bottom: 15px;
+  }
+
+  .input-group label {
+   display: block;
+   font-size: 0.85rem;
+   color: var(--text-muted);
+   margin-bottom: 5px;
+  }
+
+  .input-group input {
+   width: 100%;
+   background: var(--bg-card);
+   border: 1px solid var(--border);
+   padding: 10px 12px;
+   color: var(--text-main);
+   border-radius: 6px;
+   font-family: inherit;
+  }
+
+  .input-group input:focus {
+   outline: none;
+   border-color: var(--accent-cyan);
+  }
+
+  .list-manager {
+   margin-bottom: 20px;
+   border: 1px solid var(--border);
+   border-radius: 8px;
+   background: var(--bg-base);
+   max-height: 200px;
+   overflow-y: auto;
+  }
+
+  .list-item {
+   display: flex;
+   justify-content: space-between;
+   padding: 10px 15px;
+   border-bottom: 1px solid var(--border);
+   align-items: center;
+   font-size: 0.9rem;
+  }
+
+  .list-item:last-child {
+   border-bottom: none;
+  }
+
+  .btn-text-danger {
+   background: none;
+   border: none;
+   color: var(--danger);
+   cursor: pointer;
+   font-size: 0.85rem;
+   font-weight: 600;
+  }
+
+  .modal-actions {
+   display: flex;
+   justify-content: flex-end;
+   gap: 10px;
+   margin-top: 20px;
+  }
+
+  .btn {
+   padding: 8px 16px;
+   border-radius: 6px;
+   cursor: pointer;
+   border: none;
+   font-weight: 600;
+  }
+
+  .btn-cancel {
+   background: var(--bg-card);
+   color: var(--text-main);
+   border: 1px solid var(--border);
+  }
+
+  .btn-save {
+   background: var(--accent-cyan);
+   color: #000;
+  }
+
+  .lightbox-img {
+   max-width: 100%;
+   max-height: 90vh;
+   border-radius: 8px;
+   object-fit: contain;
+  }
+
+  /* FLOATING TOAST */
+  .toast-notify {
+   position: fixed;
+   bottom: 30px;
+   right: 30px;
+   background: var(--accent-green);
+   color: #fff;
+   padding: 14px 28px;
+   border-radius: 8px;
+   font-weight: 700;
+   font-size: 1rem;
+   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+   display: none;
+   z-index: 2000;
+   animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+   from {
+    transform: translateY(30px);
+    opacity: 0;
+   }
+
+   to {
+    transform: translateY(0);
+    opacity: 1;
+   }
+  }
+
+  /* RESPONSIVE STICKY BAR FIX FOR MOBILE */
+  @media (max-width: 650px) {
+   .sticky-control-bar {
+    align-items: flex-start;
+    /* Cog আইকনটিকে ড্রপডাউনের সোজাসুজি রাখবে */
+   }
+
+   .day-select-wrapper {
+    flex-direction: column;
+    /* লেখাকে নিচে নামিয়ে দেবে */
+    align-items: flex-start;
+    gap: 5px;
+   }
+
+   .day-dropdown {
+    width: 100%;
+    /* ছোট স্ক্রিনে ড্রপডাউনকে সুন্দরভাবে ফিট করবে */
+   }
+
+   .active-day-meta {
+    font-size: 0.75rem;
+    white-space: normal;
+    /* স্ক্রিন খুব ছোট হলে লেখাকে স্ক্রিনের বাইরে যেতে দেবে না */
+   }
+  }
+
+ </style>
+</head>
+
+<body>
+
+ <!-- JSON DATA STORAGE -->
+ <script id="app-data" type="application/json">
+  {
+   "version": 1,
+   "exportCount": 4,
+   "days": [{
+     "id": "day1",
+     "title": "Day 01: Legs & Shoulders",
+     "groups": [{
+       "id": "g1_1",
+       "name": "Legs",
+       "exercises": [{
+         "id": "e1",
+         "name": "Calf Raise",
+         "note": "Variation",
+         "img": "https://hips.hearstapps.com/hmg-prod/images/calf-raises-682dac39b1bcf.jpg?crop=1xw:0.9513054094665665xh;center,top&resize=1200:*"
+        },
+        {
+         "id": "e2",
+         "name": "Leg Press",
+         "note": "Variation",
+         "img": "https://cdn.shopify.com/s/files/1/0618/9462/3460/articles/shutterstock_215163556-min_17c4f57a-a637-4b9a-be7f-7a54be5ff841.jpg?v=1748601561"
+        },
+        {
+         "id": "e3",
+         "name": "Leg Extension",
+         "note": "Seated",
+         "img": "https://lifefitindia.com/wp-content/uploads/editor/seated-leg-curl-muscles-worked.webp"
+        },
+        {
+         "id": "e4",
+         "name": "Barbell Hip Thrust",
+         "note": "Glutes",
+         "img": "https://hips.hearstapps.com/hmg-prod/images/hip-thrust-67acc7664e81d.jpg?crop=0.670xw:1.00xh;0.224xw,0&resize=1200:*"
+        }
+       ]
+      },
+      {
+       "id": "g1_2",
+       "name": "Shoulders",
+       "exercises": [{
+         "id": "e5",
+         "name": "Seated Dumbbell Front Raise",
+         "note": "",
+         "img": "https://weighttraining.guide/wp-content/uploads/2017/08/Seated-Dumbbell-Front-Raise-resized.png"
+        },
+        {
+         "id": "e6",
+         "name": "Dumbbell Lateral Raise",
+         "note": "",
+         "img": "https://liftmanual.com/wp-content/uploads/2023/04/dumbbell-lateral-raise.jpg"
+        },
+        {
+         "id": "e7",
+         "name": "Seated Bent-Over Rear Delt Fly",
+         "note": "",
+         "img": "https://weighttraining.guide/wp-content/uploads/2016/12/seated-bent-over-lateral-raise-resized.png"
+        },
+        {
+         "id": "e8",
+         "name": "Dumbbell Shrugs",
+         "note": "Traps",
+         "img": "https://i.ytimg.com/vi/qvvJUKq7_sU/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAP728oT8BBn_Jp8f3Btsow1dPl1g"
+        }
+       ]
+      }
+     ],
+     "totalEx": 8
+    },
+    {
+     "id": "day2",
+     "title": "Day 02: Back & Biceps",
+     "groups": [{
+       "id": "g2_1",
+       "name": "Back",
+       "exercises": [{
+         "id": "e9",
+         "name": "Chin Up",
+         "note": "",
+         "img": "https://media.gq-magazine.co.uk/photos/645e53a5a66108f9a8ca9d2b/1:1/w_1080,h_1080,c_limit/Pull-Up-header.jpg"
+        },
+        {
+         "id": "e10",
+         "name": "Chest Supported Machine Row",
+         "note": "",
+         "img": "https://m.media-amazon.com/images/I/71BoAc-u3VL._AC_UF894,1000_QL80_.jpg"
+        },
+        {
+         "id": "e11",
+         "name": "Seated Cable Row",
+         "note": "2 hands + 1 hand",
+         "img": "https://cdn.muscleandstrength.com/sites/default/files/seated-cable-row.jpg"
+        }
+       ]
+      },
+      {
+       "id": "g2_2",
+       "name": "Biceps",
+       "exercises": [{
+         "id": "e12",
+         "name": "Dumbbell Concentration Curl",
+         "note": "Slow & focused",
+         "img": "https://weighttraining.guide/wp-content/uploads/2016/05/Dumbbell-Concentration-Curl-resized.png"
+        },
+        {
+         "id": "e13",
+         "name": "Hammer Curls",
+         "note": "Slow & focused",
+         "img": "https://bodybuilding-wizard.com/wp-content/uploads/2026/03/standing-hammer-dumbbell-curl-exercise-tutorial.jpg"
+        },
+        {
+         "id": "e14",
+         "name": "Standing Barbell Bicep Curl",
+         "note": "Slow & focused",
+         "img": "https://i.ytimg.com/vi/kwG2ipFRgfo/maxresdefault.jpg"
+        }
+       ]
+      }
+     ],
+     "totalEx": 6
+    },
+    {
+     "id": "day3",
+     "title": "Day 03: Chest & Triceps",
+     "groups": [{
+       "id": "g3_1",
+       "name": "Triceps",
+       "exercises": [{
+         "id": "e15",
+         "name": "Bench Dips",
+         "note": "",
+         "img": "https://hips.hearstapps.com/hmg-prod/images/img-2220-jpg-1571859261.jpg"
+        },
+        {
+         "id": "e16",
+         "name": "Overhead Dumbbell Tricep Ext.",
+         "note": "With Dumbbell",
+         "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThYeAfXRa73vNO1YQwUoDQc-9pquiAFHjLyIBMHE6yWSu88s6hk5y8y6M&s=10"
+        },
+        {
+         "id": "e17",
+         "name": "Cable Tricep Kickback",
+         "note": "With Dumbbell / Cable",
+         "img": "https://hips.hearstapps.com/hmg-prod/images/mh-9-20-brett-650b46ef4123c.jpg?resize=980:*"
+        },
+        {
+         "id": "e18",
+         "name": "Tricep Rope Pushdown",
+         "note": "Rope press",
+         "img": "https://cdn.shopify.com/s/files/1/0618/9462/3460/files/ezgif_com-gif-maker-1.gif"
+        }
+       ]
+      },
+      {
+       "id": "g3_2",
+       "name": "Chest",
+       "exercises": [{
+         "id": "e19",
+         "name": "Barbell Bench Press",
+         "note": "Upper, Lower, Middle",
+         "img": "https://gmwdfitness.com/cdn/shop/files/gmwd-bench-press-machine-v3-picture-1.jpg?v=1747983277&width=1600"
+        },
+        {
+         "id": "e20",
+         "name": "Dumbbell Pullover",
+         "note": "Focus on flys",
+         "img": "https://i.pinimg.com/originals/d2/43/1a/d2431a33e8619902629d58ecee73c454.gif"
+        },
+        {
+         "id": "e21",
+         "name": "Decline Dumbbell Fly",
+         "note": "Lower fly",
+         "img": "https://fitnessprogramer.com/wp-content/uploads/2021/06/Decline-Dumbbell-Fly.gif"
+        }
+       ]
+      }
+     ],
+     "totalEx": 7
+    }
+   ]
+  }
+
+ </script>
+
+ <div class="app-container">
+  <!-- DASHBOARD BANNER -->
+  <div class="dashboard-banner">
+   <div class="brand">
+    <h1>GYM DASHBOARD</h1>
+   </div>
+   <div class="stats-wrapper">
+    <div class="stat-box">
+     <div class="lbl">Last Workout</div>
+     <div class="val" id="globalLastDate">Never</div>
+    </div>
+    <div class="stat-box">
+     <div class="lbl">Days Ago</div>
+     <div class="val" id="globalDaysAgo">-</div>
+    </div>
+    <div class="stat-box">
+     <div class="lbl">Completed Today</div>
+     <div class="val" id="todayProgress">0 / 21</div>
+    </div>
+   </div>
+   <div class="top-actions">
+    <button class="icon-btn" onclick="resetToday()" title="Reset All Checks">🔄</button>
+    <button class="icon-btn theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    <button class="icon-btn" onclick="exportUpdatedHTML()" title="Export Updated Dashboard" style="background:var(--accent-cyan); color:#000;">💾</button>
+   </div>
+  </div>
+
+  <!-- STICKY CONTROL BAR (Dropdown & Day Manager Cog) -->
+  <div class="sticky-control-bar">
+   <div class="day-select-wrapper">
+    <select class="day-dropdown" id="daySelect" onchange="switchDay(this.value)">
+     <option value="day1" selected="">Day 01: Legs &amp; Shoulders (8 Exercises)</option>
+     <option value="day2">Day 02: Back &amp; Biceps (6 Exercises)</option>
+     <option value="day3">Day 03: Chest &amp; Triceps (7 Exercises)</option>
+    </select>
+    <div class="active-day-meta" id="activeDayMeta">Not started yet</div>
+   </div>
+   <div style="display:flex; align-items:center; gap:8px;">
+    <button class="icon-btn" style="width:38px; height:38px;" onclick="openDayManager()" title="Manage Workout Days">⚙️</button>
+   </div>
+  </div>
+
+  <!-- DYNAMIC WORKOUT CONTENT -->
+  <div id="workoutContainer">
+   <div class="routine-content active" id="view_day1">
+    <div class="group-wrapper">
+     <div class="group-header-row">
+      <div class="group-header">
+       <span>Legs</span>
+       <span class="count-badge">4</span>
+      </div>
+      <button class="icon-btn" style="width:30px;height:30px;font-size:0.9rem;" onclick="openAddExModal('day1', 'g1_1')" title="Add Exercise">➕</button>
+      <button class="btn-text-danger" style="margin-left:auto;" onclick="deleteGroup('day1', 'g1_1')">Remove Group</button>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://hips.hearstapps.com/hmg-prod/images/calf-raises-682dac39b1bcf.jpg?crop=1xw:0.9513054094665665xh;center,top&amp;resize=1200:*" onclick="showLightbox('https://hips.hearstapps.com/hmg-prod/images/calf-raises-682dac39b1bcf.jpg?crop=1xw:0.9513054094665665xh;center,top&amp;resize=1200:*')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Calf Raise</span>
+         <span class="note-tag">Variation</span>
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Calf%20Raise" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day1', 'g1_1', 'e1')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e1')">✔</button>
+      </div>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://cdn.shopify.com/s/files/1/0618/9462/3460/articles/shutterstock_215163556-min_17c4f57a-a637-4b9a-be7f-7a54be5ff841.jpg?v=1748601561" onclick="showLightbox('https://cdn.shopify.com/s/files/1/0618/9462/3460/articles/shutterstock_215163556-min_17c4f57a-a637-4b9a-be7f-7a54be5ff841.jpg?v=1748601561')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Leg Press</span>
+         <span class="note-tag">Variation</span>
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Leg%20Press" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day1', 'g1_1', 'e2')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e2')">✔</button>
+      </div>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://lifefitindia.com/wp-content/uploads/editor/seated-leg-curl-muscles-worked.webp" onclick="showLightbox('https://lifefitindia.com/wp-content/uploads/editor/seated-leg-curl-muscles-worked.webp')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Leg Extension</span>
+         <span class="note-tag">Seated</span>
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Leg%20Extension" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day1', 'g1_1', 'e3')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e3')">✔</button>
+      </div>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://hips.hearstapps.com/hmg-prod/images/hip-thrust-67acc7664e81d.jpg?crop=0.670xw:1.00xh;0.224xw,0&amp;resize=1200:*" onclick="showLightbox('https://hips.hearstapps.com/hmg-prod/images/hip-thrust-67acc7664e81d.jpg?crop=0.670xw:1.00xh;0.224xw,0&amp;resize=1200:*')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Barbell Hip Thrust</span>
+         <span class="note-tag">Glutes</span>
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Barbell%20Hip%20Thrust" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day1', 'g1_1', 'e4')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e4')">✔</button>
+      </div>
+     </div>
+    </div>
+    <div class="group-wrapper">
+     <div class="group-header-row">
+      <div class="group-header">
+       <span>Shoulders</span>
+       <span class="count-badge">4</span>
+      </div>
+      <button class="icon-btn" style="width:30px;height:30px;font-size:0.9rem;" onclick="openAddExModal('day1', 'g1_2')" title="Add Exercise">➕</button>
+      <button class="btn-text-danger" style="margin-left:auto;" onclick="deleteGroup('day1', 'g1_2')">Remove Group</button>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://weighttraining.guide/wp-content/uploads/2017/08/Seated-Dumbbell-Front-Raise-resized.png" onclick="showLightbox('https://weighttraining.guide/wp-content/uploads/2017/08/Seated-Dumbbell-Front-Raise-resized.png')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Seated Dumbbell Front Raise</span>
+
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Seated%20Dumbbell%20Front%20Raise" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day1', 'g1_2', 'e5')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e5')">✔</button>
+      </div>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://liftmanual.com/wp-content/uploads/2023/04/dumbbell-lateral-raise.jpg" onclick="showLightbox('https://liftmanual.com/wp-content/uploads/2023/04/dumbbell-lateral-raise.jpg')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Dumbbell Lateral Raise</span>
+
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Dumbbell%20Lateral%20Raise" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day1', 'g1_2', 'e6')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e6')">✔</button>
+      </div>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://weighttraining.guide/wp-content/uploads/2016/12/seated-bent-over-lateral-raise-resized.png" onclick="showLightbox('https://weighttraining.guide/wp-content/uploads/2016/12/seated-bent-over-lateral-raise-resized.png')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Seated Bent-Over Rear Delt Fly</span>
+
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Seated%20Bent-Over%20Rear%20Delt%20Fly" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day1', 'g1_2', 'e7')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e7')">✔</button>
+      </div>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://i.ytimg.com/vi/qvvJUKq7_sU/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&amp;rs=AOn4CLAP728oT8BBn_Jp8f3Btsow1dPl1g" onclick="showLightbox('https://i.ytimg.com/vi/qvvJUKq7_sU/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&amp;rs=AOn4CLAP728oT8BBn_Jp8f3Btsow1dPl1g')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Dumbbell Shrugs</span>
+         <span class="note-tag">Traps</span>
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Dumbbell%20Shrugs" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day1', 'g1_2', 'e8')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e8')">✔</button>
+      </div>
+     </div>
+    </div>
+    <div style="text-align:center; margin-top:20px; margin-bottom:40px;">
+     <button class="btn btn-cancel" onclick="addGroup('day1')">➕ Add New Muscle Group</button>
+    </div>
+   </div>
+   <div class="routine-content " id="view_day2">
+    <div class="group-wrapper">
+     <div class="group-header-row">
+      <div class="group-header">
+       <span>Back</span>
+       <span class="count-badge">3</span>
+      </div>
+      <button class="icon-btn" style="width:30px;height:30px;font-size:0.9rem;" onclick="openAddExModal('day2', 'g2_1')" title="Add Exercise">➕</button>
+      <button class="btn-text-danger" style="margin-left:auto;" onclick="deleteGroup('day2', 'g2_1')">Remove Group</button>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://media.gq-magazine.co.uk/photos/645e53a5a66108f9a8ca9d2b/1:1/w_1080,h_1080,c_limit/Pull-Up-header.jpg" onclick="showLightbox('https://media.gq-magazine.co.uk/photos/645e53a5a66108f9a8ca9d2b/1:1/w_1080,h_1080,c_limit/Pull-Up-header.jpg')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Chin Up</span>
+
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Chin%20Up" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day2', 'g2_1', 'e9')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e9')">✔</button>
+      </div>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://m.media-amazon.com/images/I/71BoAc-u3VL._AC_UF894,1000_QL80_.jpg" onclick="showLightbox('https://m.media-amazon.com/images/I/71BoAc-u3VL._AC_UF894,1000_QL80_.jpg')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Chest Supported Machine Row</span>
+
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Chest%20Supported%20Machine%20Row" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day2', 'g2_1', 'e10')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e10')">✔</button>
+      </div>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://cdn.muscleandstrength.com/sites/default/files/seated-cable-row.jpg" onclick="showLightbox('https://cdn.muscleandstrength.com/sites/default/files/seated-cable-row.jpg')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Seated Cable Row</span>
+         <span class="note-tag">2 hands + 1 hand</span>
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Seated%20Cable%20Row" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day2', 'g2_1', 'e11')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e11')">✔</button>
+      </div>
+     </div>
+    </div>
+    <div class="group-wrapper">
+     <div class="group-header-row">
+      <div class="group-header">
+       <span>Biceps</span>
+       <span class="count-badge">3</span>
+      </div>
+      <button class="icon-btn" style="width:30px;height:30px;font-size:0.9rem;" onclick="openAddExModal('day2', 'g2_2')" title="Add Exercise">➕</button>
+      <button class="btn-text-danger" style="margin-left:auto;" onclick="deleteGroup('day2', 'g2_2')">Remove Group</button>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://weighttraining.guide/wp-content/uploads/2016/05/Dumbbell-Concentration-Curl-resized.png" onclick="showLightbox('https://weighttraining.guide/wp-content/uploads/2016/05/Dumbbell-Concentration-Curl-resized.png')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Dumbbell Concentration Curl</span>
+         <span class="note-tag">Slow &amp; focused</span>
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Dumbbell%20Concentration%20Curl" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day2', 'g2_2', 'e12')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e12')">✔</button>
+      </div>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://bodybuilding-wizard.com/wp-content/uploads/2026/03/standing-hammer-dumbbell-curl-exercise-tutorial.jpg" onclick="showLightbox('https://bodybuilding-wizard.com/wp-content/uploads/2026/03/standing-hammer-dumbbell-curl-exercise-tutorial.jpg')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Hammer Curls</span>
+         <span class="note-tag">Slow &amp; focused</span>
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Hammer%20Curls" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day2', 'g2_2', 'e13')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e13')">✔</button>
+      </div>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://i.ytimg.com/vi/kwG2ipFRgfo/maxresdefault.jpg" onclick="showLightbox('https://i.ytimg.com/vi/kwG2ipFRgfo/maxresdefault.jpg')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Standing Barbell Bicep Curl</span>
+         <span class="note-tag">Slow &amp; focused</span>
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Standing%20Barbell%20Bicep%20Curl" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day2', 'g2_2', 'e14')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e14')">✔</button>
+      </div>
+     </div>
+    </div>
+    <div style="text-align:center; margin-top:20px; margin-bottom:40px;">
+     <button class="btn btn-cancel" onclick="addGroup('day2')">➕ Add New Muscle Group</button>
+    </div>
+   </div>
+   <div class="routine-content " id="view_day3">
+    <div class="group-wrapper">
+     <div class="group-header-row">
+      <div class="group-header">
+       <span>Triceps</span>
+       <span class="count-badge">4</span>
+      </div>
+      <button class="icon-btn" style="width:30px;height:30px;font-size:0.9rem;" onclick="openAddExModal('day3', 'g3_1')" title="Add Exercise">➕</button>
+      <button class="btn-text-danger" style="margin-left:auto;" onclick="deleteGroup('day3', 'g3_1')">Remove Group</button>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://hips.hearstapps.com/hmg-prod/images/img-2220-jpg-1571859261.jpg" onclick="showLightbox('https://hips.hearstapps.com/hmg-prod/images/img-2220-jpg-1571859261.jpg')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Bench Dips</span>
+
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Bench%20Dips" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day3', 'g3_1', 'e15')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e15')">✔</button>
+      </div>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThYeAfXRa73vNO1YQwUoDQc-9pquiAFHjLyIBMHE6yWSu88s6hk5y8y6M&amp;s=10" onclick="showLightbox('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThYeAfXRa73vNO1YQwUoDQc-9pquiAFHjLyIBMHE6yWSu88s6hk5y8y6M&amp;s=10')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Overhead Dumbbell Tricep Ext.</span>
+         <span class="note-tag">With Dumbbell</span>
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Overhead%20Dumbbell%20Tricep%20Ext." target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day3', 'g3_1', 'e16')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e16')">✔</button>
+      </div>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://hips.hearstapps.com/hmg-prod/images/mh-9-20-brett-650b46ef4123c.jpg?resize=980:*" onclick="showLightbox('https://hips.hearstapps.com/hmg-prod/images/mh-9-20-brett-650b46ef4123c.jpg?resize=980:*')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Cable Tricep Kickback</span>
+         <span class="note-tag">With Dumbbell / Cable</span>
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Cable%20Tricep%20Kickback" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day3', 'g3_1', 'e17')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e17')">✔</button>
+      </div>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://cdn.shopify.com/s/files/1/0618/9462/3460/files/ezgif_com-gif-maker-1.gif" onclick="showLightbox('https://cdn.shopify.com/s/files/1/0618/9462/3460/files/ezgif_com-gif-maker-1.gif')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Tricep Rope Pushdown</span>
+         <span class="note-tag">Rope press</span>
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Tricep%20Rope%20Pushdown" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day3', 'g3_1', 'e18')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e18')">✔</button>
+      </div>
+     </div>
+    </div>
+    <div class="group-wrapper">
+     <div class="group-header-row">
+      <div class="group-header">
+       <span>Chest</span>
+       <span class="count-badge">3</span>
+      </div>
+      <button class="icon-btn" style="width:30px;height:30px;font-size:0.9rem;" onclick="openAddExModal('day3', 'g3_2')" title="Add Exercise">➕</button>
+      <button class="btn-text-danger" style="margin-left:auto;" onclick="deleteGroup('day3', 'g3_2')">Remove Group</button>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://gmwdfitness.com/cdn/shop/files/gmwd-bench-press-machine-v3-picture-1.jpg?v=1747983277&amp;width=1600" onclick="showLightbox('https://gmwdfitness.com/cdn/shop/files/gmwd-bench-press-machine-v3-picture-1.jpg?v=1747983277&amp;width=1600')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Barbell Bench Press</span>
+         <span class="note-tag">Upper, Lower, Middle</span>
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Barbell%20Bench%20Press" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day3', 'g3_2', 'e19')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e19')">✔</button>
+      </div>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://i.pinimg.com/originals/d2/43/1a/d2431a33e8619902629d58ecee73c454.gif" onclick="showLightbox('https://i.pinimg.com/originals/d2/43/1a/d2431a33e8619902629d58ecee73c454.gif')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Dumbbell Pullover</span>
+         <span class="note-tag">Focus on flys</span>
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Dumbbell%20Pullover" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day3', 'g3_2', 'e20')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e20')">✔</button>
+      </div>
+     </div>
+     <div class="exercise-card ">
+      <div class="card-left">
+       <div class="thumb-box"><img src="https://fitnessprogramer.com/wp-content/uploads/2021/06/Decline-Dumbbell-Fly.gif" onclick="showLightbox('https://fitnessprogramer.com/wp-content/uploads/2021/06/Decline-Dumbbell-Fly.gif')"></div>
+       <div>
+        <div style="display:flex; align-items:center;">
+         <span class="exercise-title">Decline Dumbbell Fly</span>
+         <span class="note-tag">Lower fly</span>
+        </div>
+
+       </div>
+      </div>
+      <div class="card-actions">
+       <a href="https://www.google.com/search?tbm=isch&amp;q=Decline%20Dumbbell%20Fly" target="_blank" class="btn-small" title="Search Google">🔍</a>
+       <button class="btn-small" onclick="openEditExModal('day3', 'g3_2', 'e21')" title="Edit/Delete">⚙️</button>
+       <button class="check-btn" onclick="toggleCheck('e21')">✔</button>
+      </div>
+     </div>
+    </div>
+    <div style="text-align:center; margin-top:20px; margin-bottom:40px;">
+     <button class="btn btn-cancel" onclick="addGroup('day3')">➕ Add New Muscle Group</button>
+    </div>
+   </div>
+  </div>
+ </div>
+
+ <!-- ================= MODALS ================= -->
+
+ <!-- LIGHTBOX -->
+ <div class="modal-overlay" id="lightbox" onclick="closeLightbox(event)">
+  <button class="close-modal" style="position: absolute; top: 20px; right: 30px; color: white;" onclick="document.getElementById('lightbox').classList.remove('active')">×</button>
+  <img id="lightboxImg" class="lightbox-img" src="" alt="Full Screen">
+ </div>
+
+ <!-- DAY MANAGER MODAL (Manage Days) -->
+ <div class="modal-overlay" id="dayModal">
+  <div class="modal">
+   <h3>Manage Workout Days <button class="close-modal" onclick="closeModal('dayModal')">×</button></h3>
+   <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Add or remove your workout days.</p>
+   <div class="list-manager" id="dayManagerList"></div>
+   <div class="input-group" style="margin-top: 15px;">
+    <label>Add New Day Title</label>
+    <div style="display:flex; gap:10px;">
+     <input type="text" id="newDayName" placeholder="e.g. Day 4: Full Body">
+     <button class="btn btn-save" onclick="addDay()">Add</button>
+    </div>
+   </div>
+  </div>
+ </div>
+
+ <!-- EXERCISE EDIT/ADD MODAL -->
+ <div class="modal-overlay" id="exModal">
+  <div class="modal">
+   <h3 id="exModalTitle">Edit Exercise</h3>
+   <input type="hidden" id="exModalAction" value="EDIT">
+   <input type="hidden" id="exModalDayId" value="day1">
+   <input type="hidden" id="exModalGroupId" value="g1_1">
+   <input type="hidden" id="exModalExId" value="e4">
+
+   <div class="input-group">
+    <label>Exercise Name</label>
+    <input type="text" id="exName" placeholder="e.g. Bench Press">
+   </div>
+   <div class="input-group">
+    <label>Note / Subtitle (Optional)</label>
+    <input type="text" id="exNote" placeholder="e.g. Upper, Lower, Middle">
+   </div>
+   <div class="input-group">
+    <label>Image URL (Optional)</label>
+    <input type="text" id="exImg" placeholder="https://...">
+   </div>
+   <div class="modal-actions" style="justify-content: space-between;">
+    <button class="btn btn-cancel" style="color: var(--danger); border-color: var(--danger); display: inline-block;" id="btnDeleteEx" onclick="deleteEx()">Delete</button>
+    <div style="display:flex; gap:10px;">
+     <button class="btn btn-cancel" onclick="closeModal('exModal')">Cancel</button>
+     <button class="btn btn-save" onclick="saveEx()">Save</button>
+    </div>
+   </div>
+  </div>
+ </div>
+
+ <div class="toast-notify" id="toast" style="display: none;">Success! File exported.</div>
+
+ <script>
+  /* =========================================
+   APPLICATION LOGIC
+   ========================================= */
+
+  // Safe JSON Data Initialization
+  let htmlData = null;
+  try {
+   htmlData = JSON.parse(document.getElementById('app-data').textContent);
+  } catch (e) {
+   console.error("HTML Data Parse Error", e);
+  }
+
+  let localData = JSON.parse(localStorage.getItem('proGymData_Final_v1'));
+  let appData;
+
+  if (localData && htmlData && (localData.exportCount || 0) >= (htmlData.exportCount || 0)) {
+   appData = localData;
+  } else if (htmlData) {
+   appData = htmlData;
+   localStorage.setItem('proGymData_Final_v1', JSON.stringify(appData));
+  } else {
+   // Failsafe
+   appData = {
+    days: [],
+    exportCount: 0
+   };
+  }
+
+  let appLogs = JSON.parse(localStorage.getItem('proGymLogs_Final_v1')) || {
+   lastGlobalDate: null,
+   exerciseLogs: {}
+  };
+  let activeDayId = appData.days && appData.days.length > 0 ? appData.days[0].id : null;
+
+  // UTILS
+  function generateId() {
+   return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+  }
+
+  function saveData() {
+   localStorage.setItem('proGymData_Final_v1', JSON.stringify(appData));
+   localStorage.setItem('proGymLogs_Final_v1', JSON.stringify(appLogs));
+  }
+
+  function formatDaysAgo(dateString) {
+   if (!dateString) return null;
+   const today = new Date();
+   today.setHours(0, 0, 0, 0);
+   const d = new Date(dateString);
+   d.setHours(0, 0, 0, 0);
+   const diff = Math.floor((today - d) / (1000 * 60 * 60 * 24));
+   if (diff === 0) return 'Today';
+   if (diff === 1) return 'Yesterday';
+   return `${diff} days ago`;
+  }
+
+  function showToast(msg) {
+   const t = document.getElementById('toast');
+   t.innerText = msg;
+   t.style.display = 'block';
+   setTimeout(() => {
+    t.style.display = 'none';
+   }, 2500);
+  }
+
+  // THEME
+  function initTheme() {
+   const savedTheme = localStorage.getItem('proGymTheme');
+   if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+   else {
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    document.documentElement.setAttribute('data-theme', prefersLight ? 'light' : 'dark');
+   }
+   document.getElementById('themeBtn').innerText = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+  }
+
+  function toggleTheme() {
+   const target = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+   document.documentElement.setAttribute('data-theme', target);
+   localStorage.setItem('proGymTheme', target);
+   document.getElementById('themeBtn').innerText = target === 'dark' ? '☀️' : '🌙';
+  }
+
+  // MAIN RENDER
+  function render() {
+   if (!appData.days) return;
+
+   let totalCompletedToday = 0;
+   let totalExercises = 0;
+
+   // Calculate Counts per day
+   appData.days.forEach(day => {
+    let dayTotal = 0;
+    day.groups.forEach(g => dayTotal += g.exercises.length);
+    day.totalEx = dayTotal;
+   });
+
+   // Render Dropdown
+   const selectEl = document.getElementById('daySelect');
+   selectEl.innerHTML = appData.days.map(d => `<option value="${d.id}" ${d.id === activeDayId ? 'selected' : ''}>${d.title} &nbsp;&nbsp;[${d.totalEx}]</option>`).join('');
+
+   const workCont = document.getElementById('workoutContainer');
+   workCont.innerHTML = '';
+
+   appData.days.forEach(day => {
+    let maxDateForDay = 0;
+    let dayHtml = `<div class="routine-content ${day.id === activeDayId ? 'active' : ''}" id="view_${day.id}">`;
+
+    day.groups.forEach(group => {
+     const exCount = group.exercises.length;
+     dayHtml += `
+            <div class="group-wrapper">
+                <div class="group-header-row">
+                    <div class="group-header">
+                        <span>${group.name}</span>
+                        <span class="count-badge">${exCount}</span>
+                    </div>
+                    <button class="icon-btn" style="width:30px;height:30px;font-size:0.9rem;" onclick="openAddExModal('${day.id}', '${group.id}')" title="Add Exercise">➕</button>
+                    <button class="btn-text-danger" style="margin-left:auto;" onclick="deleteGroup('${day.id}', '${group.id}')">Remove Group</button>
+                </div>`;
+
+     totalExercises += exCount;
+     group.exercises.forEach(ex => {
+      const log = appLogs.exerciseLogs[ex.id] || {
+       completed: false,
+       date: null
+      };
+      if (log.date) {
+       const dTime = new Date(log.date).getTime();
+       if (dTime > maxDateForDay) maxDateForDay = dTime;
+       if (log.completed && formatDaysAgo(log.date) === 'Today') totalCompletedToday++;
+      }
+
+      const thumb = ex.img ? `<img src="${ex.img}" onclick="showLightbox('${ex.img}')">` : `<div class="no-img">No Img</div>`;
+      const dateStr = log.date ? `<div class="last-done">🕒 Last: ${formatDaysAgo(log.date)}</div>` : '';
+      const searchUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(ex.name)}`;
+
+      dayHtml += `
+                <div class="exercise-card ${log.completed ? 'completed' : ''}">
+                    <div class="card-left">
+                        <div class="thumb-box">${thumb}</div>
+                        <div>
+                            <div style="display:flex; align-items:center;">
+                                <span class="exercise-title">${ex.name}</span>
+                                ${ex.note ? `<span class="note-tag">${ex.note}</span>` : ''}
+                            </div>
+                            ${dateStr}
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <a href="${searchUrl}" target="_blank" class="btn-small" title="Search Google">🔍</a>
+                        <button class="btn-small" onclick="openEditExModal('${day.id}', '${group.id}', '${ex.id}')" title="Edit/Delete">⚙️</button>
+                        <button class="check-btn" onclick="toggleCheck('${ex.id}')">✔</button>
+                    </div>
+                </div>`;
+     });
+     dayHtml += `</div>`;
+    });
+
+    dayHtml += `
+            <div style="text-align:center; margin-top:20px; margin-bottom:40px;">
+                <button class="btn btn-cancel" onclick="addGroup('${day.id}')">➕ Add New Muscle Group</button>
+            </div>
+        </div>`;
+    workCont.innerHTML += dayHtml;
+
+    if (day.id === activeDayId) {
+     document.getElementById('activeDayMeta').innerText = maxDateForDay > 0 ? `Last Completed: ${formatDaysAgo(new Date(maxDateForDay).toISOString())}` : 'Not started yet';
+    }
+   });
+
+   // Update Stats
+   const globalDate = appLogs.lastGlobalDate;
+   if (globalDate) {
+    document.getElementById('globalLastDate').innerText = new Date(globalDate).toLocaleDateString('en-GB', {
+     day: '2-digit',
+     month: 'short',
+     year: 'numeric'
+    });
+    document.getElementById('globalDaysAgo').innerText = formatDaysAgo(globalDate);
+   } else {
+    document.getElementById('globalLastDate').innerText = "Never";
+    document.getElementById('globalDaysAgo').innerText = "-";
+   }
+   document.getElementById('todayProgress').innerText = `${totalCompletedToday} / ${totalExercises}`;
+  }
+
+  function switchDay(id) {
+   if (id !== activeDayId) {
+    activeDayId = id;
+    render();
+   }
+  }
+
+  function toggleCheck(id) {
+   const isComp = appLogs.exerciseLogs[id]?.completed || false;
+   const now = new Date().toISOString();
+   appLogs.exerciseLogs[id] = {
+    completed: !isComp,
+    date: !isComp ? now : appLogs.exerciseLogs[id].date
+   };
+   if (!isComp) appLogs.lastGlobalDate = now;
+   saveData();
+   render();
+  }
+
+  function resetToday() {
+   if (confirm("Reset all checkmarks?")) {
+    Object.keys(appLogs.exerciseLogs).forEach(k => appLogs.exerciseLogs[k].completed = false);
+    saveData();
+    render();
+   }
+  }
+
+  function closeModal(id) {
+   document.getElementById(id).classList.remove('active');
+  }
+
+  // DAY MANAGER
+  function openDayManager() {
+   const list = document.getElementById('dayManagerList');
+   list.innerHTML = appData.days.map(d => `
+        <div class="list-item">
+            <span>${d.title}</span>
+            <button class="btn-text-danger" onclick="deleteDay('${d.id}')">Remove</button>
+        </div>
+    `).join('');
+   document.getElementById('dayModal').classList.add('active');
+  }
+
+  function addDay() {
+   const title = document.getElementById('newDayName').value.trim();
+   if (title) {
+    const newId = generateId();
+    appData.days.push({
+     id: newId,
+     title,
+     groups: []
+    });
+    document.getElementById('newDayName').value = '';
+    activeDayId = newId;
+    saveData();
+    render();
+    closeModal('dayModal');
+   }
+  }
+
+  function deleteDay(id) {
+   if (confirm("Delete this day and its routines?")) {
+    appData.days = appData.days.filter(d => d.id !== id);
+    if (activeDayId === id) activeDayId = appData.days.length > 0 ? appData.days[0].id : null;
+    saveData();
+    render();
+    openDayManager();
+   }
+  }
+
+  // GROUPS
+  function addGroup(dayId) {
+   const name = prompt("Enter Muscle Group Name (e.g. Abs, Chest):");
+   if (name) {
+    const day = appData.days.find(d => d.id === dayId);
+    day.groups.push({
+     id: generateId(),
+     name,
+     exercises: []
+    });
+    saveData();
+    render();
+   }
+  }
+
+  function deleteGroup(dayId, groupId) {
+   if (confirm("Delete this muscle group?")) {
+    const day = appData.days.find(d => d.id === dayId);
+    day.groups = day.groups.filter(g => g.id !== groupId);
+    saveData();
+    render();
+   }
+  }
+
+  // EXERCISES
+  function openAddExModal(dayId, groupId) {
+   document.getElementById('exModalTitle').innerText = "Add New Exercise";
+   document.getElementById('exModalAction').value = "ADD";
+   document.getElementById('exModalDayId').value = dayId;
+   document.getElementById('exModalGroupId').value = groupId;
+   document.getElementById('exName').value = '';
+   document.getElementById('exNote').value = '';
+   document.getElementById('exImg').value = '';
+   document.getElementById('btnDeleteEx').style.display = 'none';
+   document.getElementById('exModal').classList.add('active');
+  }
+
+  function openEditExModal(dayId, groupId, exId) {
+   const day = appData.days.find(d => d.id === dayId);
+   const group = day.groups.find(g => g.id === groupId);
+   const ex = group.exercises.find(e => e.id === exId);
+
+   document.getElementById('exModalTitle').innerText = "Edit Exercise";
+   document.getElementById('exModalAction').value = "EDIT";
+   document.getElementById('exModalDayId').value = dayId;
+   document.getElementById('exModalGroupId').value = groupId;
+   document.getElementById('exModalExId').value = exId;
+
+   document.getElementById('exName').value = ex.name || '';
+   document.getElementById('exNote').value = ex.note || '';
+   document.getElementById('exImg').value = ex.img || '';
+   document.getElementById('btnDeleteEx').style.display = 'inline-block';
+   document.getElementById('exModal').classList.add('active');
+  }
+
+  function saveEx() {
+   const action = document.getElementById('exModalAction').value;
+   const dayId = document.getElementById('exModalDayId').value;
+   const groupId = document.getElementById('exModalGroupId').value;
+
+   const day = appData.days.find(d => d.id === dayId);
+   const group = day.groups.find(g => g.id === groupId);
+
+   const name = document.getElementById('exName').value.trim();
+   const note = document.getElementById('exNote').value.trim();
+   const img = document.getElementById('exImg').value.trim();
+
+   if (!name) return alert("Name is required!");
+
+   if (action === "ADD") {
+    group.exercises.push({
+     id: generateId(),
+     name,
+     note,
+     img
+    });
+   } else {
+    const exId = document.getElementById('exModalExId').value;
+    const ex = group.exercises.find(e => e.id === exId);
+    ex.name = name;
+    ex.note = note;
+    ex.img = img;
+   }
+   saveData();
+   render();
+   closeModal('exModal');
+  }
+
+  function deleteEx() {
+   if (confirm("Delete this exercise?")) {
+    const dayId = document.getElementById('exModalDayId').value;
+    const groupId = document.getElementById('exModalGroupId').value;
+    const exId = document.getElementById('exModalExId').value;
+
+    const day = appData.days.find(d => d.id === dayId);
+    const group = day.groups.find(g => g.id === groupId);
+    group.exercises = group.exercises.filter(e => e.id !== exId);
+
+    saveData();
+    render();
+    closeModal('exModal');
+   }
+  }
+
+  // EXPORT UPDATED HTML FILE
+  function exportUpdatedHTML() {
+   appData.exportCount = (appData.exportCount || 0) + 1;
+   saveData();
+
+   const jsonScriptBlock = document.getElementById('app-data');
+   jsonScriptBlock.textContent = JSON.stringify(appData, null, 2);
+
+   const fullHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+   const blob = new Blob([fullHtml], {
+    type: 'text/html;charset=utf-8'
+   });
+   const url = URL.createObjectURL(blob);
+   const a = document.createElement('a');
+   a.href = url;
+   a.download = `workout_pro_v${appData.exportCount}.html`;
+   a.click();
+   URL.revokeObjectURL(url);
+
+   showToast("Success! File exported.");
+  }
+
+  function showLightbox(src) {
+   if (!src) return;
+   document.getElementById('lightboxImg').src = src;
+   document.getElementById('lightbox').classList.add('active');
+  }
+
+  function closeLightbox(e) {
+   if (e.target.tagName !== 'IMG') document.getElementById('lightbox').classList.remove('active');
+  }
+
+  // START
+  initTheme();
+  render();
+
+ </script>
+
+
+
+</body>
+
+</html>
