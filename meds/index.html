@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="bn" data-theme="light">
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Medicine & Health Tracker - Parvin Akter</title>
+ <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+ <style>
+  :root {
+   --bg-base: #f0f4f8;
+   --bg-surface: #ffffff;
+   --bg-card: #ffffff;
+   --border: #e2e8f0;
+   --text-main: #1e293b;
+   --text-muted: #64748b;
+   --primary: #0ea5e9;
+   --primary-hover: #0284c7;
+   --before-meal: #ef4444;
+   --after-meal: #10b981;
+   --success: #22c55e;
+   --danger: #f43f5e;
+   --shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  [data-theme="dark"] {
+   --bg-base: #0f172a;
+   --bg-surface: #1e293b;
+   --bg-card: #1e293b;
+   --border: #334155;
+   --text-main: #f8fafc;
+   --text-muted: #94a3b8;
+   --primary: #38bdf8;
+   --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  * {
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+   font-family: 'Hind Siliguri', sans-serif;
+   transition: background-color 0.2s, color 0.2s;
+  }
+
+  body {
+   background-color: var(--bg-base);
+   color: var(--text-main);
+   padding: 15px;
+   padding-bottom: 80px;
+  }
+
+  .container {
+   max-width: 800px;
+   margin: 0 auto;
+  }
+
+  /* HEADER & DASHBOARD */
+  .header {
+   background: var(--bg-surface);
+   padding: 20px;
+   border-radius: 16px;
+   box-shadow: var(--shadow);
+   margin-bottom: 25px;
+   border: 1px solid var(--border);
+  }
+
+  .header-top {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   flex-wrap: wrap;
+   gap: 15px;
+   margin-bottom: 15px;
+  }
+
+  .header h1 {
+   font-size: 1.4rem;
+   color: var(--primary);
+   font-weight: 700;
+   line-height: 1.2;
+  }
+
+  .patient-info {
+   color: var(--text-muted);
+   font-size: 0.9rem;
+   font-weight: 600;
+  }
+
+  .header-actions {
+   display: flex;
+   gap: 8px;
+  }
+
+  .btn-icon {
+   background: var(--bg-base);
+   border: 1px solid var(--border);
+   color: var(--text-main);
+   width: 36px;
+   height: 36px;
+   border-radius: 10px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   cursor: pointer;
+   font-size: 1.1rem;
+  }
+
+  .btn-primary {
+   background: var(--primary);
+   color: white;
+   border: none;
+   padding: 0 14px;
+   border-radius: 10px;
+   font-weight: 600;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   height: 36px;
+   font-size: 0.9rem;
+  }
+
+  /* COMPACT DASHBOARD STATS */
+  .dashboard-stats {
+   display: flex;
+   gap: 5px;
+   justify-content: space-between;
+   background: var(--bg-base);
+   padding: 10px;
+   border-radius: 12px;
+   border: 1px solid var(--border);
+  }
+
+  .stat-box {
+   flex: 1;
+   text-align: center;
+   border-right: 1px solid var(--border);
+   padding: 2px;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+  }
+
+  .stat-box:last-child {
+   border-right: none;
+  }
+
+  .stat-lbl {
+   font-size: 0.65rem;
+   color: var(--text-muted);
+   font-weight: 700;
+   text-transform: uppercase;
+   line-height: 1.1;
+  }
+
+  .stat-val {
+   font-size: 0.95rem;
+   font-weight: 700;
+   color: var(--text-main);
+   margin-top: 3px;
+   line-height: 1.1;
+  }
+
+  .stat-link {
+   font-size: 0.7rem;
+   color: var(--primary);
+   font-weight: 700;
+   text-decoration: none;
+   margin-top: 4px;
+   display: inline-block;
+   cursor: pointer;
+  }
+
+  @media (max-width: 400px) {
+   .stat-lbl {
+    font-size: 0.55rem;
+   }
+
+   .stat-val {
+    font-size: 0.85rem;
+   }
+
+   .stat-link {
+    font-size: 0.6rem;
+   }
+  }
+
+  /* SCHEDULE SECTIONS */
+  .schedule-group {
+   margin-bottom: 25px;
+  }
+
+  .schedule-title {
+   font-size: 1.15rem;
+   font-weight: 700;
+   margin-bottom: 12px;
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   padding-bottom: 5px;
+   border-bottom: 2px solid var(--border);
+  }
+
+  .count-badge {
+   background: var(--text-muted);
+   color: white;
+   font-size: 0.8rem;
+   padding: 2px 8px;
+   border-radius: 20px;
+  }
+
+  /* COMPACT MEDICINE CARD */
+  .med-card {
+   background: var(--bg-card);
+   border: 1px solid var(--border);
+   border-radius: 12px;
+   padding: 12px 14px;
+   margin-bottom: 10px;
+   box-shadow: var(--shadow);
+   display: flex;
+   flex-direction: column;
+   gap: 8px;
+   transition: all 0.3s ease;
+  }
+
+  .med-card.taken {
+   opacity: 0.55;
+   background: rgba(34, 197, 94, 0.05);
+   border-color: rgba(34, 197, 94, 0.3);
+   filter: blur(0.6px);
+  }
+
+  .med-card.taken:hover,
+  .med-card.taken:active {
+   opacity: 1;
+   filter: blur(0);
+  }
+
+  .med-row-1 {
+   display: flex;
+   justify-content: space-between;
+   align-items: flex-start;
+   gap: 10px;
+  }
+
+  .med-title-group {
+   display: flex;
+   align-items: center;
+   flex-wrap: wrap;
+   gap: 8px;
+  }
+
+  .med-name {
+   font-size: 1.1rem;
+   font-weight: 700;
+   color: var(--text-main);
+   line-height: 1.2;
+  }
+
+  .stock-txt {
+   font-size: 0.75rem;
+   font-weight: 600;
+   background: var(--bg-base);
+   padding: 1px 6px;
+   border-radius: 6px;
+   border: 1px solid var(--border);
+  }
+
+  .stock-txt.low {
+   color: var(--danger);
+   border-color: rgba(244, 63, 94, 0.3);
+   background: rgba(244, 63, 94, 0.05);
+  }
+
+  .meal-badge {
+   font-size: 0.7rem;
+   font-weight: 700;
+   padding: 2px 8px;
+   border-radius: 6px;
+   color: white;
+   white-space: nowrap;
+  }
+
+  .badge-before {
+   background-color: var(--before-meal);
+  }
+
+  .badge-after {
+   background-color: var(--after-meal);
+  }
+
+  .badge-any {
+   background-color: var(--primary);
+  }
+
+  .med-row-2 {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   gap: 15px;
+  }
+
+  .med-purpose {
+   font-size: 0.85rem;
+   color: var(--text-muted);
+   flex: 1;
+   line-height: 1.3;
+  }
+
+  .details-link {
+   color: var(--primary);
+   text-decoration: none;
+   font-weight: 600;
+   white-space: nowrap;
+   cursor: pointer;
+  }
+
+  .btn-take {
+   background: var(--bg-base);
+   border: 1px solid var(--border);
+   color: var(--text-main);
+   padding: 8px 14px;
+   border-radius: 8px;
+   font-weight: 700;
+   font-size: 0.85rem;
+   cursor: pointer;
+   white-space: nowrap;
+   transition: all 0.2s;
+   flex-shrink: 0;
+  }
+
+  .btn-take:hover {
+   border-color: var(--primary);
+  }
+
+  .btn-take.taken-btn {
+   background: var(--success);
+   border-color: var(--success);
+   color: white;
+  }
+
+  /* MODALS */
+  .modal-overlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background: rgba(0, 0, 0, 0.6);
+   display: none;
+   align-items: center;
+   justify-content: center;
+   z-index: 1000;
+   padding: 15px;
+   backdrop-filter: blur(2px);
+  }
+
+  .modal-overlay.active {
+   display: flex;
+  }
+
+  .modal-content {
+   background: var(--bg-surface);
+   border-radius: 16px;
+   width: 100%;
+   max-width: 450px;
+   max-height: 90vh;
+   overflow-y: auto;
+   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  }
+
+  .modal-content.large-modal {
+   max-width: 800px;
+  }
+
+  .modal-header {
+   padding: 15px 20px;
+   border-bottom: 1px solid var(--border);
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   position: sticky;
+   top: 0;
+   background: var(--bg-surface);
+   z-index: 10;
+  }
+
+  .modal-header h2 {
+   font-size: 1.15rem;
+   color: var(--text-main);
+  }
+
+  .close-btn {
+   background: none;
+   border: none;
+   font-size: 1.5rem;
+   color: var(--text-muted);
+   cursor: pointer;
+  }
+
+  .modal-body {
+   padding: 20px;
+  }
+
+  .detail-row {
+   margin-bottom: 15px;
+  }
+
+  .detail-label {
+   font-size: 0.85rem;
+   color: var(--text-muted);
+   font-weight: 600;
+   display: block;
+   margin-bottom: 4px;
+  }
+
+  .detail-value {
+   font-size: 0.95rem;
+   color: var(--text-main);
+   font-weight: 500;
+  }
+
+  /* HEALTH CHART STYLES */
+  .health-form-grid {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: 10px;
+   margin-bottom: 15px;
+   background: var(--bg-base);
+   padding: 15px;
+   border-radius: 8px;
+   border: 1px solid var(--border);
+  }
+
+  @media (max-width: 500px) {
+   .health-form-grid {
+    grid-template-columns: 1fr;
+   }
+  }
+
+  .table-responsive {
+   overflow-x: auto;
+   border: 1px solid var(--border);
+   border-radius: 8px;
+  }
+
+  .health-table {
+   width: 100%;
+   border-collapse: collapse;
+   min-width: 600px;
+  }
+
+  .health-table th,
+  .health-table td {
+   border-bottom: 1px solid var(--border);
+   padding: 10px;
+   text-align: left;
+   font-size: 0.85rem;
+  }
+
+  .health-table th {
+   background: var(--bg-base);
+   font-weight: 700;
+   color: var(--text-muted);
+   white-space: nowrap;
+  }
+
+  .btn-del-sm {
+   color: var(--danger);
+   background: none;
+   border: none;
+   cursor: pointer;
+   font-weight: bold;
+  }
+
+  .modal-footer {
+   padding: 15px 20px;
+   border-top: 1px solid var(--border);
+   display: flex;
+   justify-content: flex-end;
+   gap: 10px;
+   background: var(--bg-base);
+  }
+
+  .btn-outline {
+   border: 1px solid var(--primary);
+   color: var(--primary);
+   background: transparent;
+   padding: 8px 16px;
+   border-radius: 8px;
+   cursor: pointer;
+   font-weight: 600;
+  }
+
+  .btn-outline:hover {
+   background: var(--primary);
+   color: white;
+  }
+
+  /* FORMS */
+  .form-group {
+   margin-bottom: 12px;
+  }
+
+  .form-group label {
+   display: block;
+   margin-bottom: 5px;
+   font-size: 0.85rem;
+   font-weight: 600;
+   color: var(--text-muted);
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+   width: 100%;
+   padding: 8px 10px;
+   border-radius: 6px;
+   border: 1px solid var(--border);
+   background: var(--bg-surface);
+   color: var(--text-main);
+   font-family: inherit;
+   font-size: 0.95rem;
+  }
+
+  .export-box {
+   width: 100%;
+   height: 150px;
+   padding: 10px;
+   font-family: monospace;
+   font-size: 0.8rem;
+   background: var(--bg-base);
+   border: 1px solid var(--border);
+   border-radius: 6px;
+   margin-bottom: 10px;
+   resize: none;
+  }
+
+  /* LIST MANAGER FOR SETTINGS */
+  .list-manager {
+   margin-bottom: 15px;
+   border: 1px solid var(--border);
+   border-radius: 8px;
+   background: var(--bg-base);
+   max-height: 200px;
+   overflow-y: auto;
+  }
+
+  .list-item {
+   display: flex;
+   justify-content: space-between;
+   padding: 10px 15px;
+   border-bottom: 1px solid var(--border);
+   align-items: center;
+   font-size: 0.9rem;
+   font-weight: 600;
+  }
+
+  .list-item:last-child {
+   border-bottom: none;
+  }
+
+  .btn-text-danger {
+   background: none;
+   border: none;
+   color: var(--danger);
+   cursor: pointer;
+   font-size: 0.85rem;
+   font-weight: 700;
+  }
+
+  /* TOAST */
+  .toast {
+   position: fixed;
+   bottom: 20px;
+   left: 50%;
+   transform: translateX(-50%) translateY(100px);
+   background: var(--success);
+   color: white;
+   padding: 12px 24px;
+   border-radius: 30px;
+   font-weight: 600;
+   transition: transform 0.3s;
+   z-index: 2000;
+   box-shadow: var(--shadow);
+  }
+
+  .toast.show {
+   transform: translateX(-50%) translateY(0);
+  }
+
+ </style>
+</head>
+
+<body>
+
+ <!-- JSON DATA -->
+ <script id="app-data" type="application/json">
+  {
+   "version": 5,
+   "exportCount": 0,
+   "lastResetDate": "",
+   "lastTakenTimestamp": null,
+   "schedules": [{
+     "id": "morning",
+     "title": "☀️ সকাল"
+    },
+    {
+     "id": "noon",
+     "title": "🌤️ দুপুর"
+    },
+    {
+     "id": "night",
+     "title": "🌙 রাত"
+    }
+   ],
+   "healthLogs": [{
+    "id": "h1",
+    "date": "2026-09-23",
+    "timeOfDay": "সকাল",
+    "glucose": "9.1",
+    "glucoseType": "Fasting (FBS)",
+    "insulin": "22 Unit",
+    "bp": "150/75",
+    "food": "২টি রুটি, সবজি"
+   }],
+   "medications": [{
+     "id": "m1",
+     "schedule": "morning",
+     "name": "Synthox 100 mcg",
+     "generic": "Levothyroxine Sodium",
+     "company": "Healthcare",
+     "timing": "before",
+     "purposeShort": "থাইরয়েড হরমোনের ঔষধ",
+     "purposeLong": "থাইরয়েডের ঘাটতি পূরণ করে। সকালে ঘুম থেকে উঠে সম্পূর্ণ খালি পেটে শুধুমাত্র পানি দিয়ে খাবেন।",
+     "sideEffects": "ওজন কমা, বুক ধড়ফড়",
+     "price": "৩.০০ ৳",
+     "stock": 30,
+     "takenToday": false
+    },
+    {
+     "id": "m2",
+     "schedule": "morning",
+     "name": "Inj. Ansulin R (22 Unit)",
+     "generic": "Human Insulin",
+     "company": "Square",
+     "timing": "before",
+     "purposeShort": "ডায়াবেটিস কন্ট্রোল",
+     "purposeLong": "খাওয়ার ঠিক ৩০ মিনিট আগে দিতে হবে। এটি দ্রুত কাজ করে সুগার কমায়।",
+     "sideEffects": "সুগার কমে যাওয়া",
+     "price": "২২০ ৳",
+     "stock": 5,
+     "takenToday": false
+    },
+    {
+     "id": "m3",
+     "schedule": "morning",
+     "name": "Tab Rabe 20",
+     "generic": "Rabeprazole",
+     "company": "Generic",
+     "timing": "before",
+     "purposeShort": "গ্যাস্ট্রিকের ঔষধ",
+     "purposeLong": "পাকস্থলীর এসিড কমায়। থাইরয়েডের ঔষধ খাওয়ার ১ ঘণ্টা পর খাবেন।",
+     "sideEffects": "মাথাব্যথা",
+     "price": "৭.০০ ৳",
+     "stock": 30,
+     "takenToday": false
+    },
+    {
+     "id": "m4",
+     "schedule": "morning",
+     "name": "Clopid 75 mg",
+     "generic": "Clopidogrel",
+     "company": "Incepta",
+     "timing": "after",
+     "purposeShort": "রক্ত পাতলা করে",
+     "purposeLong": "হার্টে রক্ত জমাট বাঁধতে দেয় না। বাইপাস রোগীদের জন্য অত্যন্ত জরুরি।",
+     "sideEffects": "রক্তপাত",
+     "price": "১২.০০ ৳",
+     "stock": 30,
+     "takenToday": false
+    },
+    {
+     "id": "m5",
+     "schedule": "morning",
+     "name": "Nitrin SR 2.6 mg",
+     "generic": "Nitroglycerin",
+     "company": "Beximco",
+     "timing": "after",
+     "purposeShort": "হার্টে রক্ত চলাচল বাড়ায়",
+     "purposeLong": "হার্টের রক্তনালী প্রসারিত করে বুকে ব্যথা কমায়।",
+     "sideEffects": "মাথাব্যথা",
+     "price": "৩.০০ ৳",
+     "stock": 30,
+     "takenToday": false
+    },
+    {
+     "id": "m6",
+     "schedule": "morning",
+     "name": "Ancor 2.5 mg",
+     "generic": "Bisoprolol Fumarate",
+     "company": "Square",
+     "timing": "after",
+     "purposeShort": "হার্ট রেট ও প্রেশার কমায়",
+     "purposeLong": "হার্টের অতিরিক্ত চাপ কমায়।",
+     "sideEffects": "দুর্বলতা",
+     "price": "৭.০০ ৳",
+     "stock": 30,
+     "takenToday": false
+    },
+    {
+     "id": "m7",
+     "schedule": "morning",
+     "name": "Abetis 40 mg",
+     "generic": "Olmesartan",
+     "company": "Square",
+     "timing": "after",
+     "purposeShort": "ব্লাড প্রেশার কন্ট্রোল",
+     "purposeLong": "উচ্চ রক্তচাপ কমায়।",
+     "sideEffects": "মাথা ঘোরা",
+     "price": "১১.০০ ৳",
+     "stock": 30,
+     "takenToday": false
+    },
+    {
+     "id": "m8",
+     "schedule": "morning",
+     "name": "Cholcut EZ 10/10",
+     "generic": "Atorvastatin + Ezetimibe",
+     "company": "Incepta",
+     "timing": "after",
+     "purposeShort": "কোলেস্টেরল কমায়",
+     "purposeLong": "রক্তে খারাপ চর্বি কমায় যা হার্টের ব্লক রোধ করে।",
+     "sideEffects": "পেশিতে ব্যথা",
+     "price": "২০.০০ ৳",
+     "stock": 30,
+     "takenToday": false
+    },
+    {
+     "id": "m9",
+     "schedule": "morning",
+     "name": "Dicaltrol Plus",
+     "generic": "Calcium + Calcitriol",
+     "company": "Drug Intl.",
+     "timing": "after",
+     "purposeShort": "হাড়ের ক্যালসিয়াম",
+     "purposeLong": "কিডনি রোগীদের জন্য বিশেষায়িত ক্যালসিয়াম।",
+     "sideEffects": "কোষ্ঠকাঠিন্য",
+     "price": "১৩.০০ ৳",
+     "stock": 30,
+     "takenToday": false
+    },
+    {
+     "id": "m10",
+     "schedule": "noon",
+     "name": "Inj. Ansulin R (20 Unit)",
+     "generic": "Human Insulin",
+     "company": "Square",
+     "timing": "before",
+     "purposeShort": "ডায়াবেটিস কন্ট্রোল",
+     "purposeLong": "দুপুরের খাবার খাওয়ার ঠিক ৩০ মিনিট আগে দিতে হবে।",
+     "sideEffects": "সুগার কমে যাওয়া",
+     "price": "২২০ ৳",
+     "stock": 5,
+     "takenToday": false
+    },
+    {
+     "id": "m11",
+     "schedule": "night",
+     "name": "Inj. Ansulin R (18 Unit)",
+     "generic": "Human Insulin",
+     "company": "Square",
+     "timing": "before",
+     "purposeShort": "ডায়াবেটিস কন্ট্রোল",
+     "purposeLong": "রাতের খাবার খাওয়ার ঠিক ৩০ মিনিট আগে দিতে হবে।",
+     "sideEffects": "সুগার কমে যাওয়া",
+     "price": "২২০ ৳",
+     "stock": 5,
+     "takenToday": false
+    },
+    {
+     "id": "m12",
+     "schedule": "night",
+     "name": "Montair 10 mg",
+     "generic": "Montelukast",
+     "company": "Incepta",
+     "timing": "after",
+     "purposeShort": "শ্বাসকষ্ট ও অ্যালার্জি",
+     "purposeLong": "ফুসফুসের শ্বাসনালী পরিষ্কার রাখে।",
+     "sideEffects": "মাথাব্যথা",
+     "price": "১৭.৫০ ৳",
+     "stock": 30,
+     "takenToday": false
+    },
+    {
+     "id": "m13",
+     "schedule": "night",
+     "name": "Inj. Larsulin 100 (20 Unit)",
+     "generic": "Insulin Glargine",
+     "company": "Square",
+     "timing": "any",
+     "purposeShort": "বেসাল ডায়াবেটিস",
+     "purposeLong": "দীর্ঘক্ষণ কাজ করে। রাতে একই সময়ে দিতে হয়।",
+     "sideEffects": "সুগার কমা",
+     "price": "৮২২ ৳",
+     "stock": 2,
+     "takenToday": false
+    }
+   ]
+  }
+
+ </script>
+
+ <div class="container">
+
+  <!-- DASHBOARD -->
+  <div class="header">
+   <div class="header-top">
+    <div>
+     <h1>Medicine Tracker</h1>
+     <div class="patient-info" id="dateDisplay">Patient: Parvin Akter | Today</div>
+    </div>
+    <div class="header-actions">
+     <button class="btn-icon" onclick="openSettingsModal()" title="Schedule Settings">⚙️</button>
+     <button class="btn-icon" onclick="toggleTheme()" title="Day/Night Mode">🌙</button>
+     <button class="btn-icon" onclick="openAddModal()" title="Add New Medicine">➕</button>
+     <button class="btn-primary" onclick="exportHTMLData()">💾 Save</button>
+    </div>
+   </div>
+
+   <div class="dashboard-stats">
+    <div class="stat-box">
+     <div class="stat-lbl">মোট ঔষধ</div>
+     <div class="stat-val" id="stat-total">0</div>
+    </div>
+    <div class="stat-box">
+     <div class="stat-lbl">আজকের খাওয়া</div>
+     <div class="stat-val" id="stat-today">0 / 0</div>
+    </div>
+    <div class="stat-box">
+     <div class="stat-lbl">সর্বশেষ খাওয়া</div>
+     <div class="stat-val" id="stat-last" style="color:var(--primary);">খায়নি</div>
+    </div>
+    <div class="stat-box">
+     <div class="stat-lbl">ডায়াবেটিস ও BP</div>
+     <div class="stat-val" id="stat-glucose">-</div>
+     <a class="stat-link" onclick="openHealthModal()">[বিস্তারিত চার্ট]</a>
+    </div>
+   </div>
+  </div>
+
+  <!-- APP CONTAINER -->
+  <div id="medicine-container"></div>
+
+ </div>
+
+ <!-- HEALTH CHART MODAL -->
+ <div class="modal-overlay" id="healthModal">
+  <div class="modal-content large-modal">
+   <div class="modal-header">
+    <h2>📊 ডায়াবেটিস ও প্রেশার ট্র্যাকার</h2>
+    <div style="display:flex; gap:10px;">
+     <button class="btn-outline" style="padding: 4px 10px; font-size:0.8rem;" onclick="openExportModal()">Copy for Sheets</button>
+     <button class="close-btn" onclick="closeModal('healthModal')">×</button>
+    </div>
+   </div>
+   <div class="modal-body">
+
+    <div class="health-form-grid">
+     <div class="form-group"><label>তারিখ (Date)</label><input type="date" id="h-date"></div>
+     <div class="form-group"><label>বেলা (Time)</label><select id="h-time">
+       <option value="সকাল (Morning)">সকাল</option>
+       <option value="দুপুর (Noon)">দুপুর</option>
+       <option value="রাত (Night)">রাত</option>
+      </select></div>
+     <div class="form-group"><label>সুগার পয়েন্ট</label><input type="text" id="h-glucose" placeholder="যেমন: 9.1"></div>
+     <div class="form-group">
+      <label>সুগারের ধরন</label>
+      <select id="h-type">
+       <option value="Fasting (খালি পেটে)">Fasting (FBS)</option>
+       <option value="2h ABF (২ ঘণ্টা পর)">2h ABF</option>
+       <option value="Random (RBS)">Random</option>
+      </select>
+     </div>
+     <div class="form-group"><label>ইনসুলিন দেওয়া হয়েছে</label><input type="text" id="h-insulin" placeholder="যেমন: 22 Unit"></div>
+     <div class="form-group"><label>ব্লাড প্রেশার (BP)</label><input type="text" id="h-bp" placeholder="যেমন: 130/80"></div>
+     <div class="form-group" style="grid-column: 1 / -1;"><label>কী খাবার খেলেন?</label><input type="text" id="h-food" placeholder="যেমন: ২টি রুটি, সবজি, ১ পিস ডিম"></div>
+     <div style="grid-column: 1 / -1; text-align:right;">
+      <button class="btn-primary" style="display:inline-flex;" onclick="saveHealthLog()">+ চার্টে যুক্ত করুন</button>
+     </div>
+    </div>
+
+    <div class="table-responsive">
+     <table class="health-table" id="healthTableBody">
+      <thead>
+       <tr>
+        <th>তারিখ</th>
+        <th>বেলা</th>
+        <th>সুগার</th>
+        <th>ধরন</th>
+        <th>ইনসুলিন</th>
+        <th>প্রেশার (BP)</th>
+        <th>খাবার</th>
+        <th>মুছুন</th>
+       </tr>
+      </thead>
+      <tbody></tbody>
+     </table>
+    </div>
+
+   </div>
+  </div>
+ </div>
+
+ <!-- EXPORT TO SHEETS MODAL -->
+ <div class="modal-overlay" id="exportModal">
+  <div class="modal-content">
+   <div class="modal-header">
+    <h2>Export to Sheets</h2>
+    <button class="close-btn" onclick="closeModal('exportModal')">×</button>
+   </div>
+   <div class="modal-body">
+    <textarea id="exportTextarea" class="export-box" readonly></textarea>
+    <button class="btn-primary" style="width:100%; justify-content:center;" onclick="copyToClipboard()">📋 Click to Copy Text</button>
+   </div>
+  </div>
+ </div>
+
+ <!-- SCHEDULE SETTINGS MODAL -->
+ <div class="modal-overlay" id="settingsModal">
+  <div class="modal-content">
+   <div class="modal-header">
+    <h2>⚙️ Schedule Settings</h2>
+    <button class="close-btn" onclick="closeModal('settingsModal')">×</button>
+   </div>
+   <div class="form-group" style="margin-bottom: 15px;padding: 20px;">
+    <label>রোগীর নাম (Patient Name)</label>
+    <div style="display:flex; gap:10px;">
+     <input type="text" id="settingPatientName" style="flex: 1;">
+     <button class="btn-primary" style="flex-shrink: 0;" onclick="updatePatientName()">Save</button>
+    </div>
+   </div>
+   <hr style="border:0; border-top:1px solid var(--border); margin: 15px 0;">
+   <div class="modal-body">
+    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">ওষুধ খাওয়ার বেলা (Schedule) যোগ বা ডিলিট করুন:</p>
+    <div class="list-manager" id="scheduleManagerList"></div>
+
+    <div class="form-group" style="margin-top: 15px;">
+     <label>নতুন বেলা যুক্ত করুন (Title)</label>
+     <div style="display:flex; gap:10px;">
+      <input type="text" id="newScheduleName" placeholder="যেমন: বিকেল">
+      <button class="btn-primary" onclick="addSchedule()">Add</button>
+     </div>
+    </div>
+   </div>
+
+  </div>
+ </div>
+
+ <!-- MED DETAILS MODAL (FULL) -->
+ <div class="modal-overlay" id="detailsModal">
+  <div class="modal-content">
+   <div class="modal-header">
+    <h2 id="det-name">Medicine Name</h2>
+    <button class="close-btn" onclick="closeModal('detailsModal')">×</button>
+   </div>
+   <div class="modal-body">
+    <div class="detail-row"><span class="detail-label">কাজের বিবরণ</span><span class="detail-value" id="det-purpose">...</span></div>
+
+    <div class="detail-row">
+     <span class="detail-label">স্টক ম্যানেজমেন্ট</span>
+     <div style="display:flex; align-items:center; gap:10px; background:var(--bg-base); padding:8px; border-radius:8px; width:fit-content; border:1px solid var(--border);">
+      <button style="width:30px;height:30px;cursor:pointer;border-radius:6px;border:1px solid var(--border);background:var(--bg-card);font-weight:bold;" onclick="updateStockInModal(-1)">-</button>
+      <span id="det-stock" style="font-weight:bold;font-size:1.1rem;width:30px;text-align:center;">0</span>
+      <button style="width:30px;height:30px;cursor:pointer;border-radius:6px;border:1px solid var(--border);background:var(--bg-card);font-weight:bold;" onclick="updateStockInModal(1)">+</button>
+     </div>
+    </div>
+
+    <div class="detail-row"><span class="detail-label">জেনেরিক নাম</span><span class="detail-value" id="det-generic">...</span></div>
+
+    <div style="display:flex; gap:15px; margin-bottom:15px;">
+     <div style="flex:1"><span class="detail-label">কোম্পানি</span><span class="detail-value" id="det-company">...</span></div>
+     <div style="flex:1"><span class="detail-label">দাম</span><span class="detail-value" id="det-price">...</span></div>
+    </div>
+
+    <div class="detail-row" style="padding:10px; background:rgba(244, 63, 94, 0.08); border-radius:8px; border:1px solid rgba(244, 63, 94, 0.2);">
+     <span class="detail-label" style="color:var(--danger)">সাইড ইফেক্ট</span>
+     <span class="detail-value" id="det-side">...</span>
+    </div>
+   </div>
+   <div class="modal-footer">
+    <button class="btn-outline" onclick="openEditFromDetails()">✏️ Edit info</button>
+    <button class="btn-primary" onclick="closeModal('detailsModal')">Close</button>
+   </div>
+  </div>
+ </div>
+
+ <!-- MED FORM MODAL -->
+ <div class="modal-overlay" id="formModal">
+  <div class="modal-content">
+   <div class="modal-header">
+    <h2 id="form-title">Add/Edit Medicine</h2><button class="close-btn" onclick="closeModal('formModal')">×</button>
+   </div>
+   <div class="modal-body">
+    <div class="form-group"><label>ঔষধের নাম</label><input type="text" id="f-name"></div>
+    <div style="display:flex; gap:10px;">
+     <div class="form-group" style="flex:1;"><label>কখন খাবে?</label><select id="f-schedule"></select></div>
+     <div class="form-group" style="flex:1;"><label>আগে/পরে?</label><select id="f-timing">
+       <option value="before">খাবারের আগে</option>
+       <option value="after">খাবারের পরে</option>
+       <option value="any">যেকোনো সময়</option>
+      </select></div>
+    </div>
+    <div class="form-group"><label>কাজের বিবরণ - ছোট</label><input type="text" id="f-pshort"></div>
+    <div class="form-group"><label>কাজের বিবরণ - বিস্তারিত</label><textarea id="f-plong" rows="2"></textarea></div>
+
+    <div style="display:flex; gap:10px;">
+     <div class="form-group" style="flex:1;"><label>জেনেরিক</label><input type="text" id="f-generic"></div>
+     <div class="form-group" style="flex:1;"><label>কোম্পানি</label><input type="text" id="f-company"></div>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+     <div class="form-group" style="flex:1;"><label>দাম</label><input type="text" id="f-price"></div>
+     <div class="form-group" style="flex:1;"><label>বর্তমান স্টক</label><input type="number" id="f-stock"></div>
+    </div>
+
+    <div class="form-group"><label>সাইড ইফেক্ট</label><input type="text" id="f-side"></div>
+   </div>
+   <div class="modal-footer" style="justify-content: space-between;">
+    <button class="btn-outline" style="color:var(--danger); border-color:var(--danger);" id="btn-delete" onclick="deleteMed()">🗑️ Delete</button>
+    <div style="display:flex; gap:10px;">
+     <button class="btn-outline" onclick="closeModal('formModal')">Cancel</button>
+     <button class="btn-primary" onclick="saveMed()">Save</button>
+    </div>
+   </div>
+  </div>
+ </div>
+
+ <div class="toast" id="toastBox">Success!</div>
+
+ <!-- Firebase Compat SDKs -->
+ <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+ <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+
+ <script>
+  // Firebase Configuration
+  const firebaseConfig = {
+   apiKey: "AIzaSyDHXiuHMyZfHMNQHj8Ov_o8crQeHwQYqyM",
+   authDomain: "medicine-tracker-68b2a.firebaseapp.com",
+   databaseURL: "https://medicine-tracker-68b2a-default-rtdb.asia-southeast1.firebasedatabase.app",
+   projectId: "medicine-tracker-68b2a",
+   storageBucket: "medicine-tracker-68b2a.firebasestorage.app",
+   messagingSenderId: "551152388243",
+   appId: "1:551152388243:web:9097f3468ca17d7a9a2566"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  let appData = null;
+  let currentEditId = null;
+
+  function generateId() {
+   return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+  }
+
+  function initData() {
+   // Listen for real-time changes from Firebase
+   db.ref('ParvinTrackerData').on('value', (snapshot) => {
+    const cloudData = snapshot.val();
+
+    if (cloudData) {
+     appData = cloudData;
+    } else {
+     // If cloud is empty initially, load local/embedded data and push to cloud
+     const scriptData = JSON.parse(document.getElementById('app-data').textContent);
+     const localData = JSON.parse(localStorage.getItem('ParvinMedData_v5'));
+     appData = localData || scriptData;
+
+     if (!appData.healthLogs) appData.healthLogs = [];
+     if (!appData.schedules) appData.schedules = [{
+       "id": "morning",
+       "title": "☀️ সকাল"
+      },
+      {
+       "id": "noon",
+       "title": "🌤️ দুপুর"
+      },
+      {
+       "id": "night",
+       "title": "🌙 রাত"
+      }
+     ];
+     if (!appData.patientName) appData.patientName = "Parvin Akter";
+
+     saveToLocal();
+    }
+
+    if (!appData.healthLogs) appData.healthLogs = [];
+    if (!appData.schedules) appData.schedules = [];
+    if (!appData.patientName) appData.patientName = "Parvin Akter";
+
+    checkDailyReset();
+    const hDateEl = document.getElementById('h-date');
+    if (hDateEl && !hDateEl.value) hDateEl.valueAsDate = new Date();
+
+    render();
+   });
+  }
+
+  function saveToLocal() {
+   localStorage.setItem('ParvinMedData_v5', JSON.stringify(appData));
+   // Push live update to Firebase
+   db.ref('ParvinTrackerData').set(appData);
+  }
+
+  function checkDailyReset() {
+   const today = new Date().toLocaleDateString('en-GB');
+   document.getElementById('dateDisplay').innerText = `Patient: ${appData.patientName || 'Parvin Akter'} | ${today}`;
+   if (appData.lastResetDate !== today) {
+    appData.medications.forEach(m => m.takenToday = false);
+    appData.lastResetDate = today;
+    saveToLocal();
+   }
+  }
+
+  function timeAgo(isoString) {
+   if (!isoString) return "খায়নি";
+   const diff = Date.now() - new Date(isoString).getTime();
+   const mins = Math.floor(diff / 60000);
+   if (mins < 1) return "এইমাত্র";
+   if (mins < 60) return `${mins} মি. আগে`;
+   const hrs = Math.floor(mins / 60);
+   if (hrs < 24) return `${hrs} ঘণ্টা আগে`;
+   return `${Math.floor(hrs / 24)} দিন আগে`;
+  }
+
+  function render() {
+   if (!appData) return;
+
+   // Dashboard Stats
+   const totalMeds = appData.medications.length;
+   const takenMeds = appData.medications.filter(m => m.takenToday).length;
+   document.getElementById('stat-total').innerText = totalMeds;
+   document.getElementById('stat-today').innerText = `${takenMeds} / ${totalMeds}`;
+   document.getElementById('stat-last').innerText = timeAgo(appData.lastTakenTimestamp);
+
+   // Dashboard Health Stats (Glucose & BP)
+   const healthStatText = document.getElementById('stat-glucose');
+   if (appData.healthLogs && appData.healthLogs.length > 0) {
+    const lastLog = appData.healthLogs[0];
+    let displayTxt = `${lastLog.glucose}`;
+    if (lastLog.bp && lastLog.bp !== "-") displayTxt += ` | ${lastLog.bp}`;
+    healthStatText.innerText = displayTxt;
+    healthStatText.style.color = "var(--primary)";
+   } else {
+    healthStatText.innerText = "ডাটা নেই";
+    healthStatText.style.color = "var(--text-muted)";
+   }
+
+   // Populate Schedule Dropdown in Form
+   const scheduleSelect = document.getElementById('f-schedule');
+   scheduleSelect.innerHTML = appData.schedules.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
+
+   // Render Medicines
+   const container = document.getElementById('medicine-container');
+   container.innerHTML = '';
+
+   appData.schedules.forEach(sch => {
+    const meds = appData.medications.filter(m => m.schedule === sch.id);
+    if (meds.length === 0) return;
+
+    let sectionHtml = `<div class="schedule-group"><div class="schedule-title">${sch.title} <span class="count-badge">${meds.length} টি</span></div>`;
+
+    meds.forEach(med => {
+     let badgeClass = med.timing === 'before' ? 'badge-before' : (med.timing === 'after' ? 'badge-after' : 'badge-any');
+     let badgeText = med.timing === 'before' ? 'খাবারের আগে' : (med.timing === 'after' ? 'খাবারের পরে' : 'যেকোনো সময়');
+     let stockClass = med.stock <= 5 ? 'low' : '';
+     let btnClass = med.takenToday ? 'taken-btn' : '';
+     let btnText = med.takenToday ? '✔ খাওয়া হয়েছে' : 'খাওয়া হয়েছে';
+
+     sectionHtml += `
+                    <div class="med-card ${med.takenToday ? 'taken' : ''}" id="card-${med.id}">
+                        <div class="med-row-1">
+                            <div class="med-title-group"><span class="med-name">${med.name}</span><span class="stock-txt ${stockClass}">স্টক: ${med.stock}</span></div>
+                            <span class="meal-badge ${badgeClass}">${badgeText}</span>
+                        </div>
+                        <div class="med-row-2">
+                            <div class="med-purpose">${med.purposeShort} <a href="#" class="details-link" onclick="openDetails('${med.id}'); return false;">[বিস্তারিত]</a></div>
+                            <button class="btn-take ${btnClass}" onclick="toggleTaken('${med.id}')">${btnText}</button>
+                        </div>
+                    </div>`;
+    });
+    sectionHtml += `</div>`;
+    container.innerHTML += sectionHtml;
+   });
+  }
+
+  // --- HEALTH CHART LOGIC ---
+  function openHealthModal() {
+   renderHealthTable();
+   document.getElementById('healthModal').classList.add('active');
+  }
+
+  function renderHealthTable() {
+   const tbody = document.querySelector('#healthTableBody tbody');
+   tbody.innerHTML = '';
+   if (!appData.healthLogs) return;
+
+   appData.healthLogs.forEach(log => {
+    tbody.innerHTML += `
+                <tr>
+                    <td><strong>${log.date}</strong></td>
+                    <td>${log.timeOfDay}</td>
+                    <td style="color:var(--primary); font-weight:bold;">${log.glucose}</td>
+                    <td>${log.glucoseType}</td>
+                    <td>${log.insulin || '-'}</td>
+                    <td>${log.bp || '-'}</td>
+                    <td>${log.food || '-'}</td>
+                    <td><button class="btn-del-sm" onclick="deleteHealthLog('${log.id}')">✕</button></td>
+                </tr>`;
+   });
+  }
+
+  function saveHealthLog() {
+   const date = document.getElementById('h-date').value;
+   const glucose = document.getElementById('h-glucose').value;
+   const bp = document.getElementById('h-bp').value;
+
+   if (!glucose && !bp) {
+    alert('সুগার পয়েন্ট অথবা ব্লাড প্রেশার লিখুন!');
+    return;
+   }
+
+   const newLog = {
+    id: 'h' + Date.now(),
+    date: date,
+    timeOfDay: document.getElementById('h-time').value,
+    glucose: glucose || "-",
+    glucoseType: document.getElementById('h-type').value,
+    insulin: document.getElementById('h-insulin').value,
+    bp: bp || "-",
+    food: document.getElementById('h-food').value
+   };
+
+   appData.healthLogs.unshift(newLog);
+   saveToLocal();
+   renderHealthTable();
+   render();
+   showToast('হেলথ চার্ট আপডেট হয়েছে!');
+   ['h-glucose', 'h-insulin', 'h-bp', 'h-food'].forEach(id => document.getElementById(id).value = '');
+  }
+
+  function deleteHealthLog(id) {
+   if (confirm("এই ডাটাটি মুছে ফেলতে চান?")) {
+    appData.healthLogs = appData.healthLogs.filter(h => h.id !== id);
+    saveToLocal();
+    renderHealthTable();
+    render();
+   }
+  }
+
+  // --- EXPORT TO SHEETS ---
+  function openExportModal() {
+   let tsvContent = "Date\tTime\tGlucose\tType\tInsulin\tBlood Pressure\tFood\n";
+   if (appData.healthLogs) {
+    appData.healthLogs.forEach(log => {
+     tsvContent += `${log.date}\t${log.timeOfDay}\t${log.glucose}\t${log.glucoseType}\t${log.insulin}\t${log.bp}\t${log.food}\n`;
+    });
+   }
+   document.getElementById('exportTextarea').value = tsvContent;
+   document.getElementById('exportModal').classList.add('active');
+  }
+
+  function copyToClipboard() {
+   const copyText = document.getElementById('exportTextarea');
+   copyText.select();
+   copyText.setSelectionRange(0, 99999);
+   navigator.clipboard.writeText(copyText.value).then(() => {
+    showToast("চার্ট কপি হয়েছে! Excel এ Paste করুন।");
+    closeModal('exportModal');
+   });
+  }
+
+  // --- SCHEDULE SETTINGS MANAGER ---
+  function openSettingsModal() {
+   renderScheduleManager();
+   document.getElementById('settingsModal').classList.add('active');
+   document.getElementById('settingPatientName').value = appData.patientName || 'Parvin Akter';
+  }
+
+  function renderScheduleManager() {
+   const list = document.getElementById('scheduleManagerList');
+   list.innerHTML = appData.schedules.map(s => `
+                <div class="list-item">
+                    <span>${s.title}</span>
+                    <button class="btn-text-danger" onclick="deleteSchedule('${s.id}')">Remove</button>
+                </div>
+            `).join('');
+  }
+
+  function addSchedule() {
+   const title = document.getElementById('newScheduleName').value.trim();
+   if (title) {
+    appData.schedules.push({
+     id: generateId(),
+     title: title
+    });
+    document.getElementById('newScheduleName').value = '';
+    saveToLocal();
+    renderScheduleManager();
+    render();
+   }
+  }
+
+  function deleteSchedule(id) {
+   if (confirm("এই বেলাটি মুছলে এর ভেতরের সব ঔষধ মুছে যাবে। নিশ্চিত?")) {
+    appData.schedules = appData.schedules.filter(s => s.id !== id);
+    appData.medications = appData.medications.filter(m => m.schedule !== id);
+    saveToLocal();
+    renderScheduleManager();
+    render();
+   }
+  }
+
+  // --- MED ACTIONS ---
+  function toggleTaken(id) {
+   const med = appData.medications.find(m => m.id === id);
+   if (med) {
+    med.takenToday = !med.takenToday;
+    if (med.takenToday) {
+     med.stock = Math.max(0, med.stock - 1);
+     appData.lastTakenTimestamp = new Date().toISOString();
+    } else {
+     med.stock += 1;
+    }
+    saveToLocal();
+    render();
+   }
+  }
+
+  function updateStockInModal(delta) {
+   if (!currentEditId) return;
+   const med = appData.medications.find(m => m.id === currentEditId);
+   if (med) {
+    med.stock = Math.max(0, med.stock + delta);
+    saveToLocal();
+    document.getElementById('det-stock').innerText = med.stock;
+    render();
+   }
+  }
+
+  // --- MODALS (MEDS) ---
+  function openDetails(id) {
+   currentEditId = id;
+   const med = appData.medications.find(m => m.id === id);
+   if (!med) return;
+   document.getElementById('det-name').innerText = med.name;
+   document.getElementById('det-purpose').innerText = med.purposeLong || med.purposeShort;
+   document.getElementById('det-stock').innerText = med.stock;
+   document.getElementById('det-generic').innerText = med.generic || '-';
+   document.getElementById('det-company').innerText = med.company || '-';
+   document.getElementById('det-price').innerText = med.price || '-';
+   document.getElementById('det-side').innerText = med.sideEffects || 'জানা নেই';
+   document.getElementById('detailsModal').classList.add('active');
+  }
+
+  function closeModal(modalId) {
+   document.getElementById(modalId).classList.remove('active');
+  }
+
+  function openAddModal() {
+   currentEditId = null;
+   document.getElementById('form-title').innerText = "নতুন ঔষধ";
+   document.getElementById('btn-delete').style.display = 'none';
+   ['f-name', 'f-pshort', 'f-plong', 'f-generic', 'f-company', 'f-price', 'f-stock', 'f-side'].forEach(id => document.getElementById(id).value = '');
+   if (appData.schedules.length > 0) document.getElementById('f-schedule').value = appData.schedules[0].id;
+   document.getElementById('formModal').classList.add('active');
+  }
+
+  function openEditFromDetails() {
+   closeModal('detailsModal');
+   openEditModal(currentEditId);
+  }
+
+  function openEditModal(id) {
+   currentEditId = id;
+   const med = appData.medications.find(m => m.id === id);
+   if (!med) return;
+   document.getElementById('form-title').innerText = "এডিট করুন";
+   document.getElementById('btn-delete').style.display = 'block';
+
+   document.getElementById('f-name').value = med.name;
+   document.getElementById('f-schedule').value = med.schedule;
+   document.getElementById('f-timing').value = med.timing;
+   document.getElementById('f-pshort').value = med.purposeShort;
+   document.getElementById('f-plong').value = med.purposeLong || "";
+   document.getElementById('f-generic').value = med.generic || "";
+   document.getElementById('f-company').value = med.company || "";
+   document.getElementById('f-price').value = med.price || "";
+   document.getElementById('f-stock').value = med.stock;
+   document.getElementById('f-side').value = med.sideEffects || "";
+
+   document.getElementById('formModal').classList.add('active');
+  }
+
+  function saveMed() {
+   const name = document.getElementById('f-name').value.trim();
+   if (!name) return alert("নাম আবশ্যক!");
+   const medObj = {
+    id: currentEditId || generateId(),
+    name: name,
+    schedule: document.getElementById('f-schedule').value,
+    timing: document.getElementById('f-timing').value,
+    purposeShort: document.getElementById('f-pshort').value,
+    purposeLong: document.getElementById('f-plong').value,
+    generic: document.getElementById('f-generic').value,
+    company: document.getElementById('f-company').value,
+    price: document.getElementById('f-price').value,
+    stock: parseInt(document.getElementById('f-stock').value) || 0,
+    sideEffects: document.getElementById('f-side').value,
+    takenToday: false
+   };
+   if (currentEditId) {
+    const index = appData.medications.findIndex(m => m.id === currentEditId);
+    medObj.takenToday = appData.medications[index].takenToday;
+    appData.medications[index] = medObj;
+   } else {
+    appData.medications.push(medObj);
+   }
+   saveToLocal();
+   render();
+   closeModal('formModal');
+   showToast("Saved!");
+  }
+
+  function deleteMed() {
+   if (confirm("মুছে ফেলতে চান?")) {
+    appData.medications = appData.medications.filter(m => m.id !== currentEditId);
+    saveToLocal();
+    render();
+    closeModal('formModal');
+    showToast("Deleted!");
+   }
+  }
+
+  // --- CORE HTML EXPORT ---
+  function exportHTMLData() {
+   appData.exportCount += 1;
+   saveToLocal();
+   document.getElementById('app-data').textContent = JSON.stringify(appData, null, 4);
+   const htmlContent = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+   const blob = new Blob([htmlContent], {
+    type: 'text/html'
+   });
+   const url = URL.createObjectURL(blob);
+   const a = document.createElement('a');
+   a.href = url;
+   a.download = `Medicine_Tracker_Final_v${appData.exportCount}.html`;
+   a.click();
+   URL.revokeObjectURL(url);
+   showToast("ফাইল ডাউনলোড হয়েছে!");
+  }
+
+  function updatePatientName() {
+   const newName = document.getElementById('settingPatientName').value.trim();
+   if (newName) {
+    appData.patientName = newName;
+    saveToLocal();
+
+    const today = new Date().toLocaleDateString('en-GB');
+    document.getElementById('dateDisplay').innerText = `Patient: ${newName} | ${today}`;
+
+    showToast("নাম আপডেট হয়েছে!");
+   }
+  }
+
+  function showToast(msg) {
+   const t = document.getElementById('toastBox');
+   t.innerText = msg;
+   t.classList.add('show');
+   setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function toggleTheme() {
+   const body = document.documentElement;
+   const target = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+   body.setAttribute('data-theme', target);
+   localStorage.setItem('ParvinTheme_v5', target);
+  }
+
+  const savedTheme = localStorage.getItem('ParvinTheme_v5');
+  if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+  
+  // Start Application & Realtime listener
+  initData();
+  setInterval(render, 60000);
+
+ </script>
+</body>
+
+</html>
