@@ -119,7 +119,7 @@
    font-size: 0.9rem;
   }
 
-  /* COMPACT DASHBOARD STATS */
+  /* DASHBOARD STATS */
   .dashboard-stats {
    display: flex;
    gap: 5px;
@@ -226,7 +226,7 @@
    opacity: 0.55;
    background: rgba(34, 197, 94, 0.05);
    border-color: rgba(34, 197, 94, 0.3);
-   filter: blur(0.6px);
+   filter: blur(0.8px);
   }
 
   .med-card.taken:hover,
@@ -401,25 +401,35 @@
    padding: 20px;
   }
 
-  .detail-row {
-   margin-bottom: 15px;
+  /* TABLES */
+  .table-responsive {
+   overflow-x: auto;
+   border: 1px solid var(--border);
+   border-radius: 8px;
+   margin-bottom: 10px;
   }
 
-  .detail-label {
+  .data-table {
+   width: 100%;
+   border-collapse: collapse;
+   min-width: 500px;
+  }
+
+  .data-table th,
+  .data-table td {
+   border-bottom: 1px solid var(--border);
+   padding: 10px;
+   text-align: left;
    font-size: 0.85rem;
+  }
+
+  .data-table th {
+   background: var(--bg-base);
+   font-weight: 700;
    color: var(--text-muted);
-   font-weight: 600;
-   display: block;
-   margin-bottom: 4px;
+   white-space: nowrap;
   }
 
-  .detail-value {
-   font-size: 0.95rem;
-   color: var(--text-main);
-   font-weight: 500;
-  }
-
-  /* HEALTH CHART STYLES */
   .health-form-grid {
    display: grid;
    grid-template-columns: 1fr 1fr;
@@ -435,33 +445,6 @@
    .health-form-grid {
     grid-template-columns: 1fr;
    }
-  }
-
-  .table-responsive {
-   overflow-x: auto;
-   border: 1px solid var(--border);
-   border-radius: 8px;
-  }
-
-  .health-table {
-   width: 100%;
-   border-collapse: collapse;
-   min-width: 600px;
-  }
-
-  .health-table th,
-  .health-table td {
-   border-bottom: 1px solid var(--border);
-   padding: 10px;
-   text-align: left;
-   font-size: 0.85rem;
-  }
-
-  .health-table th {
-   background: var(--bg-base);
-   font-weight: 700;
-   color: var(--text-muted);
-   white-space: nowrap;
   }
 
   .btn-del-sm {
@@ -494,6 +477,15 @@
   .btn-outline:hover {
    background: var(--primary);
    color: white;
+  }
+
+  .btn-text-danger {
+   background: none;
+   border: none;
+   color: var(--danger);
+   cursor: pointer;
+   font-size: 0.85rem;
+   font-weight: 700;
   }
 
   /* FORMS */
@@ -535,7 +527,6 @@
    resize: none;
   }
 
-  /* LIST MANAGER FOR SETTINGS */
   .list-manager {
    margin-bottom: 15px;
    border: 1px solid var(--border);
@@ -555,20 +546,6 @@
    font-weight: 600;
   }
 
-  .list-item:last-child {
-   border-bottom: none;
-  }
-
-  .btn-text-danger {
-   background: none;
-   border: none;
-   color: var(--danger);
-   cursor: pointer;
-   font-size: 0.85rem;
-   font-weight: 700;
-  }
-
-  /* TOAST */
   .toast {
    position: fixed;
    bottom: 20px;
@@ -592,226 +569,7 @@
 </head>
 
 <body>
-
- <!-- JSON DATA -->
- <script id="app-data" type="application/json">
-  {
-   "version": 5,
-   "exportCount": 0,
-   "lastResetDate": "",
-   "lastTakenTimestamp": null,
-   "schedules": [{
-     "id": "morning",
-     "title": "☀️ সকাল"
-    },
-    {
-     "id": "noon",
-     "title": "🌤️ দুপুর"
-    },
-    {
-     "id": "night",
-     "title": "🌙 রাত"
-    }
-   ],
-   "healthLogs": [{
-    "id": "h1",
-    "date": "2026-09-23",
-    "timeOfDay": "সকাল",
-    "glucose": "9.1",
-    "glucoseType": "Fasting (FBS)",
-    "insulin": "22 Unit",
-    "bp": "150/75",
-    "food": "২টি রুটি, সবজি"
-   }],
-   "medications": [{
-     "id": "m1",
-     "schedule": "morning",
-     "name": "Synthox 100 mcg",
-     "generic": "Levothyroxine Sodium",
-     "company": "Healthcare",
-     "timing": "before",
-     "purposeShort": "থাইরয়েড হরমোনের ঔষধ",
-     "purposeLong": "থাইরয়েডের ঘাটতি পূরণ করে। সকালে ঘুম থেকে উঠে সম্পূর্ণ খালি পেটে শুধুমাত্র পানি দিয়ে খাবেন।",
-     "sideEffects": "ওজন কমা, বুক ধড়ফড়",
-     "price": "৩.০০ ৳",
-     "stock": 30,
-     "takenToday": false
-    },
-    {
-     "id": "m2",
-     "schedule": "morning",
-     "name": "Inj. Ansulin R (22 Unit)",
-     "generic": "Human Insulin",
-     "company": "Square",
-     "timing": "before",
-     "purposeShort": "ডায়াবেটিস কন্ট্রোল",
-     "purposeLong": "খাওয়ার ঠিক ৩০ মিনিট আগে দিতে হবে। এটি দ্রুত কাজ করে সুগার কমায়।",
-     "sideEffects": "সুগার কমে যাওয়া",
-     "price": "২২০ ৳",
-     "stock": 5,
-     "takenToday": false
-    },
-    {
-     "id": "m3",
-     "schedule": "morning",
-     "name": "Tab Rabe 20",
-     "generic": "Rabeprazole",
-     "company": "Generic",
-     "timing": "before",
-     "purposeShort": "গ্যাস্ট্রিকের ঔষধ",
-     "purposeLong": "পাকস্থলীর এসিড কমায়। থাইরয়েডের ঔষধ খাওয়ার ১ ঘণ্টা পর খাবেন।",
-     "sideEffects": "মাথাব্যথা",
-     "price": "৭.০০ ৳",
-     "stock": 30,
-     "takenToday": false
-    },
-    {
-     "id": "m4",
-     "schedule": "morning",
-     "name": "Clopid 75 mg",
-     "generic": "Clopidogrel",
-     "company": "Incepta",
-     "timing": "after",
-     "purposeShort": "রক্ত পাতলা করে",
-     "purposeLong": "হার্টে রক্ত জমাট বাঁধতে দেয় না। বাইপাস রোগীদের জন্য অত্যন্ত জরুরি।",
-     "sideEffects": "রক্তপাত",
-     "price": "১২.০০ ৳",
-     "stock": 30,
-     "takenToday": false
-    },
-    {
-     "id": "m5",
-     "schedule": "morning",
-     "name": "Nitrin SR 2.6 mg",
-     "generic": "Nitroglycerin",
-     "company": "Beximco",
-     "timing": "after",
-     "purposeShort": "হার্টে রক্ত চলাচল বাড়ায়",
-     "purposeLong": "হার্টের রক্তনালী প্রসারিত করে বুকে ব্যথা কমায়।",
-     "sideEffects": "মাথাব্যথা",
-     "price": "৩.০০ ৳",
-     "stock": 30,
-     "takenToday": false
-    },
-    {
-     "id": "m6",
-     "schedule": "morning",
-     "name": "Ancor 2.5 mg",
-     "generic": "Bisoprolol Fumarate",
-     "company": "Square",
-     "timing": "after",
-     "purposeShort": "হার্ট রেট ও প্রেশার কমায়",
-     "purposeLong": "হার্টের অতিরিক্ত চাপ কমায়।",
-     "sideEffects": "দুর্বলতা",
-     "price": "৭.০০ ৳",
-     "stock": 30,
-     "takenToday": false
-    },
-    {
-     "id": "m7",
-     "schedule": "morning",
-     "name": "Abetis 40 mg",
-     "generic": "Olmesartan",
-     "company": "Square",
-     "timing": "after",
-     "purposeShort": "ব্লাড প্রেশার কন্ট্রোল",
-     "purposeLong": "উচ্চ রক্তচাপ কমায়।",
-     "sideEffects": "মাথা ঘোরা",
-     "price": "১১.০০ ৳",
-     "stock": 30,
-     "takenToday": false
-    },
-    {
-     "id": "m8",
-     "schedule": "morning",
-     "name": "Cholcut EZ 10/10",
-     "generic": "Atorvastatin + Ezetimibe",
-     "company": "Incepta",
-     "timing": "after",
-     "purposeShort": "কোলেস্টেরল কমায়",
-     "purposeLong": "রক্তে খারাপ চর্বি কমায় যা হার্টের ব্লক রোধ করে।",
-     "sideEffects": "পেশিতে ব্যথা",
-     "price": "২০.০০ ৳",
-     "stock": 30,
-     "takenToday": false
-    },
-    {
-     "id": "m9",
-     "schedule": "morning",
-     "name": "Dicaltrol Plus",
-     "generic": "Calcium + Calcitriol",
-     "company": "Drug Intl.",
-     "timing": "after",
-     "purposeShort": "হাড়ের ক্যালসিয়াম",
-     "purposeLong": "কিডনি রোগীদের জন্য বিশেষায়িত ক্যালসিয়াম।",
-     "sideEffects": "কোষ্ঠকাঠিন্য",
-     "price": "১৩.০০ ৳",
-     "stock": 30,
-     "takenToday": false
-    },
-    {
-     "id": "m10",
-     "schedule": "noon",
-     "name": "Inj. Ansulin R (20 Unit)",
-     "generic": "Human Insulin",
-     "company": "Square",
-     "timing": "before",
-     "purposeShort": "ডায়াবেটিস কন্ট্রোল",
-     "purposeLong": "দুপুরের খাবার খাওয়ার ঠিক ৩০ মিনিট আগে দিতে হবে।",
-     "sideEffects": "সুগার কমে যাওয়া",
-     "price": "২২০ ৳",
-     "stock": 5,
-     "takenToday": false
-    },
-    {
-     "id": "m11",
-     "schedule": "night",
-     "name": "Inj. Ansulin R (18 Unit)",
-     "generic": "Human Insulin",
-     "company": "Square",
-     "timing": "before",
-     "purposeShort": "ডায়াবেটিস কন্ট্রোল",
-     "purposeLong": "রাতের খাবার খাওয়ার ঠিক ৩০ মিনিট আগে দিতে হবে।",
-     "sideEffects": "সুগার কমে যাওয়া",
-     "price": "২২০ ৳",
-     "stock": 5,
-     "takenToday": false
-    },
-    {
-     "id": "m12",
-     "schedule": "night",
-     "name": "Montair 10 mg",
-     "generic": "Montelukast",
-     "company": "Incepta",
-     "timing": "after",
-     "purposeShort": "শ্বাসকষ্ট ও অ্যালার্জি",
-     "purposeLong": "ফুসফুসের শ্বাসনালী পরিষ্কার রাখে।",
-     "sideEffects": "মাথাব্যথা",
-     "price": "১৭.৫০ ৳",
-     "stock": 30,
-     "takenToday": false
-    },
-    {
-     "id": "m13",
-     "schedule": "night",
-     "name": "Inj. Larsulin 100 (20 Unit)",
-     "generic": "Insulin Glargine",
-     "company": "Square",
-     "timing": "any",
-     "purposeShort": "বেসাল ডায়াবেটিস",
-     "purposeLong": "দীর্ঘক্ষণ কাজ করে। রাতে একই সময়ে দিতে হয়।",
-     "sideEffects": "সুগার কমা",
-     "price": "৮২২ ৳",
-     "stock": 2,
-     "takenToday": false
-    }
-   ]
-  }
-
- </script>
-
  <div class="container">
-
   <!-- DASHBOARD -->
   <div class="header">
    <div class="header-top">
@@ -820,10 +578,10 @@
      <div class="patient-info" id="dateDisplay">Patient: Parvin Akter | Today</div>
     </div>
     <div class="header-actions">
+     <button class="btn-icon" onclick="manualResetToday()" title="আজকের সব ঔষধ রিসেট করুন">🔄</button>
      <button class="btn-icon" onclick="openSettingsModal()" title="Schedule Settings">⚙️</button>
      <button class="btn-icon" onclick="toggleTheme()" title="Day/Night Mode">🌙</button>
      <button class="btn-icon" onclick="openAddModal()" title="Add New Medicine">➕</button>
-     <button class="btn-primary" onclick="exportHTMLData()" style="display:none;">💾 Save</button>
     </div>
    </div>
 
@@ -839,6 +597,7 @@
     <div class="stat-box">
      <div class="stat-lbl">সর্বশেষ খাওয়া</div>
      <div class="stat-val" id="stat-last" style="color:var(--primary);">খায়নি</div>
+     <a class="stat-link" onclick="openMedLogModal()">[বিস্তারিত চার্ট]</a>
     </div>
     <div class="stat-box">
      <div class="stat-lbl">ডায়াবেটিস ও BP</div>
@@ -850,7 +609,37 @@
 
   <!-- APP CONTAINER -->
   <div id="medicine-container"></div>
+ </div>
 
+ <!-- MEDICINE LOG CHART MODAL -->
+ <div class="modal-overlay" id="medLogModal">
+  <div class="modal-content large-modal">
+   <div class="modal-header">
+    <h2>💊 ঔষধ খাওয়ার রেকর্ড</h2>
+    <div style="display:flex; gap:10px;">
+     <button class="btn-outline" style="padding: 4px 10px; font-size:0.8rem;" onclick="openMedExportModal()">Copy for Sheets</button>
+     <button class="close-btn" onclick="closeModal('medLogModal')">×</button>
+    </div>
+   </div>
+   <div class="modal-body">
+    <div class="table-responsive">
+     <table class="data-table" id="medLogTableBody">
+      <thead>
+       <tr>
+        <th>তারিখ</th>
+        <th>সময়</th>
+        <th>ঔষধের নাম</th>
+        <th>বেলা</th>
+        <th>খাওয়ার কথা</th>
+        <th>আপডেট</th>
+        <th>মুছুন</th>
+       </tr>
+      </thead>
+      <tbody></tbody>
+     </table>
+    </div>
+   </div>
+  </div>
  </div>
 
  <!-- HEALTH CHART MODAL -->
@@ -864,33 +653,26 @@
     </div>
    </div>
    <div class="modal-body">
-
     <div class="health-form-grid">
      <div class="form-group"><label>তারিখ (Date)</label><input type="date" id="h-date"></div>
      <div class="form-group"><label>বেলা (Time)</label><select id="h-time">
-       <option value="সকাল (Morning)">সকাল</option>
-       <option value="দুপুর (Noon)">দুপুর</option>
-       <option value="রাত (Night)">রাত</option>
+       <option value="সকাল">সকাল</option>
+       <option value="দুপুর">দুপুর</option>
+       <option value="রাত">রাত</option>
       </select></div>
      <div class="form-group"><label>সুগার পয়েন্ট</label><input type="text" id="h-glucose" placeholder="যেমন: 9.1"></div>
-     <div class="form-group">
-      <label>সুগারের ধরন</label>
-      <select id="h-type">
-       <option value="Fasting (খালি পেটে)">Fasting (FBS)</option>
-       <option value="2h ABF (২ ঘণ্টা পর)">2h ABF</option>
-       <option value="Random (RBS)">Random</option>
-      </select>
-     </div>
+     <div class="form-group"><label>সুগারের ধরন</label><select id="h-type">
+       <option value="Fasting (FBS)">Fasting (FBS)</option>
+       <option value="2h ABF">2h ABF</option>
+       <option value="Random (RBS)">Random (RBS)</option>
+      </select></div>
      <div class="form-group"><label>ইনসুলিন দেওয়া হয়েছে</label><input type="text" id="h-insulin" placeholder="যেমন: 22 Unit"></div>
      <div class="form-group"><label>ব্লাড প্রেশার (BP)</label><input type="text" id="h-bp" placeholder="যেমন: 130/80"></div>
      <div class="form-group" style="grid-column: 1 / -1;"><label>কী খাবার খেলেন?</label><input type="text" id="h-food" placeholder="যেমন: ২টি রুটি, সবজি, ১ পিস ডিম"></div>
-     <div style="grid-column: 1 / -1; text-align:right;">
-      <button class="btn-primary" style="display:inline-flex;" onclick="saveHealthLog()">+ চার্টে যুক্ত করুন</button>
-     </div>
+     <div style="grid-column: 1 / -1; text-align:right;"><button class="btn-primary" style="display:inline-flex;" onclick="saveHealthLog()">+ চার্টে যুক্ত করুন</button></div>
     </div>
-
     <div class="table-responsive">
-     <table class="health-table" id="healthTableBody">
+     <table class="data-table" id="healthTableBody">
       <thead>
        <tr>
         <th>তারিখ</th>
@@ -906,7 +688,6 @@
       <tbody></tbody>
      </table>
     </div>
-
    </div>
   </div>
  </div>
@@ -915,7 +696,7 @@
  <div class="modal-overlay" id="exportModal">
   <div class="modal-content">
    <div class="modal-header">
-    <h2>Export to Sheets</h2>
+    <h2 id="exportModalTitle">Export to Sheets</h2>
     <button class="close-btn" onclick="closeModal('exportModal')">×</button>
    </div>
    <div class="modal-body">
@@ -929,8 +710,7 @@
  <div class="modal-overlay" id="settingsModal">
   <div class="modal-content">
    <div class="modal-header">
-    <h2>⚙️ Schedule Settings</h2>
-    <button class="close-btn" onclick="closeModal('settingsModal')">×</button>
+    <h2>⚙️ Settings</h2><button class="close-btn" onclick="closeModal('settingsModal')">×</button>
    </div>
    <div class="form-group" style="margin-bottom: 15px;padding: 20px;">
     <label>রোগীর নাম (Patient Name)</label>
@@ -943,7 +723,6 @@
    <div class="modal-body">
     <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">ওষুধ খাওয়ার বেলা (Schedule) যোগ বা ডিলিট করুন:</p>
     <div class="list-manager" id="scheduleManagerList"></div>
-
     <div class="form-group" style="margin-top: 15px;">
      <label>নতুন বেলা যুক্ত করুন (Title)</label>
      <div style="display:flex; gap:10px;">
@@ -952,40 +731,53 @@
      </div>
     </div>
    </div>
-
   </div>
  </div>
 
- <!-- MED DETAILS MODAL (FULL) -->
+ <!-- MED DETAILS MODAL (FULL BEAUTIFIED) -->
  <div class="modal-overlay" id="detailsModal">
   <div class="modal-content">
    <div class="modal-header">
-    <h2 id="det-name">Medicine Name</h2>
+    <h2 id="det-name" style="font-weight: 700; color: var(--text-main);">Medicine Name</h2>
     <button class="close-btn" onclick="closeModal('detailsModal')">×</button>
    </div>
-   <div class="modal-body">
-    <div class="detail-row"><span class="detail-label">কাজের বিবরণ</span><span class="detail-value" id="det-purpose">...</span></div>
+   <div class="modal-body" style="padding: 20px;">
 
-    <div class="detail-row">
-     <span class="detail-label">স্টক ম্যানেজমেন্ট</span>
-     <div style="display:flex; align-items:center; gap:10px; background:var(--bg-base); padding:8px; border-radius:8px; width:fit-content; border:1px solid var(--border);">
-      <button style="width:30px;height:30px;cursor:pointer;border-radius:6px;border:1px solid var(--border);background:var(--bg-card);font-weight:bold;" onclick="updateStockInModal(-1)">-</button>
-      <span id="det-stock" style="font-weight:bold;font-size:1.1rem;width:30px;text-align:center;">0</span>
-      <button style="width:30px;height:30px;cursor:pointer;border-radius:6px;border:1px solid var(--border);background:var(--bg-card);font-weight:bold;" onclick="updateStockInModal(1)">+</button>
+    <div class="detail-row" style="margin-bottom: 20px;">
+     <span class="detail-label" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 6px;">কাজের বিবরণ</span>
+     <span class="detail-value" id="det-purpose" style="font-size: 1rem; color: var(--text-main); font-weight: 500; display: block; line-height: 1.4;">...</span>
+    </div>
+
+    <div class="detail-row" style="margin-bottom: 20px;">
+     <span class="detail-label" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 6px;">স্টক ম্যানেজমেন্ট</span>
+     <div style="display:inline-flex; align-items:center; gap:12px; background:var(--bg-base); padding:8px 12px; border-radius:8px; border:1px solid var(--border);">
+      <button style="width:32px; height:32px; border-radius:6px; border:1px solid var(--border); background:var(--bg-surface); font-weight:bold; font-size:1.2rem; color:var(--text-main); cursor:pointer; display:flex; align-items:center; justify-content:center;" onclick="updateStockInModal(-1)">-</button>
+      <span id="det-stock" style="font-weight:700; font-size:1.15rem; width:35px; text-align:center; color:var(--text-main);">0</span>
+      <button style="width:32px; height:32px; border-radius:6px; border:1px solid var(--border); background:var(--bg-surface); font-weight:bold; font-size:1.2rem; color:var(--text-main); cursor:pointer; display:flex; align-items:center; justify-content:center;" onclick="updateStockInModal(1)">+</button>
      </div>
     </div>
 
-    <div class="detail-row"><span class="detail-label">জেনেরিক নাম</span><span class="detail-value" id="det-generic">...</span></div>
-
-    <div style="display:flex; gap:15px; margin-bottom:15px;">
-     <div style="flex:1"><span class="detail-label">কোম্পানি</span><span class="detail-value" id="det-company">...</span></div>
-     <div style="flex:1"><span class="detail-label">দাম</span><span class="detail-value" id="det-price">...</span></div>
+    <div class="detail-row" style="margin-bottom: 20px;">
+     <span class="detail-label" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 6px;">জেনেরিক নাম</span>
+     <span class="detail-value" id="det-generic" style="font-size: 1rem; color: var(--text-main); font-weight: 600; display: block;">...</span>
     </div>
 
-    <div class="detail-row" style="padding:10px; background:rgba(244, 63, 94, 0.08); border-radius:8px; border:1px solid rgba(244, 63, 94, 0.2);">
-     <span class="detail-label" style="color:var(--danger)">সাইড ইফেক্ট</span>
-     <span class="detail-value" id="det-side">...</span>
+    <div style="display:flex; gap:20px; margin-bottom:25px;">
+     <div style="flex:1;">
+      <span class="detail-label" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 6px;">কোম্পানি</span>
+      <span class="detail-value" id="det-company" style="font-size: 1rem; color: var(--text-main); font-weight: 600; display: block;">...</span>
+     </div>
+     <div style="flex:1;">
+      <span class="detail-label" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 6px;">দাম</span>
+      <span class="detail-value" id="det-price" style="font-size: 1rem; color: var(--text-main); font-weight: 600; display: block;">...</span>
+     </div>
     </div>
+
+    <div style="padding:15px; background:rgba(244, 63, 94, 0.05); border-radius:10px; border:1px solid rgba(244, 63, 94, 0.2);">
+     <span class="detail-label" style="font-size: 0.85rem; color:var(--danger); font-weight: 700; display: block; margin-bottom: 8px;">সাইড ইফেক্ট</span>
+     <span class="detail-value" id="det-side" style="font-size: 1rem; color:var(--text-main); font-weight: 500; display: block;">...</span>
+    </div>
+
    </div>
    <div class="modal-footer">
     <button class="btn-outline" onclick="openEditFromDetails()">✏️ Edit info</button>
@@ -1012,17 +804,14 @@
     </div>
     <div class="form-group"><label>কাজের বিবরণ - ছোট</label><input type="text" id="f-pshort"></div>
     <div class="form-group"><label>কাজের বিবরণ - বিস্তারিত</label><textarea id="f-plong" rows="2"></textarea></div>
-
     <div style="display:flex; gap:10px;">
      <div class="form-group" style="flex:1;"><label>জেনেরিক</label><input type="text" id="f-generic"></div>
      <div class="form-group" style="flex:1;"><label>কোম্পানি</label><input type="text" id="f-company"></div>
     </div>
-
     <div style="display:flex; gap:10px;">
      <div class="form-group" style="flex:1;"><label>দাম</label><input type="text" id="f-price"></div>
      <div class="form-group" style="flex:1;"><label>বর্তমান স্টক</label><input type="number" id="f-stock"></div>
     </div>
-
     <div class="form-group"><label>সাইড ইফেক্ট</label><input type="text" id="f-side"></div>
    </div>
    <div class="modal-footer" style="justify-content: space-between;">
@@ -1047,13 +836,9 @@
    apiKey: "AIzaSyDHXiuHMyZfHMNQHj8Ov_o8crQeHwQYqyM",
    authDomain: "medicine-tracker-68b2a.firebaseapp.com",
    databaseURL: "https://medicine-tracker-68b2a-default-rtdb.asia-southeast1.firebasedatabase.app",
-   projectId: "medicine-tracker-68b2a",
-   storageBucket: "medicine-tracker-68b2a.firebasestorage.app",
-   messagingSenderId: "551152388243",
-   appId: "1:551152388243:web:9097f3468ca17d7a9a2566"
+   projectId: "medicine-tracker-68b2a"
   };
 
-  // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
@@ -1065,38 +850,35 @@
   }
 
   function initData() {
-   // Listen for real-time changes from Firebase
    db.ref('ParvinTrackerData').on('value', (snapshot) => {
     const cloudData = snapshot.val();
 
     if (cloudData) {
      appData = cloudData;
     } else {
-     // If cloud is empty initially, load local/embedded data and push to cloud
-     const scriptData = JSON.parse(document.getElementById('app-data').textContent);
-     const localData = JSON.parse(localStorage.getItem('ParvinMedData_v5'));
-     appData = localData || scriptData;
-
-     if (!appData.healthLogs) appData.healthLogs = [];
-     if (!appData.schedules) appData.schedules = [{
-       "id": "morning",
-       "title": "☀️ সকাল"
-      },
-      {
-       "id": "noon",
-       "title": "🌤️ দুপুর"
-      },
-      {
-       "id": "night",
-       "title": "🌙 রাত"
-      }
-     ];
-     if (!appData.patientName) appData.patientName = "Parvin Akter";
-
+     // Default Data Structure
+     appData = {
+      medications: [],
+      schedules: [{
+       id: "morning",
+       title: "☀️ সকাল"
+      }, {
+       id: "noon",
+       title: "🌤️ দুপুর"
+      }, {
+       id: "night",
+       title: "🌙 রাত"
+      }],
+      healthLogs: [],
+      medLogs: [],
+      patientName: "Parvin Akter",
+      lastResetDate: ""
+     };
      saveToLocal();
     }
 
     if (!appData.healthLogs) appData.healthLogs = [];
+    if (!appData.medLogs) appData.medLogs = [];
     if (!appData.schedules) appData.schedules = [];
     if (!appData.patientName) appData.patientName = "Parvin Akter";
 
@@ -1109,18 +891,31 @@
   }
 
   function saveToLocal() {
-   localStorage.setItem('ParvinMedData_v5', JSON.stringify(appData));
-   // Push live update to Firebase
    db.ref('ParvinTrackerData').set(appData);
   }
 
   function checkDailyReset() {
    const today = new Date().toLocaleDateString('en-GB');
-   document.getElementById('dateDisplay').innerText = `Patient: ${appData.patientName || 'Parvin Akter'} | ${today}`;
+   document.getElementById('dateDisplay').innerText = `Patient: ${appData.patientName} | ${today}`;
    if (appData.lastResetDate !== today) {
     appData.medications.forEach(m => m.takenToday = false);
     appData.lastResetDate = today;
     saveToLocal();
+   }
+  }
+
+  function manualResetToday() {
+   if (confirm("আজকের সব ঔষধের টিক মুছে ফেলতে চান? (স্টক আগের অবস্থায় ফিরে যাবে)")) {
+    appData.medications.forEach(m => {
+     if (m.takenToday) {
+      m.takenToday = false;
+      m.stock += 1;
+     }
+    });
+    const todayStr = new Date().toLocaleDateString('en-GB');
+    appData.medLogs = appData.medLogs.filter(l => l.dateStr !== todayStr);
+    saveToLocal();
+    showToast("সব ঔষধ রিসেট করা হয়েছে!");
    }
   }
 
@@ -1138,14 +933,12 @@
   function render() {
    if (!appData) return;
 
-   // Dashboard Stats
    const totalMeds = appData.medications.length;
    const takenMeds = appData.medications.filter(m => m.takenToday).length;
    document.getElementById('stat-total').innerText = totalMeds;
    document.getElementById('stat-today').innerText = `${takenMeds} / ${totalMeds}`;
    document.getElementById('stat-last').innerText = timeAgo(appData.lastTakenTimestamp);
 
-   // Dashboard Health Stats (Glucose & BP)
    const healthStatText = document.getElementById('stat-glucose');
    if (appData.healthLogs && appData.healthLogs.length > 0) {
     const lastLog = appData.healthLogs[0];
@@ -1158,11 +951,9 @@
     healthStatText.style.color = "var(--text-muted)";
    }
 
-   // Populate Schedule Dropdown in Form
    const scheduleSelect = document.getElementById('f-schedule');
    scheduleSelect.innerHTML = appData.schedules.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
 
-   // Render Medicines
    const container = document.getElementById('medicine-container');
    container.innerHTML = '';
 
@@ -1194,6 +985,66 @@
     sectionHtml += `</div>`;
     container.innerHTML += sectionHtml;
    });
+  }
+
+  // --- MED LOG CHART LOGIC ---
+  function openMedLogModal() {
+   renderMedLogTable();
+   document.getElementById('medLogModal').classList.add('active');
+  }
+
+  function renderMedLogTable() {
+   const tbody = document.querySelector('#medLogTableBody tbody');
+   tbody.innerHTML = '';
+   if (!appData.medLogs) return;
+
+   const sortedLogs = [...appData.medLogs].reverse();
+   sortedLogs.forEach(log => {
+    let badgeText = log.timing === 'before' ? 'খাবারের আগে' : (log.timing === 'after' ? 'খাবারের পরে' : 'যেকোনো সময়');
+    let schTitle = appData.schedules.find(s => s.id === log.schedule)?.title || log.schedule;
+    tbody.innerHTML += `
+              <tr>
+                  <td><strong>${log.dateStr}</strong></td>
+                  <td style="color:var(--primary); font-weight:bold;">${log.actualTime}</td>
+                  <td>${log.medName}</td>
+                  <td>${schTitle}</td>
+                  <td>${badgeText}</td>
+                  <td>${log.updateCount > 1 ? `<span style="color:var(--danger)">${log.updateCount} বার</span>` : '১ বার'}</td>
+                  <td><button class="btn-del-sm" onclick="deleteMedLog('${log.id}')">✕</button></td>
+              </tr>`;
+   });
+  }
+
+  function deleteMedLog(logId) {
+   if (confirm("এই রেকর্ডটি মুছে ফেলতে চান? ঔষধটি আনচেক হয়ে যাবে এবং স্টক ফিরে আসবে।")) {
+    const log = appData.medLogs.find(l => l.id === logId);
+    if (log) {
+     const med = appData.medications.find(m => m.id === log.medId);
+     const todayStr = new Date().toLocaleDateString('en-GB');
+     if (med && med.takenToday && log.dateStr === todayStr) {
+      med.takenToday = false;
+      med.stock += 1;
+     }
+     appData.medLogs = appData.medLogs.filter(l => l.id !== logId);
+     saveToLocal();
+     renderMedLogTable();
+     showToast("রেকর্ড মুছে ফেলা হয়েছে!");
+    }
+   }
+  }
+
+  function openMedExportModal() {
+   let tsvContent = "Date\tTime Taken\tMedicine Name\tSchedule\tMeal Timing\tUpdate Count\n";
+   if (appData.medLogs) {
+    [...appData.medLogs].reverse().forEach(log => {
+     let badgeText = log.timing === 'before' ? 'Before Meal' : (log.timing === 'after' ? 'After Meal' : 'Any Time');
+     let schTitle = appData.schedules.find(s => s.id === log.schedule)?.title || log.schedule;
+     tsvContent += `${log.dateStr}\t${log.actualTime}\t${log.medName}\t${schTitle}\t${badgeText}\t${log.updateCount}\n`;
+    });
+   }
+   document.getElementById('exportModalTitle').innerText = "Export Medicine Logs";
+   document.getElementById('exportTextarea').value = tsvContent;
+   document.getElementById('exportModal').classList.add('active');
   }
 
   // --- HEALTH CHART LOGIC ---
@@ -1242,11 +1093,8 @@
     bp: bp || "-",
     food: document.getElementById('h-food').value
    };
-
    appData.healthLogs.unshift(newLog);
    saveToLocal();
-   renderHealthTable();
-   render();
    showToast('হেলথ চার্ট আপডেট হয়েছে!');
    ['h-glucose', 'h-insulin', 'h-bp', 'h-food'].forEach(id => document.getElementById(id).value = '');
   }
@@ -1256,11 +1104,9 @@
     appData.healthLogs = appData.healthLogs.filter(h => h.id !== id);
     saveToLocal();
     renderHealthTable();
-    render();
    }
   }
 
-  // --- EXPORT TO SHEETS ---
   function openExportModal() {
    let tsvContent = "Date\tTime\tGlucose\tType\tInsulin\tBlood Pressure\tFood\n";
    if (appData.healthLogs) {
@@ -1268,6 +1114,7 @@
      tsvContent += `${log.date}\t${log.timeOfDay}\t${log.glucose}\t${log.glucoseType}\t${log.insulin}\t${log.bp}\t${log.food}\n`;
     });
    }
+   document.getElementById('exportModalTitle').innerText = "Export Health Data";
    document.getElementById('exportTextarea').value = tsvContent;
    document.getElementById('exportModal').classList.add('active');
   }
@@ -1277,7 +1124,7 @@
    copyText.select();
    copyText.setSelectionRange(0, 99999);
    navigator.clipboard.writeText(copyText.value).then(() => {
-    showToast("চার্ট কপি হয়েছে! Excel এ Paste করুন।");
+    showToast("কপি হয়েছে! Excel এ Paste করুন।");
     closeModal('exportModal');
    });
   }
@@ -1290,13 +1137,7 @@
   }
 
   function renderScheduleManager() {
-   const list = document.getElementById('scheduleManagerList');
-   list.innerHTML = appData.schedules.map(s => `
-                <div class="list-item">
-                    <span>${s.title}</span>
-                    <button class="btn-text-danger" onclick="deleteSchedule('${s.id}')">Remove</button>
-                </div>
-            `).join('');
+   document.getElementById('scheduleManagerList').innerHTML = appData.schedules.map(s => `<div class="list-item"><span>${s.title}</span><button class="btn-text-danger" onclick="deleteSchedule('${s.id}')">Remove</button></div>`).join('');
   }
 
   function addSchedule() {
@@ -1308,8 +1149,6 @@
     });
     document.getElementById('newScheduleName').value = '';
     saveToLocal();
-    renderScheduleManager();
-    render();
    }
   }
 
@@ -1318,24 +1157,51 @@
     appData.schedules = appData.schedules.filter(s => s.id !== id);
     appData.medications = appData.medications.filter(m => m.schedule !== id);
     saveToLocal();
-    renderScheduleManager();
-    render();
    }
   }
 
-  // --- MED ACTIONS ---
+  // --- MED ACTIONS & LOGGING ---
   function toggleTaken(id) {
    const med = appData.medications.find(m => m.id === id);
    if (med) {
     med.takenToday = !med.takenToday;
+    const todayStr = new Date().toLocaleDateString('en-GB');
+    const timeNow = new Date().toLocaleTimeString('en-GB', {
+     hour: '2-digit',
+     minute: '2-digit',
+     hour12: true
+    });
+
+    if (!appData.medLogs) appData.medLogs = [];
+    let existingLog = appData.medLogs.find(l => l.medId === id && l.dateStr === todayStr);
+
     if (med.takenToday) {
      med.stock = Math.max(0, med.stock - 1);
      appData.lastTakenTimestamp = new Date().toISOString();
+
+     if (existingLog) {
+      existingLog.actualTime = timeNow;
+      existingLog.updateCount = (existingLog.updateCount || 1) + 1;
+     } else {
+      appData.medLogs.push({
+       id: 'ml' + Date.now(),
+       medId: id,
+       dateStr: todayStr,
+       medName: med.name,
+       schedule: med.schedule,
+       timing: med.timing,
+       actualTime: timeNow,
+       updateCount: 1
+      });
+     }
     } else {
      med.stock += 1;
+     if (existingLog) {
+      existingLog.actualTime = timeNow;
+      existingLog.updateCount = (existingLog.updateCount || 1) + 1;
+     }
     }
     saveToLocal();
-    render();
    }
   }
 
@@ -1389,7 +1255,6 @@
    if (!med) return;
    document.getElementById('form-title').innerText = "এডিট করুন";
    document.getElementById('btn-delete').style.display = 'block';
-
    document.getElementById('f-name').value = med.name;
    document.getElementById('f-schedule').value = med.schedule;
    document.getElementById('f-timing').value = med.timing;
@@ -1400,7 +1265,6 @@
    document.getElementById('f-price').value = med.price || "";
    document.getElementById('f-stock').value = med.stock;
    document.getElementById('f-side').value = med.sideEffects || "";
-
    document.getElementById('formModal').classList.add('active');
   }
 
@@ -1429,7 +1293,6 @@
     appData.medications.push(medObj);
    }
    saveToLocal();
-   render();
    closeModal('formModal');
    showToast("Saved!");
   }
@@ -1438,28 +1301,9 @@
    if (confirm("মুছে ফেলতে চান?")) {
     appData.medications = appData.medications.filter(m => m.id !== currentEditId);
     saveToLocal();
-    render();
     closeModal('formModal');
     showToast("Deleted!");
    }
-  }
-
-  // --- CORE HTML EXPORT ---
-  function exportHTMLData() {
-   appData.exportCount += 1;
-   saveToLocal();
-   document.getElementById('app-data').textContent = JSON.stringify(appData, null, 4);
-   const htmlContent = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-   const blob = new Blob([htmlContent], {
-    type: 'text/html'
-   });
-   const url = URL.createObjectURL(blob);
-   const a = document.createElement('a');
-   a.href = url;
-   a.download = `Medicine_Tracker_Final_v${appData.exportCount}.html`;
-   a.click();
-   URL.revokeObjectURL(url);
-   showToast("ফাইল ডাউনলোড হয়েছে!");
   }
 
   function updatePatientName() {
@@ -1467,10 +1311,8 @@
    if (newName) {
     appData.patientName = newName;
     saveToLocal();
-
     const today = new Date().toLocaleDateString('en-GB');
     document.getElementById('dateDisplay').innerText = `Patient: ${newName} | ${today}`;
-
     showToast("নাম আপডেট হয়েছে!");
    }
   }
@@ -1491,8 +1333,7 @@
 
   const savedTheme = localStorage.getItem('ParvinTheme_v5');
   if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
-  
-  // Start Application & Realtime listener
+
   initData();
   setInterval(render, 60000);
 
