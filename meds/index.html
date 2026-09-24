@@ -530,7 +530,7 @@
      if (a.takenToday) {
       a.takenToday = false;
       const libMed = appData.library.find(l => l.id === a.libId);
-      if(libMed) libMed.stock += 1;
+      if(libMed && libMed.type !== 'inj') libMed.stock += 1;
      }
     });
     const todayStr = new Date().toLocaleDateString('en-GB');
@@ -769,7 +769,9 @@
       let existingLog = appData.medLogs.find(l => l.assignId === assignId && l.dateStr === todayStr);
 
       if (assign.takenToday) {
-          libMed.stock = Math.max(0, libMed.stock - 1);
+          if (libMed.type !== 'inj') {
+              libMed.stock = Math.max(0, libMed.stock - 1);
+          }
           appData.lastTakenTimestamp = new Date().toISOString();
           
           if(existingLog) {
@@ -789,7 +791,9 @@
               saveHealthLogSmartMerge(todayISO, assign.schedule, null, null, formattedName, injUnitStr, assignId, null, null);
           }
       } else {
-          libMed.stock += 1;
+          if (libMed.type !== 'inj') {
+              libMed.stock += 1;
+          }
           if(existingLog) {
               existingLog.actualTime = timeNow;
               existingLog.updateCount = (existingLog.updateCount || 1) + 1;
@@ -879,7 +883,7 @@
               if(assign && assign.takenToday && log.dateStr === todayStr) {
                   assign.takenToday = false;
                   const libMed = appData.library.find(l => l.id === assign.libId);
-                  if(libMed) libMed.stock += 1;
+                  if(libMed && libMed.type !== 'inj') libMed.stock += 1;
               }
               appData.medLogs = appData.medLogs.filter(l => l.id !== logId);
               saveToLocal(); renderMedLogTable(); render(); showToast("রেকর্ড মুছে ফেলা হয়েছে!");
