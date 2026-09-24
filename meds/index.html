@@ -1,587 +1,117 @@
 <!DOCTYPE html>
 <html lang="bn" data-theme="light">
-
 <head>
  <meta charset="UTF-8">
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>Medicine & Health Tracker</title>
+ <title>Smart Health & Medicine Tracker - Parvin Akter</title>
  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
  <style>
   :root {
-   --bg-base: #f0f4f8;
-   --bg-surface: #ffffff;
-   --bg-card: #ffffff;
-   --border: #e2e8f0;
-   --text-main: #1e293b;
-   --text-muted: #64748b;
-   --primary: #0ea5e9;
-   --primary-hover: #0284c7;
-   --before-meal: #ef4444;
-   --after-meal: #10b981;
-   --success: #22c55e;
-   --danger: #f43f5e;
+   --bg-base: #f0f4f8; --bg-surface: #ffffff; --bg-card: #ffffff; --border: #e2e8f0;
+   --text-main: #1e293b; --text-muted: #64748b; --primary: #0ea5e9; --primary-hover: #0284c7;
+   --before-meal: #ef4444; --after-meal: #10b981; --success: #22c55e; --danger: #f43f5e;
    --shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
-
   [data-theme="dark"] {
-   --bg-base: #0f172a;
-   --bg-surface: #1e293b;
-   --bg-card: #1e293b;
-   --border: #334155;
-   --text-main: #f8fafc;
-   --text-muted: #94a3b8;
-   --primary: #38bdf8;
-   --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+   --bg-base: #0f172a; --bg-surface: #1e293b; --bg-card: #1e293b; --border: #334155;
+   --text-main: #f8fafc; --text-muted: #94a3b8; --primary: #38bdf8; --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Hind Siliguri', sans-serif; transition: background-color 0.2s, color 0.2s; }
+  body { background-color: var(--bg-base); color: var(--text-main); padding: 15px; padding-bottom: 80px; }
+  .container { max-width: 800px; margin: 0 auto; }
 
-  * {
-   box-sizing: border-box;
-   margin: 0;
-   padding: 0;
-   font-family: 'Hind Siliguri', sans-serif;
-   transition: background-color 0.2s, color 0.2s;
-  }
+  /* HEADER */
+  .header { background: var(--bg-surface); padding: 20px; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 25px; border: 1px solid var(--border); }
+  .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 15px; }
+  .header h1 { font-size: 1.4rem; color: var(--primary); font-weight: 700; line-height: 1.2; }
+  .patient-info { color: var(--text-muted); font-size: 0.9rem; font-weight: 600; }
+  .header-actions { display: flex; gap: 8px; }
+  .btn-icon { background: var(--bg-base); border: 1px solid var(--border); color: var(--text-main); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; }
+  .btn-primary { background: var(--primary); color: white; border: none; padding: 0 14px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; height: 36px; font-size: 0.9rem; }
 
-  body {
-   background-color: var(--bg-base);
-   color: var(--text-main);
-   padding: 15px;
-   padding-bottom: 80px;
-  }
-
-  .container {
-   max-width: 800px;
-   margin: 0 auto;
-  }
-
-  /* HEADER & DASHBOARD */
-  .header {
-   background: var(--bg-surface);
-   padding: 20px;
-   border-radius: 16px;
-   box-shadow: var(--shadow);
-   margin-bottom: 25px;
-   border: 1px solid var(--border);
-  }
-
-  .header-top {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   flex-wrap: wrap;
-   gap: 15px;
-   margin-bottom: 15px;
-  }
-
-  .header h1 {
-   font-size: 1.4rem;
-   color: var(--primary);
-   font-weight: 700;
-   line-height: 1.2;
-  }
-
-  .patient-info {
-   color: var(--text-muted);
-   font-size: 0.9rem;
-   font-weight: 600;
-  }
-
-  .header-actions {
-   display: flex;
-   gap: 8px;
-  }
-
-  .btn-icon {
-   background: var(--bg-base);
-   border: 1px solid var(--border);
-   color: var(--text-main);
-   width: 36px;
-   height: 36px;
-   border-radius: 10px;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   cursor: pointer;
-   font-size: 1.1rem;
-  }
-
-  .btn-primary {
-   background: var(--primary);
-   color: white;
-   border: none;
-   padding: 0 14px;
-   border-radius: 10px;
-   font-weight: 600;
-   cursor: pointer;
-   display: flex;
-   align-items: center;
-   height: 36px;
-   font-size: 0.9rem;
-  }
-
-  /* DASHBOARD STATS */
-  .dashboard-stats {
-   display: flex;
-   gap: 5px;
-   justify-content: space-between;
-   background: var(--bg-base);
-   padding: 10px;
-   border-radius: 12px;
-   border: 1px solid var(--border);
-  }
-
-  .stat-box {
-   flex: 1;
-   text-align: center;
-   border-right: 1px solid var(--border);
-   padding: 2px;
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
-  }
-
-  .stat-box:last-child {
-   border-right: none;
-  }
-
-  .stat-lbl {
-   font-size: 0.65rem;
-   color: var(--text-muted);
-   font-weight: 700;
-   text-transform: uppercase;
-   line-height: 1.1;
-  }
-
-  .stat-val {
-   font-size: 0.95rem;
-   font-weight: 700;
-   color: var(--text-main);
-   margin-top: 3px;
-   line-height: 1.1;
-  }
-
-  .stat-link {
-   font-size: 0.7rem;
-   color: var(--primary);
-   font-weight: 700;
-   text-decoration: none;
-   margin-top: 4px;
-   display: inline-block;
-   cursor: pointer;
-  }
-
-  @media (max-width: 400px) {
-   .stat-lbl {
-    font-size: 0.55rem;
-   }
-
-   .stat-val {
-    font-size: 0.85rem;
-   }
-
-   .stat-link {
-    font-size: 0.6rem;
-   }
-  }
+  /* STATS */
+  .dashboard-stats { display: flex; gap: 5px; justify-content: space-between; background: var(--bg-base); padding: 10px; border-radius: 12px; border: 1px solid var(--border); }
+  .stat-box { flex: 1; text-align: center; border-right: 1px solid var(--border); padding: 2px; display: flex; flex-direction: column; justify-content: center; }
+  .stat-box:last-child { border-right: none; }
+  .stat-lbl { font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; line-height: 1.1; }
+  .stat-val { font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-top: 3px; line-height: 1.1; }
+  .stat-link { font-size: 0.7rem; color: var(--primary); font-weight: 700; text-decoration: none; margin-top: 4px; display: inline-block; cursor: pointer; }
+  @media (max-width: 400px) { .stat-lbl { font-size: 0.55rem; } .stat-val { font-size: 0.85rem; } .stat-link { font-size: 0.6rem; } }
 
   /* SCHEDULE SECTIONS */
-  .schedule-group {
-   margin-bottom: 25px;
-  }
-
-  .schedule-title {
-   font-size: 1.15rem;
-   font-weight: 700;
-   margin-bottom: 12px;
-   display: flex;
-   align-items: center;
-   gap: 8px;
-   padding-bottom: 5px;
-   border-bottom: 2px solid var(--border);
-  }
-
-  .count-badge {
-   background: var(--text-muted);
-   color: white;
-   font-size: 0.8rem;
-   padding: 2px 8px;
-   border-radius: 20px;
-  }
+  .schedule-group { margin-bottom: 25px; }
+  .schedule-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; padding-bottom: 5px; border-bottom: 2px solid var(--border); }
+  .count-badge { background: var(--text-muted); color: white; font-size: 0.8rem; padding: 2px 8px; border-radius: 20px; }
 
   /* COMPACT MEDICINE CARD */
-  .med-card {
-   background: var(--bg-card);
-   border: 1px solid var(--border);
-   border-radius: 12px;
-   padding: 12px 14px;
-   margin-bottom: 10px;
-   box-shadow: var(--shadow);
-   display: flex;
-   flex-direction: column;
-   gap: 8px;
-   transition: all 0.3s ease;
-  }
-
-  .med-card.taken {
-   opacity: 0.55;
-   background: rgba(34, 197, 94, 0.05);
-   border-color: rgba(34, 197, 94, 0.3);
-   filter: blur(0.8px);
-  }
-
-  .med-card.taken:hover,
-  .med-card.taken:active {
-   opacity: 1;
-   filter: blur(0);
-  }
-
-  .med-row-1 {
-   display: flex;
-   justify-content: space-between;
-   align-items: flex-start;
-   gap: 10px;
-  }
-
-  .med-title-group {
-   display: flex;
-   align-items: center;
-   flex-wrap: wrap;
-   gap: 8px;
-  }
-
-  .med-name {
-   font-size: 1.1rem;
-   font-weight: 700;
-   color: var(--text-main);
-   line-height: 1.2;
-  }
-
-  .stock-txt {
-   font-size: 0.75rem;
-   font-weight: 600;
-   background: var(--bg-base);
-   padding: 1px 6px;
-   border-radius: 6px;
-   border: 1px solid var(--border);
-  }
-
-  .stock-txt.low {
-   color: var(--danger);
-   border-color: rgba(244, 63, 94, 0.3);
-   background: rgba(244, 63, 94, 0.05);
-  }
-
-  .meal-badge {
-   font-size: 0.7rem;
-   font-weight: 700;
-   padding: 2px 8px;
-   border-radius: 6px;
-   color: white;
-   white-space: nowrap;
-  }
-
-  .badge-before {
-   background-color: var(--before-meal);
-  }
-
-  .badge-after {
-   background-color: var(--after-meal);
-  }
-
-  .badge-any {
-   background-color: var(--primary);
-  }
-
-  .med-row-2 {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   gap: 15px;
-  }
-
-  .med-purpose {
-   font-size: 0.85rem;
-   color: var(--text-muted);
-   flex: 1;
-   line-height: 1.3;
-  }
-
-  .details-link {
-   color: var(--primary);
-   text-decoration: none;
-   font-weight: 600;
-   white-space: nowrap;
-   cursor: pointer;
-  }
-
-  .btn-take {
-   background: var(--bg-base);
-   border: 1px solid var(--border);
-   color: var(--text-main);
-   padding: 8px 14px;
-   border-radius: 8px;
-   font-weight: 700;
-   font-size: 0.85rem;
-   cursor: pointer;
-   white-space: nowrap;
-   transition: all 0.2s;
-   flex-shrink: 0;
-  }
-
-  .btn-take:hover {
-   border-color: var(--primary);
-  }
-
-  .btn-take.taken-btn {
-   background: var(--success);
-   border-color: var(--success);
-   color: white;
-  }
+  .med-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 8px; transition: all 0.3s ease; }
+  .med-card.taken { opacity: 0.55; background: rgba(34, 197, 94, 0.05); border-color: rgba(34, 197, 94, 0.3); filter: blur(0.8px); }
+  .med-card.taken:hover, .med-card.taken:active { opacity: 1; filter: blur(0); }
+  .med-row-1 { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .med-title-group { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .med-name { font-size: 1.05rem; font-weight: 700; color: var(--text-main); line-height: 1.2; }
+  .stock-txt { font-size: 0.75rem; font-weight: 600; background: var(--bg-base); padding: 1px 6px; border-radius: 6px; border: 1px solid var(--border); }
+  .stock-txt.low { color: var(--danger); border-color: rgba(244, 63, 94, 0.3); background: rgba(244, 63, 94, 0.05); }
+  .meal-badge { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; color: white; white-space: nowrap; }
+  .badge-before { background-color: var(--before-meal); } .badge-after { background-color: var(--after-meal); } .badge-any { background-color: var(--primary); }
+  .med-row-2 { display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+  .med-purpose { font-size: 0.85rem; color: var(--text-muted); flex: 1; line-height: 1.3; }
+  .details-link { color: var(--primary); text-decoration: none; font-weight: 600; white-space: nowrap; cursor: pointer; }
+  .btn-take { background: var(--bg-base); border: 1px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
+  .btn-take:hover { border-color: var(--primary); }
+  .btn-take.taken-btn { background: var(--success); border-color: var(--success); color: white; }
 
   /* MODALS */
-  .modal-overlay {
-   position: fixed;
-   top: 0;
-   left: 0;
-   right: 0;
-   bottom: 0;
-   background: rgba(0, 0, 0, 0.6);
-   display: none;
-   align-items: center;
-   justify-content: center;
-   z-index: 1000;
-   padding: 15px;
-   backdrop-filter: blur(2px);
-  }
+  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 15px; backdrop-filter: blur(2px); }
+  .modal-overlay.active { display: flex; }
+  .modal-content { background: var(--bg-surface); border-radius: 16px; width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); }
+  .modal-content.large-modal { max-width: 800px; }
+  .modal-header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--bg-surface); z-index: 10; }
+  .modal-header h2 { font-size: 1.15rem; color: var(--text-main); }
+  .close-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
+  .modal-body { padding: 20px; }
+  .detail-row { margin-bottom: 15px; }
+  .detail-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 4px;}
+  .detail-value { font-size: 0.95rem; color: var(--text-main); font-weight: 500; }
 
-  .modal-overlay.active {
-   display: flex;
-  }
-
-  .modal-content {
-   background: var(--bg-surface);
-   border-radius: 16px;
-   width: 100%;
-   max-width: 450px;
-   max-height: 90vh;
-   overflow-y: auto;
-   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-  }
-
-  .modal-content.large-modal {
-   max-width: 800px;
-  }
-
-  .modal-header {
-   padding: 15px 20px;
-   border-bottom: 1px solid var(--border);
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   position: sticky;
-   top: 0;
-   background: var(--bg-surface);
-   z-index: 10;
-  }
-
-  .modal-header h2 {
-   font-size: 1.15rem;
-   color: var(--text-main);
-  }
-
-  .close-btn {
-   background: none;
-   border: none;
-   font-size: 1.5rem;
-   color: var(--text-muted);
-   cursor: pointer;
-  }
-
-  .modal-body {
-   padding: 20px;
-  }
-
-  /* TABLES */
-  .table-responsive {
-   overflow-x: auto;
-   border: 1px solid var(--border);
-   border-radius: 8px;
-   margin-bottom: 10px;
-  }
-
-  .data-table {
-   width: 100%;
-   border-collapse: collapse;
-   min-width: 500px;
-  }
-
-  .data-table th,
-  .data-table td {
-   border-bottom: 1px solid var(--border);
-   padding: 10px;
-   text-align: left;
-   font-size: 0.85rem;
-  }
-
-  .data-table th {
-   background: var(--bg-base);
-   font-weight: 700;
-   color: var(--text-muted);
-   white-space: nowrap;
-  }
-
-  .health-form-grid {
-   display: grid;
-   grid-template-columns: 1fr 1fr;
-   gap: 10px;
-   margin-bottom: 15px;
-   background: var(--bg-base);
-   padding: 15px;
-   border-radius: 8px;
-   border: 1px solid var(--border);
-  }
-
-  @media (max-width: 500px) {
-   .health-form-grid {
-    grid-template-columns: 1fr;
-   }
-  }
-
-  .btn-del-sm {
-   color: var(--danger);
-   background: none;
-   border: none;
-   cursor: pointer;
-   font-weight: bold;
-  }
-
-  .modal-footer {
-   padding: 15px 20px;
-   border-top: 1px solid var(--border);
-   display: flex;
-   justify-content: flex-end;
-   gap: 10px;
-   background: var(--bg-base);
-  }
-
-  .btn-outline {
-   border: 1px solid var(--primary);
-   color: var(--primary);
-   background: transparent;
-   padding: 8px 16px;
-   border-radius: 8px;
-   cursor: pointer;
-   font-weight: 600;
-  }
-
-  .btn-outline:hover {
-   background: var(--primary);
-   color: white;
-  }
-
-  .btn-text-danger {
-   background: none;
-   border: none;
-   color: var(--danger);
-   cursor: pointer;
-   font-size: 0.85rem;
-   font-weight: 700;
-  }
-
-  /* FORMS */
-  .form-group {
-   margin-bottom: 12px;
-  }
-
-  .form-group label {
-   display: block;
-   margin-bottom: 5px;
-   font-size: 0.85rem;
-   font-weight: 600;
-   color: var(--text-muted);
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-   width: 100%;
-   padding: 8px 10px;
-   border-radius: 6px;
-   border: 1px solid var(--border);
-   background: var(--bg-surface);
-   color: var(--text-main);
-   font-family: inherit;
-   font-size: 0.95rem;
-  }
-
-  .export-box {
-   width: 100%;
-   height: 150px;
-   padding: 10px;
-   font-family: monospace;
-   font-size: 0.8rem;
-   background: var(--bg-base);
-   border: 1px solid var(--border);
-   border-radius: 6px;
-   margin-bottom: 10px;
-   resize: none;
-  }
-
-  .list-manager {
-   margin-bottom: 15px;
-   border: 1px solid var(--border);
-   border-radius: 8px;
-   background: var(--bg-base);
-   max-height: 200px;
-   overflow-y: auto;
-  }
-
-  .list-item {
-   display: flex;
-   justify-content: space-between;
-   padding: 10px 15px;
-   border-bottom: 1px solid var(--border);
-   align-items: center;
-   font-size: 0.9rem;
-   font-weight: 600;
-  }
-
-  .toast {
-   position: fixed;
-   bottom: 20px;
-   left: 50%;
-   transform: translateX(-50%) translateY(100px);
-   background: var(--success);
-   color: white;
-   padding: 12px 24px;
-   border-radius: 30px;
-   font-weight: 600;
-   transition: transform 0.3s;
-   z-index: 2000;
-   box-shadow: var(--shadow);
-  }
-
-  .toast.show {
-   transform: translateX(-50%) translateY(0);
-  }
-
+  /* TABLES & FORMS */
+  .table-responsive { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px;}
+  .data-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+  .data-table th, .data-table td { border-bottom: 1px solid var(--border); padding: 10px; text-align: left; font-size: 0.85rem; }
+  .data-table th { background: var(--bg-base); font-weight: 700; color: var(--text-muted); white-space: nowrap; }
+  .health-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; background: var(--bg-base); padding: 15px; border-radius: 8px; border: 1px solid var(--border); }
+  @media (max-width: 500px) { .health-form-grid { grid-template-columns: 1fr; } }
+  .btn-del-sm { color: var(--danger); background: none; border: none; cursor: pointer; font-weight: bold; font-size: 1rem;}
+  .modal-footer { padding: 15px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: var(--bg-base); }
+  .btn-outline { border: 1px solid var(--primary); color: var(--primary); background: transparent; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+  .btn-outline:hover { background: var(--primary); color: white; }
+  .form-group { margin-bottom: 12px; }
+  .form-group label { display: block; margin-bottom: 5px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-surface); color: var(--text-main); font-family: inherit; font-size: 0.95rem; }
+  .export-box { width: 100%; height: 150px; padding: 10px; font-family: monospace; font-size: 0.8rem; background: var(--bg-base); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 10px; resize: none; }
+  .list-manager { margin-bottom: 15px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-base); max-height: 300px; overflow-y: auto; }
+  .list-item { display: flex; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid var(--border); align-items: center; font-size: 0.9rem; font-weight: 600; }
+  .btn-text-danger { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 0.85rem; font-weight: 700; }
+  
+  /* TOAST */
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--success); color: white; padding: 12px 24px; border-radius: 30px; font-weight: 600; transition: transform 0.3s; z-index: 2000; box-shadow: var(--shadow); }
+  .toast.show { transform: translateX(-50%) translateY(0); }
  </style>
 </head>
-
 <body>
  <div class="container">
   <!-- DASHBOARD -->
   <div class="header">
    <div class="header-top">
     <div>
-     <h1>Medicine Tracker</h1>
-     <div class="patient-info" id="dateDisplay">Patient: Parvin Akter | Today</div>
+     <h1>Smart Health Tracker</h1>
+     <div class="patient-info" id="dateDisplay">Patient: Loading...</div>
     </div>
     <div class="header-actions">
-     <button class="btn-icon" onclick="manualResetToday()" title="আজকের সব ঔষধ রিসেট করুন">🔄</button>
-     <button class="btn-icon" onclick="openSettingsModal()" title="Schedule Settings">⚙️</button>
-     <button class="btn-icon" onclick="toggleTheme()" title="Day/Night Mode">🌙</button>
-     <button class="btn-icon" onclick="openAddModal()" title="Add New Medicine">➕</button>
+     <button class="btn-icon" onclick="openLibraryModal()" title="Medicine Library">📚</button>
+     <button class="btn-icon" onclick="manualResetToday()" title="আজকের ঔষধ রিসেট করুন">🔄</button>
+     <button class="btn-icon" onclick="openMasterSettingsModal()" title="Settings">⚙️</button>
+     <button class="btn-icon" onclick="toggleTheme()" title="Day/Night">🌙</button>
     </div>
    </div>
 
@@ -597,18 +127,132 @@
     <div class="stat-box">
      <div class="stat-lbl">সর্বশেষ খাওয়া</div>
      <div class="stat-val" id="stat-last" style="color:var(--primary);">খায়নি</div>
-     <a class="stat-link" onclick="openMedLogModal()">[বিস্তারিত চার্ট]</a>
+     <a class="stat-link" onclick="openMedLogModal()">[রেকর্ড চার্ট]</a>
     </div>
     <div class="stat-box">
      <div class="stat-lbl">ডায়াবেটিস ও BP</div>
      <div class="stat-val" id="stat-glucose">-</div>
-     <a class="stat-link" onclick="openHealthModal()">[বিস্তারিত চার্ট]</a>
+     <a class="stat-link" onclick="openHealthModal()">[হেলথ চার্ট]</a>
     </div>
    </div>
   </div>
 
   <!-- APP CONTAINER -->
   <div id="medicine-container"></div>
+ </div>
+
+ <!-- LIBRARY MODAL -->
+ <div class="modal-overlay" id="libraryModal">
+  <div class="modal-content large-modal">
+   <div class="modal-header">
+    <h2>📚 মেডিসিন লাইব্রেরি</h2>
+    <div style="display:flex; gap:10px;">
+     <button class="btn-primary" onclick="openLibraryFormModal()">+ নতুন ঔষধ</button>
+     <button class="close-btn" onclick="closeModal('libraryModal')">×</button>
+    </div>
+   </div>
+   <div class="modal-body">
+    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">এখান থেকে ঔষধ অ্যাড করুন। এরপর ড্যাশবোর্ডে ⚙️ আইকনে চাপ দিয়ে ঔষধগুলো বেলায় অ্যাসাইন করতে পারবেন।</p>
+    <div class="table-responsive">
+     <table class="data-table" id="libraryTableBody">
+      <thead><tr><th>নাম</th><th>প্রকার</th><th>স্টক</th><th>জেনেরিক</th><th>অ্যাকশন</th></tr></thead>
+      <tbody></tbody>
+     </table>
+    </div>
+   </div>
+  </div>
+ </div>
+
+ <!-- LIBRARY FORM MODAL (MEDICINE SETUP) -->
+ <div class="modal-overlay" id="libFormModal">
+  <div class="modal-content">
+   <div class="modal-header"><h2 id="lib-form-title">লাইব্রেরিতে ঔষধ যুক্ত করুন</h2><button class="close-btn" onclick="closeModal('libFormModal')">×</button></div>
+   <div class="modal-body">
+    <div style="display:flex; gap:10px;">
+        <div class="form-group" style="flex:2;"><label>ঔষধের নাম (যেমন: Napa)</label><input type="text" id="lf-name"></div>
+        <div class="form-group" style="flex:1;"><label>প্রকার</label>
+        <select id="lf-type" onchange="toggleUnitInput()">
+            <option value="tab">💊 Tablet</option><option value="cap">💊 Capsule</option>
+            <option value="inj">💉 Injection</option><option value="syr">🥄 Syrup</option>
+            <option value="other">📦 Other</option>
+        </select></div>
+    </div>
+    
+    <div class="form-group" id="lf-unit-group" style="display:none; background:rgba(14, 165, 233, 0.05); padding:10px; border-radius:8px; border:1px solid rgba(14, 165, 233, 0.2);">
+        <label style="color:var(--primary);">ডিফল্ট ইনজেকশন ইউনিট (Unit)</label>
+        <input type="number" id="lf-unit" placeholder="যেমন: 22">
+        <span style="font-size:0.75rem; color:var(--text-muted); display:block; margin-top:4px;">এটি হেলথ চার্টে অটোমেটিক রেকর্ড হবে।</span>
+    </div>
+
+    <div class="form-group">
+        <label>খাবারের আগে/পরে?</label>
+        <select id="lf-timing">
+            <option value="before">খাবারের আগে</option>
+            <option value="after">খাবারের পরে</option>
+            <option value="any">যেকোনো সময়</option>
+        </select>
+    </div>
+
+    <div class="form-group"><label>কাজের বিবরণ - ছোট</label><input type="text" id="lf-pshort"></div>
+    <div class="form-group"><label>কাজের বিবরণ - বিস্তারিত</label><textarea id="lf-plong" rows="2"></textarea></div>
+    <div style="display:flex; gap:10px;">
+     <div class="form-group" style="flex:1;"><label>জেনেরিক</label><input type="text" id="lf-generic"></div>
+     <div class="form-group" style="flex:1;"><label>কোম্পানি</label><input type="text" id="lf-company"></div>
+    </div>
+    <div style="display:flex; gap:10px;">
+     <div class="form-group" style="flex:1;"><label>দাম</label><input type="text" id="lf-price"></div>
+     <div class="form-group" style="flex:1;"><label>বর্তমান স্টক</label><input type="number" id="lf-stock"></div>
+    </div>
+    <div class="form-group"><label>সাইড ইফেক্ট</label><input type="text" id="lf-side"></div>
+   </div>
+   <div class="modal-footer" style="justify-content: space-between;">
+    <button class="btn-outline" style="color:var(--danger); border-color:var(--danger);" id="lib-btn-delete" onclick="deleteLibMed()">🗑️ Delete</button>
+    <div style="display:flex; gap:10px;">
+     <button class="btn-outline" onclick="closeModal('libFormModal')">Cancel</button>
+     <button class="btn-primary" onclick="saveLibMed()">Save to Library</button>
+    </div>
+   </div>
+  </div>
+ </div>
+
+ <!-- SCHEDULE SETTINGS MODAL (ASSIGN MEDS TO SCHEDULE) -->
+ <div class="modal-overlay" id="schSettingsModal">
+  <div class="modal-content">
+   <div class="modal-header">
+    <h2 id="sch-settings-title">⚙️ সকালের ঔষধ</h2>
+    <button class="close-btn" onclick="closeModal('schSettingsModal')">×</button>
+   </div>
+   <div class="modal-body">
+    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">এই বেলায় যুক্ত থাকা ঔষধগুলো:</p>
+    <div class="list-manager" id="schAssignedList" style="max-height: 200px;"></div>
+    
+    <div style="margin-top:20px; padding-top:15px; border-top:1px solid var(--border);">
+        <p style="font-size:0.9rem; font-weight:700; margin-bottom:10px;">+ নতুন ঔষধ যুক্ত করুন</p>
+        <div class="form-group"><label>লাইব্রেরি থেকে বেছে নিন</label><select id="sch-libId"></select></div>
+        <button class="btn-primary" style="width:100%; justify-content:center;" onclick="addMedToSchedule()">Add to Schedule</button>
+    </div>
+   </div>
+  </div>
+ </div>
+
+ <!-- INJECTION PROMPT MODAL -->
+ <div class="modal-overlay" id="injModal">
+    <div class="modal-content" style="max-width:350px;">
+        <div class="modal-header">
+            <h2 style="font-size:1.15rem;">💉 ইনজেকশন/ইনসুলিন</h2>
+            <button class="close-btn" onclick="closeModal('injModal')">×</button>
+        </div>
+        <div class="modal-body" style="padding:20px;">
+            <div class="form-group">
+                <label style="font-size:0.9rem; font-weight:700;">কত ইউনিট দেওয়া হলো?</label>
+                <input type="number" id="injUnitInput" placeholder="যেমন: 22" style="font-size:1.1rem; font-weight:bold; text-align:center;">
+            </div>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:5px; text-align:center;">এই ইউনিটটি চার্টে অটোমেটিক রেকর্ড হবে।</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-primary" style="width:100%; justify-content:center; font-size:1rem;" onclick="confirmInjTaken()">Confirm & Log</button>
+        </div>
+    </div>
  </div>
 
  <!-- MEDICINE LOG CHART MODAL -->
@@ -624,17 +268,7 @@
    <div class="modal-body">
     <div class="table-responsive">
      <table class="data-table" id="medLogTableBody">
-      <thead>
-       <tr>
-        <th>তারিখ</th>
-        <th>সময়</th>
-        <th>ঔষধের নাম</th>
-        <th>বেলা</th>
-        <th>খাওয়ার কথা</th>
-        <th>আপডেট</th>
-        <th>মুছুন</th>
-       </tr>
-      </thead>
+      <thead><tr><th>তারিখ</th><th>সময়</th><th>ঔষধের নাম</th><th>বেলা</th><th>খাওয়ার কথা</th><th>আপডেট</th><th>মুছুন</th></tr></thead>
       <tbody></tbody>
      </table>
     </div>
@@ -655,36 +289,31 @@
    <div class="modal-body">
     <div class="health-form-grid">
      <div class="form-group"><label>তারিখ (Date)</label><input type="date" id="h-date"></div>
-     <div class="form-group"><label>বেলা (Time)</label><select id="h-time">
-       <option value="সকাল">সকাল</option>
-       <option value="দুপুর">দুপুর</option>
-       <option value="রাত">রাত</option>
-      </select></div>
+     <div class="form-group"><label>বেলা (Time)</label><select id="h-time"></select></div>
      <div class="form-group"><label>সুগার পয়েন্ট</label><input type="text" id="h-glucose" placeholder="যেমন: 9.1"></div>
-     <div class="form-group"><label>সুগারের ধরন</label><select id="h-type">
-       <option value="Fasting (FBS)">Fasting (FBS)</option>
-       <option value="2h ABF">2h ABF</option>
-       <option value="Random (RBS)">Random (RBS)</option>
-      </select></div>
-     <div class="form-group"><label>ইনসুলিন দেওয়া হয়েছে</label><input type="text" id="h-insulin" placeholder="যেমন: 22 Unit"></div>
-     <div class="form-group"><label>ব্লাড প্রেশার (BP)</label><input type="text" id="h-bp" placeholder="যেমন: 130/80"></div>
-     <div class="form-group" style="grid-column: 1 / -1;"><label>কী খাবার খেলেন?</label><input type="text" id="h-food" placeholder="যেমন: ২টি রুটি, সবজি, ১ পিস ডিম"></div>
-     <div style="grid-column: 1 / -1; text-align:right;"><button class="btn-primary" style="display:inline-flex;" onclick="saveHealthLog()">+ চার্টে যুক্ত করুন</button></div>
+     <div class="form-group">
+        <label>সুগারের ধরন</label>
+        <select id="h-type">
+            <option value="" disabled selected>নির্বাচন করুন</option>
+            <option value="Fasting (FBS)">Fasting (FBS - খালি পেটে)</option>
+            <option value="2h ABF">2h ABF (খাবারের পর)</option>
+            <option value="Random (RBS)">Random (RBS)</option>
+        </select>
+     </div>
+     <div class="form-group">
+        <label>ইনসুলিনের নাম</label>
+        <select id="h-ins-name">
+            <option value="">নির্বাচন করুন</option>
+        </select>
+     </div>
+     <div class="form-group"><label>ডোজ/ইউনিট</label><input type="text" id="h-ins-dose" placeholder="যেমন: 22"></div>
+     <div class="form-group"><label>ব্লাড প্রেশার (BP)</label><input type="text" id="h-bp" placeholder="যেমন: 120/80"></div>
+     <div class="form-group"><label>কী খাবার খেলেন?</label><input type="text" id="h-food" placeholder="যেমন: ২টি রুটি, সবজি"></div>
+     <div style="grid-column: 1 / -1; text-align:right;"><button class="btn-primary" style="display:inline-flex;" onclick="saveHealthLogManual()">+ চার্টে যুক্ত/আপডেট করুন</button></div>
     </div>
     <div class="table-responsive">
      <table class="data-table" id="healthTableBody">
-      <thead>
-       <tr>
-        <th>তারিখ</th>
-        <th>বেলা</th>
-        <th>সুগার</th>
-        <th>ধরন</th>
-        <th>ইনসুলিন</th>
-        <th>প্রেশার (BP)</th>
-        <th>খাবার</th>
-        <th>মুছুন</th>
-       </tr>
-      </thead>
+      <thead><tr><th>তারিখ</th><th>বেলা</th><th>সুগার</th><th>ধরন</th><th>ইনসুলিন (নাম ও ডোজ)</th><th>প্রেশার (BP)</th><th>খাবার</th><th>মুছুন</th></tr></thead>
       <tbody></tbody>
      </table>
     </div>
@@ -695,10 +324,7 @@
  <!-- EXPORT TO SHEETS MODAL -->
  <div class="modal-overlay" id="exportModal">
   <div class="modal-content">
-   <div class="modal-header">
-    <h2 id="exportModalTitle">Export to Sheets</h2>
-    <button class="close-btn" onclick="closeModal('exportModal')">×</button>
-   </div>
+   <div class="modal-header"><h2 id="exportModalTitle">Export to Sheets</h2><button class="close-btn" onclick="closeModal('exportModal')">×</button></div>
    <div class="modal-body">
     <textarea id="exportTextarea" class="export-box" readonly></textarea>
     <button class="btn-primary" style="width:100%; justify-content:center;" onclick="copyToClipboard()">📋 Click to Copy Text</button>
@@ -706,12 +332,10 @@
   </div>
  </div>
 
- <!-- SCHEDULE SETTINGS MODAL -->
- <div class="modal-overlay" id="settingsModal">
+ <!-- MASTER SETTINGS MODAL -->
+ <div class="modal-overlay" id="masterSettingsModal">
   <div class="modal-content">
-   <div class="modal-header">
-    <h2>⚙️ Settings</h2><button class="close-btn" onclick="closeModal('settingsModal')">×</button>
-   </div>
+   <div class="modal-header"><h2>⚙️ Settings</h2><button class="close-btn" onclick="closeModal('masterSettingsModal')">×</button></div>
    <div class="form-group" style="margin-bottom: 15px;padding: 20px;">
     <label>রোগীর নাম (Patient Name)</label>
     <div style="display:flex; gap:10px;">
@@ -722,7 +346,7 @@
    <hr style="border:0; border-top:1px solid var(--border); margin: 15px 0;">
    <div class="modal-body">
     <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">ওষুধ খাওয়ার বেলা (Schedule) যোগ বা ডিলিট করুন:</p>
-    <div class="list-manager" id="scheduleManagerList"></div>
+    <div class="list-manager" id="masterScheduleManagerList"></div>
     <div class="form-group" style="margin-top: 15px;">
      <label>নতুন বেলা যুক্ত করুন (Title)</label>
      <div style="display:flex; gap:10px;">
@@ -734,92 +358,51 @@
   </div>
  </div>
 
- <!-- MED DETAILS MODAL (FULL BEAUTIFIED) -->
+ <!-- MED DETAILS MODAL (BEAUTIFIED WITH UNIT) -->
  <div class="modal-overlay" id="detailsModal">
   <div class="modal-content">
-   <div class="modal-header">
-    <h2 id="det-name" style="font-weight: 700; color: var(--text-main);">Medicine Name</h2>
-    <button class="close-btn" onclick="closeModal('detailsModal')">×</button>
-   </div>
+   <div class="modal-header"><h2 id="det-name" style="font-weight: 700; color: var(--text-main);">Medicine Name</h2><button class="close-btn" onclick="closeModal('detailsModal')">×</button></div>
    <div class="modal-body" style="padding: 20px;">
-
     <div class="detail-row" style="margin-bottom: 20px;">
-     <span class="detail-label" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 6px;">কাজের বিবরণ</span>
-     <span class="detail-value" id="det-purpose" style="font-size: 1rem; color: var(--text-main); font-weight: 500; display: block; line-height: 1.4;">...</span>
+     <span class="detail-label" style="display: block; margin-bottom: 6px;">কাজের বিবরণ</span>
+     <span class="detail-value" id="det-purpose" style="display: block; line-height: 1.4;">...</span>
+    </div>
+    
+    <div style="display:flex; gap:20px; margin-bottom: 20px; flex-wrap:wrap;">
+        <div class="detail-row">
+            <span class="detail-label" style="display: block; margin-bottom: 6px;">স্টক ম্যানেজমেন্ট</span>
+            <div style="display:inline-flex; align-items:center; gap:12px; background:var(--bg-base); padding:8px 12px; border-radius:8px; border:1px solid var(--border);">
+            <button style="width:32px; height:32px; border-radius:6px; border:1px solid var(--border); background:var(--bg-surface); font-weight:bold; font-size:1.2rem; cursor:pointer;" onclick="updateStockInModal(-1)">-</button>
+            <span id="det-stock" style="font-weight:700; font-size:1.15rem; width:35px; text-align:center;">0</span>
+            <button style="width:32px; height:32px; border-radius:6px; border:1px solid var(--border); background:var(--bg-surface); font-weight:bold; font-size:1.2rem; cursor:pointer;" onclick="updateStockInModal(1)">+</button>
+            </div>
+        </div>
+
+        <div class="detail-row" id="det-unit-row" style="display:none;">
+            <span class="detail-label" style="display: block; margin-bottom: 6px;">ইউনিট (Unit) ম্যানেজমেন্ট</span>
+            <div style="display:inline-flex; align-items:center; gap:12px; background:rgba(14, 165, 233, 0.1); padding:8px 12px; border-radius:8px; border:1px solid rgba(14, 165, 233, 0.3);">
+            <button style="width:32px; height:32px; border-radius:6px; border:1px solid var(--primary); background:var(--bg-surface); color:var(--primary); font-weight:bold; font-size:1.2rem; cursor:pointer;" onclick="updateUnitInModal(-1)">-</button>
+            <span id="det-unit" style="font-weight:700; font-size:1.15rem; width:35px; text-align:center; color:var(--primary);">0</span>
+            <button style="width:32px; height:32px; border-radius:6px; border:1px solid var(--primary); background:var(--bg-surface); color:var(--primary); font-weight:bold; font-size:1.2rem; cursor:pointer;" onclick="updateUnitInModal(1)">+</button>
+            </div>
+        </div>
     </div>
 
     <div class="detail-row" style="margin-bottom: 20px;">
-     <span class="detail-label" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 6px;">স্টক ম্যানেজমেন্ট</span>
-     <div style="display:inline-flex; align-items:center; gap:12px; background:var(--bg-base); padding:8px 12px; border-radius:8px; border:1px solid var(--border);">
-      <button style="width:32px; height:32px; border-radius:6px; border:1px solid var(--border); background:var(--bg-surface); font-weight:bold; font-size:1.2rem; color:var(--text-main); cursor:pointer; display:flex; align-items:center; justify-content:center;" onclick="updateStockInModal(-1)">-</button>
-      <span id="det-stock" style="font-weight:700; font-size:1.15rem; width:35px; text-align:center; color:var(--text-main);">0</span>
-      <button style="width:32px; height:32px; border-radius:6px; border:1px solid var(--border); background:var(--bg-surface); font-weight:bold; font-size:1.2rem; color:var(--text-main); cursor:pointer; display:flex; align-items:center; justify-content:center;" onclick="updateStockInModal(1)">+</button>
-     </div>
+     <span class="detail-label" style="display: block; margin-bottom: 6px;">জেনেরিক নাম</span><span class="detail-value" id="det-generic" style="font-weight: 600; display: block;">...</span>
     </div>
-
-    <div class="detail-row" style="margin-bottom: 20px;">
-     <span class="detail-label" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 6px;">জেনেরিক নাম</span>
-     <span class="detail-value" id="det-generic" style="font-size: 1rem; color: var(--text-main); font-weight: 600; display: block;">...</span>
-    </div>
-
     <div style="display:flex; gap:20px; margin-bottom:25px;">
-     <div style="flex:1;">
-      <span class="detail-label" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 6px;">কোম্পানি</span>
-      <span class="detail-value" id="det-company" style="font-size: 1rem; color: var(--text-main); font-weight: 600; display: block;">...</span>
-     </div>
-     <div style="flex:1;">
-      <span class="detail-label" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 6px;">দাম</span>
-      <span class="detail-value" id="det-price" style="font-size: 1rem; color: var(--text-main); font-weight: 600; display: block;">...</span>
-     </div>
+     <div style="flex:1;"><span class="detail-label" style="display: block; margin-bottom: 6px;">কোম্পানি</span><span class="detail-value" id="det-company" style="font-weight: 600; display: block;">...</span></div>
+     <div style="flex:1;"><span class="detail-label" style="display: block; margin-bottom: 6px;">দাম</span><span class="detail-value" id="det-price" style="font-weight: 600; display: block;">...</span></div>
     </div>
-
     <div style="padding:15px; background:rgba(244, 63, 94, 0.05); border-radius:10px; border:1px solid rgba(244, 63, 94, 0.2);">
-     <span class="detail-label" style="font-size: 0.85rem; color:var(--danger); font-weight: 700; display: block; margin-bottom: 8px;">সাইড ইফেক্ট</span>
-     <span class="detail-value" id="det-side" style="font-size: 1rem; color:var(--text-main); font-weight: 500; display: block;">...</span>
+     <span class="detail-label" style="color:var(--danger); font-weight: 700; display: block; margin-bottom: 8px;">সাইড ইফেক্ট</span>
+     <span class="detail-value" id="det-side" style="font-weight: 500; display: block;">...</span>
     </div>
-
    </div>
    <div class="modal-footer">
-    <button class="btn-outline" onclick="openEditFromDetails()">✏️ Edit info</button>
+    <button class="btn-outline" onclick="editLibraryMedFromDetails()">✏️ Edit in Library</button>
     <button class="btn-primary" onclick="closeModal('detailsModal')">Close</button>
-   </div>
-  </div>
- </div>
-
- <!-- MED FORM MODAL -->
- <div class="modal-overlay" id="formModal">
-  <div class="modal-content">
-   <div class="modal-header">
-    <h2 id="form-title">Add/Edit Medicine</h2><button class="close-btn" onclick="closeModal('formModal')">×</button>
-   </div>
-   <div class="modal-body">
-    <div class="form-group"><label>ঔষধের নাম</label><input type="text" id="f-name"></div>
-    <div style="display:flex; gap:10px;">
-     <div class="form-group" style="flex:1;"><label>কখন খাবে?</label><select id="f-schedule"></select></div>
-     <div class="form-group" style="flex:1;"><label>আগে/পরে?</label><select id="f-timing">
-       <option value="before">খাবারের আগে</option>
-       <option value="after">খাবারের পরে</option>
-       <option value="any">যেকোনো সময়</option>
-      </select></div>
-    </div>
-    <div class="form-group"><label>কাজের বিবরণ - ছোট</label><input type="text" id="f-pshort"></div>
-    <div class="form-group"><label>কাজের বিবরণ - বিস্তারিত</label><textarea id="f-plong" rows="2"></textarea></div>
-    <div style="display:flex; gap:10px;">
-     <div class="form-group" style="flex:1;"><label>জেনেরিক</label><input type="text" id="f-generic"></div>
-     <div class="form-group" style="flex:1;"><label>কোম্পানি</label><input type="text" id="f-company"></div>
-    </div>
-    <div style="display:flex; gap:10px;">
-     <div class="form-group" style="flex:1;"><label>দাম</label><input type="text" id="f-price"></div>
-     <div class="form-group" style="flex:1;"><label>বর্তমান স্টক</label><input type="number" id="f-stock"></div>
-    </div>
-    <div class="form-group"><label>সাইড ইফেক্ট</label><input type="text" id="f-side"></div>
-   </div>
-   <div class="modal-footer" style="justify-content: space-between;">
-    <button class="btn-outline" style="color:var(--danger); border-color:var(--danger);" id="btn-delete" onclick="deleteMed()">🗑️ Delete</button>
-    <div style="display:flex; gap:10px;">
-     <button class="btn-outline" onclick="closeModal('formModal')">Cancel</button>
-     <button class="btn-primary" onclick="saveMed()">Save</button>
-    </div>
    </div>
   </div>
  </div>
@@ -831,55 +414,94 @@
  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
  <script>
-  // Firebase Configuration
   const firebaseConfig = {
    apiKey: "AIzaSyDHXiuHMyZfHMNQHj8Ov_o8crQeHwQYqyM",
    authDomain: "medicine-tracker-68b2a.firebaseapp.com",
    databaseURL: "https://medicine-tracker-68b2a-default-rtdb.asia-southeast1.firebasedatabase.app",
    projectId: "medicine-tracker-68b2a"
   };
-
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
   let appData = null;
-  let currentEditId = null;
+  let currentEditLibId = null;
+  let currentSettingsSchId = null;
+  let currentEditAssignId = null;
+  let pendingAssignIdForInj = null;
 
-  function generateId() {
-   return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+  function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 5); }
+  function getLocalDateISO() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+
+  function getIconForType(type) {
+      if(type === 'tab' || type === 'cap') return '💊';
+      if(type === 'inj') return '💉';
+      if(type === 'syr') return '🥄';
+      return '📦';
+  }
+
+  function getTypeText(type, name) {
+      const n = name.toLowerCase();
+      if(type === 'tab' && !n.includes('tab')) return 'Tab. ';
+      if(type === 'cap' && !n.includes('cap')) return 'Cap. ';
+      if(type === 'inj' && !n.includes('inj')) return 'Inj. ';
+      if(type === 'syr' && !n.includes('syr')) return 'Syr. ';
+      return '';
+  }
+
+  function buildMedTitle(libMed, assignUnit = null) {
+      let icon = getIconForType(libMed.type);
+      let typeTxt = getTypeText(libMed.type, libMed.name);
+      let title = `${icon} ${typeTxt}${libMed.name}`;
+      if(libMed.type === 'inj' && (assignUnit || libMed.defaultUnit)) {
+          title += ` (${assignUnit || libMed.defaultUnit} Unit)`;
+      }
+      return title;
+  }
+
+  function migrateOldData(data) {
+      if(data.library && data.assignments) {
+          data.assignments.forEach(a => {
+              if(a.timing) {
+                  let l = data.library.find(x => x.id === a.libId);
+                  if(l && !l.timing) l.timing = a.timing;
+                  delete a.timing;
+              }
+              if(a.unit === undefined) {
+                  let libMed = data.library.find(l => l.id === a.libId);
+                  if(libMed && libMed.type === 'inj') {
+                      a.unit = libMed.defaultUnit || 0;
+                  }
+              }
+          });
+          data.library.forEach(l => { if(!l.timing) l.timing = 'after'; });
+      }
+      if(data.healthLogs) {
+          data.healthLogs.forEach(h => {
+              if (h.insulinName !== undefined || h.insulinDose !== undefined) {
+                  h.insulinData = {};
+                  if(h.insulinName && h.insulinName !== '-') {
+                      h.insulinData['manual_migrated'] = h.insulinName + (h.insulinDose && h.insulinDose !== '-' ? ` (${h.insulinDose} Unit)` : '');
+                  }
+                  delete h.insulinName;
+                  delete h.insulinDose;
+              }
+          });
+      }
+      return data;
   }
 
   function initData() {
    db.ref('ParvinTrackerData').on('value', (snapshot) => {
-    const cloudData = snapshot.val();
-
-    if (cloudData) {
-     appData = cloudData;
-    } else {
-     // Default Data Structure
-     appData = {
-      medications: [],
-      schedules: [{
-       id: "morning",
-       title: "☀️ সকাল"
-      }, {
-       id: "noon",
-       title: "🌤️ দুপুর"
-      }, {
-       id: "night",
-       title: "🌙 রাত"
-      }],
-      healthLogs: [],
-      medLogs: [],
-      patientName: "Parvin Akter",
-      lastResetDate: ""
-     };
-     saveToLocal();
+    let cloudData = snapshot.val();
+    if (cloudData) { appData = migrateOldData(cloudData); } 
+    else {
+     appData = { library: [], assignments: [], schedules: [{ id: "morning", title: "☀️ সকাল" }, { id: "noon", title: "🌤️ দুপুর" }, { id: "night", title: "🌙 রাত" }], healthLogs: [], medLogs: [], patientName: "Parvin Akter", lastResetDate: "" };
     }
-
     if (!appData.healthLogs) appData.healthLogs = [];
     if (!appData.medLogs) appData.medLogs = [];
     if (!appData.schedules) appData.schedules = [];
+    if (!appData.library) appData.library = [];
+    if (!appData.assignments) appData.assignments = [];
     if (!appData.patientName) appData.patientName = "Parvin Akter";
 
     checkDailyReset();
@@ -890,15 +512,13 @@
    });
   }
 
-  function saveToLocal() {
-   db.ref('ParvinTrackerData').set(appData);
-  }
+  function saveToLocal() { db.ref('ParvinTrackerData').set(appData); }
 
   function checkDailyReset() {
    const today = new Date().toLocaleDateString('en-GB');
    document.getElementById('dateDisplay').innerText = `Patient: ${appData.patientName} | ${today}`;
    if (appData.lastResetDate !== today) {
-    appData.medications.forEach(m => m.takenToday = false);
+    appData.assignments.forEach(a => a.takenToday = false);
     appData.lastResetDate = today;
     saveToLocal();
    }
@@ -906,10 +526,11 @@
 
   function manualResetToday() {
    if (confirm("আজকের সব ঔষধের টিক মুছে ফেলতে চান? (স্টক আগের অবস্থায় ফিরে যাবে)")) {
-    appData.medications.forEach(m => {
-     if (m.takenToday) {
-      m.takenToday = false;
-      m.stock += 1;
+    appData.assignments.forEach(a => {
+     if (a.takenToday) {
+      a.takenToday = false;
+      const libMed = appData.library.find(l => l.id === a.libId);
+      if(libMed) libMed.stock += 1;
      }
     });
     const todayStr = new Date().toLocaleDateString('en-GB');
@@ -923,421 +544,479 @@
    if (!isoString) return "খায়নি";
    const diff = Date.now() - new Date(isoString).getTime();
    const mins = Math.floor(diff / 60000);
-   if (mins < 1) return "এইমাত্র";
-   if (mins < 60) return `${mins} মি. আগে`;
+   if (mins < 1) return "এইমাত্র"; if (mins < 60) return `${mins} মি. আগে`;
    const hrs = Math.floor(mins / 60);
-   if (hrs < 24) return `${hrs} ঘণ্টা আগে`;
-   return `${Math.floor(hrs / 24)} দিন আগে`;
+   if (hrs < 24) return `${hrs} ঘণ্টা আগে`; return `${Math.floor(hrs / 24)} দিন আগে`;
   }
 
   function render() {
    if (!appData) return;
 
-   const totalMeds = appData.medications.length;
-   const takenMeds = appData.medications.filter(m => m.takenToday).length;
+   const totalMeds = appData.assignments.length;
+   const takenMeds = appData.assignments.filter(a => a.takenToday).length;
    document.getElementById('stat-total').innerText = totalMeds;
    document.getElementById('stat-today').innerText = `${takenMeds} / ${totalMeds}`;
    document.getElementById('stat-last').innerText = timeAgo(appData.lastTakenTimestamp);
 
    const healthStatText = document.getElementById('stat-glucose');
    if (appData.healthLogs && appData.healthLogs.length > 0) {
-    const lastLog = appData.healthLogs[0];
+    const sortedLogs = [...appData.healthLogs].sort((a,b) => new Date(b.date) - new Date(a.date));
+    const lastLog = sortedLogs[0];
     let displayTxt = `${lastLog.glucose}`;
     if (lastLog.bp && lastLog.bp !== "-") displayTxt += ` | ${lastLog.bp}`;
     healthStatText.innerText = displayTxt;
     healthStatText.style.color = "var(--primary)";
    } else {
-    healthStatText.innerText = "ডাটা নেই";
-    healthStatText.style.color = "var(--text-muted)";
+    healthStatText.innerText = "ডাটা নেই"; healthStatText.style.color = "var(--text-muted)";
    }
-
-   const scheduleSelect = document.getElementById('f-schedule');
-   scheduleSelect.innerHTML = appData.schedules.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
 
    const container = document.getElementById('medicine-container');
    container.innerHTML = '';
 
    appData.schedules.forEach(sch => {
-    const meds = appData.medications.filter(m => m.schedule === sch.id);
-    if (meds.length === 0) return;
+    const assignments = appData.assignments.filter(a => a.schedule === sch.id);
+    
+    let sectionHtml = `<div class="schedule-group">
+        <div class="schedule-title">${sch.title} <span class="count-badge">${assignments.length} টি</span>
+        <button class="btn-icon" style="width:28px;height:28px;margin-left:auto;" onclick="openSchSettingsModal('${sch.id}')" title="এই বেলার ঔষধ সেটিং">⚙️</button>
+        </div>`;
 
-    let sectionHtml = `<div class="schedule-group"><div class="schedule-title">${sch.title} <span class="count-badge">${meds.length} টি</span></div>`;
+    assignments.forEach(assign => {
+     const libMed = appData.library.find(l => l.id === assign.libId);
+     if(!libMed) return; 
 
-    meds.forEach(med => {
-     let badgeClass = med.timing === 'before' ? 'badge-before' : (med.timing === 'after' ? 'badge-after' : 'badge-any');
-     let badgeText = med.timing === 'before' ? 'খাবারের আগে' : (med.timing === 'after' ? 'খাবারের পরে' : 'যেকোনো সময়');
-     let stockClass = med.stock <= 5 ? 'low' : '';
-     let btnClass = med.takenToday ? 'taken-btn' : '';
-     let btnText = med.takenToday ? '✔ খাওয়া হয়েছে' : 'খাওয়া হয়েছে';
+     let badgeClass = libMed.timing === 'before' ? 'badge-before' : (libMed.timing === 'after' ? 'badge-after' : 'badge-any');
+     let badgeText = libMed.timing === 'before' ? 'খাবারের আগে' : (libMed.timing === 'after' ? 'খাবারের পরে' : 'যেকোনো সময়');
+     let stockClass = libMed.stock <= 5 ? 'low' : '';
+     let btnClass = assign.takenToday ? 'taken-btn' : '';
+     let btnText = assign.takenToday ? '✔ খাওয়া হয়েছে' : 'খাওয়া হয়েছে';
+     let titleStr = buildMedTitle(libMed, assign.unit);
 
      sectionHtml += `
-                    <div class="med-card ${med.takenToday ? 'taken' : ''}" id="card-${med.id}">
-                        <div class="med-row-1">
-                            <div class="med-title-group"><span class="med-name">${med.name}</span><span class="stock-txt ${stockClass}">স্টক: ${med.stock}</span></div>
-                            <span class="meal-badge ${badgeClass}">${badgeText}</span>
-                        </div>
-                        <div class="med-row-2">
-                            <div class="med-purpose">${med.purposeShort} <a href="#" class="details-link" onclick="openDetails('${med.id}'); return false;">[বিস্তারিত]</a></div>
-                            <button class="btn-take ${btnClass}" onclick="toggleTaken('${med.id}')">${btnText}</button>
-                        </div>
-                    </div>`;
+        <div class="med-card ${assign.takenToday ? 'taken' : ''}">
+            <div class="med-row-1">
+                <div class="med-title-group">
+                    <span class="med-name">${titleStr}</span>
+                    <span class="stock-txt ${stockClass}">স্টক: ${libMed.stock}</span>
+                </div>
+                <span class="meal-badge ${badgeClass}">${badgeText}</span>
+            </div>
+            <div class="med-row-2">
+                <div class="med-purpose">${libMed.purposeShort} <a href="#" class="details-link" onclick="openDetails('${assign.id}'); return false;">[বিস্তারিত]</a></div>
+                <button class="btn-take ${btnClass}" onclick="toggleTaken('${assign.id}')">${btnText}</button>
+            </div>
+        </div>`;
     });
     sectionHtml += `</div>`;
     container.innerHTML += sectionHtml;
    });
-  }
 
-  // --- MED LOG CHART LOGIC ---
-  function openMedLogModal() {
-   renderMedLogTable();
-   document.getElementById('medLogModal').classList.add('active');
-  }
+   const schOptions = appData.schedules.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
+   const hTimeEl = document.getElementById('h-time');
+   if(hTimeEl) hTimeEl.innerHTML = schOptions;
 
-  function renderMedLogTable() {
-   const tbody = document.querySelector('#medLogTableBody tbody');
-   tbody.innerHTML = '';
-   if (!appData.medLogs) return;
-
-   const sortedLogs = [...appData.medLogs].reverse();
-   sortedLogs.forEach(log => {
-    let badgeText = log.timing === 'before' ? 'খাবারের আগে' : (log.timing === 'after' ? 'খাবারের পরে' : 'যেকোনো সময়');
-    let schTitle = appData.schedules.find(s => s.id === log.schedule)?.title || log.schedule;
-    tbody.innerHTML += `
-              <tr>
-                  <td><strong>${log.dateStr}</strong></td>
-                  <td style="color:var(--primary); font-weight:bold;">${log.actualTime}</td>
-                  <td>${log.medName}</td>
-                  <td>${schTitle}</td>
-                  <td>${badgeText}</td>
-                  <td>${log.updateCount > 1 ? `<span style="color:var(--danger)">${log.updateCount} বার</span>` : '১ বার'}</td>
-                  <td><button class="btn-del-sm" onclick="deleteMedLog('${log.id}')">✕</button></td>
-              </tr>`;
-   });
-  }
-
-  function deleteMedLog(logId) {
-   if (confirm("এই রেকর্ডটি মুছে ফেলতে চান? ঔষধটি আনচেক হয়ে যাবে এবং স্টক ফিরে আসবে।")) {
-    const log = appData.medLogs.find(l => l.id === logId);
-    if (log) {
-     const med = appData.medications.find(m => m.id === log.medId);
-     const todayStr = new Date().toLocaleDateString('en-GB');
-     if (med && med.takenToday && log.dateStr === todayStr) {
-      med.takenToday = false;
-      med.stock += 1;
-     }
-     appData.medLogs = appData.medLogs.filter(l => l.id !== logId);
-     saveToLocal();
-     renderMedLogTable();
-     showToast("রেকর্ড মুছে ফেলা হয়েছে!");
-    }
+   const insSelect = document.getElementById('h-ins-name');
+   if (insSelect) {
+       const insMeds = appData.library.filter(l => l.type === 'inj');
+       insSelect.innerHTML = `<option value="">নির্বাচন করুন</option>` + 
+           insMeds.map(m => `<option value="${m.name}">${getTypeText('inj', m.name)}${m.name}</option>`).join('');
    }
   }
 
-  function openMedExportModal() {
-   let tsvContent = "Date\tTime Taken\tMedicine Name\tSchedule\tMeal Timing\tUpdate Count\n";
-   if (appData.medLogs) {
-    [...appData.medLogs].reverse().forEach(log => {
-     let badgeText = log.timing === 'before' ? 'Before Meal' : (log.timing === 'after' ? 'After Meal' : 'Any Time');
-     let schTitle = appData.schedules.find(s => s.id === log.schedule)?.title || log.schedule;
-     tsvContent += `${log.dateStr}\t${log.actualTime}\t${log.medName}\t${schTitle}\t${badgeText}\t${log.updateCount}\n`;
-    });
-   }
-   document.getElementById('exportModalTitle').innerText = "Export Medicine Logs";
-   document.getElementById('exportTextarea').value = tsvContent;
-   document.getElementById('exportModal').classList.add('active');
-  }
+  // --- LIBRARY MANAGEMENT ---
+  function openLibraryModal() { renderLibraryTable(); document.getElementById('libraryModal').classList.add('active'); }
 
-  // --- HEALTH CHART LOGIC ---
-  function openHealthModal() {
-   renderHealthTable();
-   document.getElementById('healthModal').classList.add('active');
-  }
-
-  function renderHealthTable() {
-   const tbody = document.querySelector('#healthTableBody tbody');
-   tbody.innerHTML = '';
-   if (!appData.healthLogs) return;
-
-   appData.healthLogs.forEach(log => {
-    tbody.innerHTML += `
-                <tr>
-                    <td><strong>${log.date}</strong></td>
-                    <td>${log.timeOfDay}</td>
-                    <td style="color:var(--primary); font-weight:bold;">${log.glucose}</td>
-                    <td>${log.glucoseType}</td>
-                    <td>${log.insulin || '-'}</td>
-                    <td>${log.bp || '-'}</td>
-                    <td>${log.food || '-'}</td>
-                    <td><button class="btn-del-sm" onclick="deleteHealthLog('${log.id}')">✕</button></td>
-                </tr>`;
-   });
-  }
-
-  function saveHealthLog() {
-   const date = document.getElementById('h-date').value;
-   const glucose = document.getElementById('h-glucose').value;
-   const bp = document.getElementById('h-bp').value;
-
-   if (!glucose && !bp) {
-    alert('সুগার পয়েন্ট অথবা ব্লাড প্রেশার লিখুন!');
-    return;
-   }
-
-   const newLog = {
-    id: 'h' + Date.now(),
-    date: date,
-    timeOfDay: document.getElementById('h-time').value,
-    glucose: glucose || "-",
-    glucoseType: document.getElementById('h-type').value,
-    insulin: document.getElementById('h-insulin').value,
-    bp: bp || "-",
-    food: document.getElementById('h-food').value
-   };
-   appData.healthLogs.unshift(newLog);
-   saveToLocal();
-   showToast('হেলথ চার্ট আপডেট হয়েছে!');
-   ['h-glucose', 'h-insulin', 'h-bp', 'h-food'].forEach(id => document.getElementById(id).value = '');
-  }
-
-  function deleteHealthLog(id) {
-   if (confirm("এই ডাটাটি মুছে ফেলতে চান?")) {
-    appData.healthLogs = appData.healthLogs.filter(h => h.id !== id);
-    saveToLocal();
-    renderHealthTable();
-   }
-  }
-
-  function openExportModal() {
-   let tsvContent = "Date\tTime\tGlucose\tType\tInsulin\tBlood Pressure\tFood\n";
-   if (appData.healthLogs) {
-    appData.healthLogs.forEach(log => {
-     tsvContent += `${log.date}\t${log.timeOfDay}\t${log.glucose}\t${log.glucoseType}\t${log.insulin}\t${log.bp}\t${log.food}\n`;
-    });
-   }
-   document.getElementById('exportModalTitle').innerText = "Export Health Data";
-   document.getElementById('exportTextarea').value = tsvContent;
-   document.getElementById('exportModal').classList.add('active');
-  }
-
-  function copyToClipboard() {
-   const copyText = document.getElementById('exportTextarea');
-   copyText.select();
-   copyText.setSelectionRange(0, 99999);
-   navigator.clipboard.writeText(copyText.value).then(() => {
-    showToast("কপি হয়েছে! Excel এ Paste করুন।");
-    closeModal('exportModal');
-   });
-  }
-
-  // --- SCHEDULE SETTINGS MANAGER ---
-  function openSettingsModal() {
-   renderScheduleManager();
-   document.getElementById('settingsModal').classList.add('active');
-   document.getElementById('settingPatientName').value = appData.patientName || 'Parvin Akter';
-  }
-
-  function renderScheduleManager() {
-   document.getElementById('scheduleManagerList').innerHTML = appData.schedules.map(s => `<div class="list-item"><span>${s.title}</span><button class="btn-text-danger" onclick="deleteSchedule('${s.id}')">Remove</button></div>`).join('');
-  }
-
-  function addSchedule() {
-   const title = document.getElementById('newScheduleName').value.trim();
-   if (title) {
-    appData.schedules.push({
-     id: generateId(),
-     title: title
-    });
-    document.getElementById('newScheduleName').value = '';
-    saveToLocal();
-   }
-  }
-
-  function deleteSchedule(id) {
-   if (confirm("এই বেলাটি মুছলে এর ভেতরের সব ঔষধ মুছে যাবে। নিশ্চিত?")) {
-    appData.schedules = appData.schedules.filter(s => s.id !== id);
-    appData.medications = appData.medications.filter(m => m.schedule !== id);
-    saveToLocal();
-   }
-  }
-
-  // --- MED ACTIONS & LOGGING ---
-  function toggleTaken(id) {
-   const med = appData.medications.find(m => m.id === id);
-   if (med) {
-    med.takenToday = !med.takenToday;
-    const todayStr = new Date().toLocaleDateString('en-GB');
-    const timeNow = new Date().toLocaleTimeString('en-GB', {
-     hour: '2-digit',
-     minute: '2-digit',
-     hour12: true
-    });
-
-    if (!appData.medLogs) appData.medLogs = [];
-    let existingLog = appData.medLogs.find(l => l.medId === id && l.dateStr === todayStr);
-
-    if (med.takenToday) {
-     med.stock = Math.max(0, med.stock - 1);
-     appData.lastTakenTimestamp = new Date().toISOString();
-
-     if (existingLog) {
-      existingLog.actualTime = timeNow;
-      existingLog.updateCount = (existingLog.updateCount || 1) + 1;
-     } else {
-      appData.medLogs.push({
-       id: 'ml' + Date.now(),
-       medId: id,
-       dateStr: todayStr,
-       medName: med.name,
-       schedule: med.schedule,
-       timing: med.timing,
-       actualTime: timeNow,
-       updateCount: 1
+  function renderLibraryTable() {
+      const tbody = document.querySelector('#libraryTableBody tbody'); tbody.innerHTML = '';
+      appData.library.forEach(med => {
+          let icon = getIconForType(med.type);
+          tbody.innerHTML += `<tr>
+              <td><strong>${icon} ${med.name}</strong></td><td>${med.type.toUpperCase()}</td>
+              <td style="${med.stock <= 5 ? 'color:red;font-weight:bold;' : ''}">${med.stock}</td><td>${med.generic}</td>
+              <td><button class="btn-outline" style="padding:2px 8px;font-size:0.8rem;" onclick="openLibraryFormModal('${med.id}')">Edit</button></td>
+          </tr>`;
       });
-     }
-    } else {
-     med.stock += 1;
-     if (existingLog) {
-      existingLog.actualTime = timeNow;
-      existingLog.updateCount = (existingLog.updateCount || 1) + 1;
-     }
-    }
-    saveToLocal();
+  }
+
+  function toggleUnitInput() {
+      const type = document.getElementById('lf-type').value;
+      document.getElementById('lf-unit-group').style.display = type === 'inj' ? 'block' : 'none';
+  }
+
+  function openLibraryFormModal(libId = null) {
+      currentEditLibId = libId;
+      if(libId) {
+          document.getElementById('lib-form-title').innerText = "ঔষধ এডিট করুন";
+          document.getElementById('lib-btn-delete').style.display = 'block';
+          const med = appData.library.find(l => l.id === libId);
+          document.getElementById('lf-name').value = med.name; document.getElementById('lf-type').value = med.type;
+          document.getElementById('lf-unit').value = med.defaultUnit || "";
+          document.getElementById('lf-timing').value = med.timing || 'after';
+          document.getElementById('lf-pshort').value = med.purposeShort; document.getElementById('lf-plong').value = med.purposeLong || "";
+          document.getElementById('lf-generic').value = med.generic || ""; document.getElementById('lf-company').value = med.company || "";
+          document.getElementById('lf-price').value = med.price || ""; document.getElementById('lf-stock').value = med.stock;
+          document.getElementById('lf-side').value = med.sideEffects || "";
+      } else {
+          document.getElementById('lib-form-title').innerText = "নতুন ঔষধ যুক্ত করুন";
+          document.getElementById('lib-btn-delete').style.display = 'none';
+          ['lf-name', 'lf-unit', 'lf-pshort', 'lf-plong', 'lf-generic', 'lf-company', 'lf-price', 'lf-stock', 'lf-side'].forEach(id => document.getElementById(id).value = '');
+          document.getElementById('lf-type').value = 'tab';
+          document.getElementById('lf-timing').value = 'after';
+      }
+      toggleUnitInput();
+      document.getElementById('libFormModal').classList.add('active');
+  }
+
+  function saveLibMed() {
+      const name = document.getElementById('lf-name').value.trim(); if (!name) return alert("নাম আবশ্যক!");
+      const obj = {
+        id: currentEditLibId || 'l' + generateId(), name: name, type: document.getElementById('lf-type').value, defaultUnit: document.getElementById('lf-unit').value,
+        timing: document.getElementById('lf-timing').value,
+        purposeShort: document.getElementById('lf-pshort').value, purposeLong: document.getElementById('lf-plong').value,
+        generic: document.getElementById('lf-generic').value, company: document.getElementById('lf-company').value,
+        price: document.getElementById('lf-price').value, stock: parseInt(document.getElementById('lf-stock').value) || 0,
+        sideEffects: document.getElementById('lf-side').value
+      };
+      if (currentEditLibId) { const index = appData.library.findIndex(l => l.id === currentEditLibId); appData.library[index] = obj; } 
+      else { appData.library.push(obj); }
+      saveToLocal(); renderLibraryTable(); render(); closeModal('libFormModal'); showToast("Library Updated!");
+  }
+
+  function deleteLibMed() {
+      if(confirm("এই ঔষধটি লাইব্রেরি থেকে মুছলে এটি রুটিন থেকেও মুছে যাবে। নিশ্চিত?")) {
+          appData.library = appData.library.filter(l => l.id !== currentEditLibId);
+          appData.assignments = appData.assignments.filter(a => a.libId !== currentEditLibId);
+          saveToLocal(); renderLibraryTable(); render(); closeModal('libFormModal');
+      }
+  }
+
+  // --- SCHEDULE SETTINGS (ASSIGN MEDS) ---
+  function openSchSettingsModal(schId) {
+      currentSettingsSchId = schId;
+      const sch = appData.schedules.find(s => s.id === schId);
+      document.getElementById('sch-settings-title').innerText = `⚙️ ${sch.title} এর ঔষধ`;
+      renderSchAssignedList();
+      
+      document.getElementById('sch-libId').innerHTML = appData.library.map(l => `<option value="${l.id}">${buildMedTitle(l)}</option>`).join('');
+      document.getElementById('schSettingsModal').classList.add('active');
+  }
+
+  function renderSchAssignedList() {
+      const assignments = appData.assignments.filter(a => a.schedule === currentSettingsSchId);
+      const listContainer = document.getElementById('schAssignedList');
+      if(assignments.length === 0) { listContainer.innerHTML = `<p style="padding:10px; color:var(--text-muted); text-align:center; font-size:0.9rem;">কোনো ঔষধ যুক্ত করা নেই</p>`; return; }
+      
+      listContainer.innerHTML = assignments.map(a => {
+          const libMed = appData.library.find(l => l.id === a.libId); if(!libMed) return '';
+          let badgeText = libMed.timing === 'before' ? 'খাবারের আগে' : (libMed.timing === 'after' ? 'খাবারের পরে' : 'যেকোনো সময়');
+          return `<div class="list-item" style="padding:8px 10px;">
+              <span style="font-weight:600; font-size:0.95rem;">${buildMedTitle(libMed, a.unit)} <span style="font-size:0.75rem; color:var(--primary);">(${badgeText})</span></span>
+              <button class="btn-del-sm" style="font-size:1.2rem;" onclick="deleteAssignment('${a.id}')">✕</button>
+          </div>`;
+      }).join('');
+  }
+
+  function addMedToSchedule() {
+      if(appData.library.length === 0) return alert("প্রথমে 📚 লাইব্রেরিতে ঔষধ যুক্ত করুন!");
+      const libId = document.getElementById('sch-libId').value;
+      if(appData.assignments.find(a => a.schedule === currentSettingsSchId && a.libId === libId)) { alert("এই ঔষধটি এই বেলায় আগেই যুক্ত করা আছে!"); return; }
+      
+      const libMed = appData.library.find(l => l.id === libId);
+      let assignUnit = (libMed && libMed.type === 'inj') ? (libMed.defaultUnit || 0) : null;
+
+      appData.assignments.push({ id: 'a' + generateId(), libId: libId, schedule: currentSettingsSchId, unit: assignUnit, takenToday: false });
+      saveToLocal(); renderSchAssignedList(); render(); showToast("ঔষধ যুক্ত হয়েছে!");
+  }
+
+  function deleteAssignment(assignId) {
+      if(confirm("এই বেলা থেকে ঔষধটি সরাতে চান?")) {
+          appData.assignments = appData.assignments.filter(a => a.id !== assignId);
+          saveToLocal(); renderSchAssignedList(); render();
+      }
+  }
+
+  // --- MED ACTIONS (WITH SMART INJ PROMPT) ---
+  function toggleTaken(assignId) {
+   const assign = appData.assignments.find(a => a.id === assignId); if (!assign) return;
+   const libMed = appData.library.find(l => l.id === assign.libId); if (!libMed) return;
+
+   if (!assign.takenToday && libMed.type === 'inj') {
+       pendingAssignIdForInj = assignId;
+       document.getElementById('injUnitInput').value = assign.unit || libMed.defaultUnit || '';
+       document.getElementById('injModal').classList.add('active');
+       return; 
    }
+   executeToggleTaken(assignId, null);
+  }
+
+  function confirmInjTaken() {
+      const units = document.getElementById('injUnitInput').value.trim();
+      const assign = appData.assignments.find(a => a.id === pendingAssignIdForInj);
+      if(assign && units) assign.unit = parseInt(units); // Overwrite assignment unit so it saves for future
+      
+      executeToggleTaken(pendingAssignIdForInj, units ? `${units}` : 'Done');
+      closeModal('injModal');
+  }
+
+  function executeToggleTaken(assignId, injUnitStr) {
+      const assign = appData.assignments.find(a => a.id === assignId);
+      const libMed = appData.library.find(l => l.id === assign.libId);
+      
+      assign.takenToday = !assign.takenToday;
+      const todayStr = new Date().toLocaleDateString('en-GB');
+      const timeNow = new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute:'2-digit', hour12: true});
+      
+      let existingLog = appData.medLogs.find(l => l.assignId === assignId && l.dateStr === todayStr);
+
+      if (assign.takenToday) {
+          libMed.stock = Math.max(0, libMed.stock - 1);
+          appData.lastTakenTimestamp = new Date().toISOString();
+          
+          if(existingLog) {
+              existingLog.actualTime = timeNow;
+              existingLog.updateCount = (existingLog.updateCount || 1) + 1;
+          } else {
+              appData.medLogs.push({
+                  id: 'ml' + Date.now(), assignId: assignId, dateStr: todayStr,
+                  medName: libMed.name, schedule: assign.schedule,
+                  actualTime: timeNow, updateCount: 1
+              });
+          }
+
+          if(libMed.type === 'inj' && injUnitStr && injUnitStr !== 'Done') {
+              const todayISO = getLocalDateISO();
+              const formattedName = getTypeText('inj', libMed.name) + libMed.name;
+              saveHealthLogSmartMerge(todayISO, assign.schedule, null, null, formattedName, injUnitStr, assignId, null, null);
+          }
+      } else {
+          libMed.stock += 1;
+          if(existingLog) {
+              existingLog.actualTime = timeNow;
+              existingLog.updateCount = (existingLog.updateCount || 1) + 1;
+          }
+      }
+      saveToLocal();
+      render();
   }
 
   function updateStockInModal(delta) {
-   if (!currentEditId) return;
-   const med = appData.medications.find(m => m.id === currentEditId);
-   if (med) {
-    med.stock = Math.max(0, med.stock + delta);
-    saveToLocal();
-    document.getElementById('det-stock').innerText = med.stock;
-    render();
+   if (!currentEditId) return; const assign = appData.assignments.find(a => a.id === currentEditId); if (!assign) return;
+   const libMed = appData.library.find(l => l.id === assign.libId);
+   if (libMed) { libMed.stock = Math.max(0, libMed.stock + delta); saveToLocal(); document.getElementById('det-stock').innerText = libMed.stock; render(); }
+  }
+
+  function updateUnitInModal(delta) {
+   if (!currentEditId) return; const assign = appData.assignments.find(a => a.id === currentEditId); if (!assign) return;
+   const libMed = appData.library.find(l => l.id === assign.libId);
+   if (libMed) { 
+       let currentUnit = parseInt(assign.unit) || parseInt(libMed.defaultUnit) || 0;
+       assign.unit = Math.max(0, currentUnit + delta); 
+       saveToLocal(); 
+       document.getElementById('det-unit').innerText = assign.unit; 
+       render(); 
    }
   }
 
   // --- MODALS (MEDS) ---
-  function openDetails(id) {
-   currentEditId = id;
-   const med = appData.medications.find(m => m.id === id);
-   if (!med) return;
-   document.getElementById('det-name').innerText = med.name;
-   document.getElementById('det-purpose').innerText = med.purposeLong || med.purposeShort;
-   document.getElementById('det-stock').innerText = med.stock;
-   document.getElementById('det-generic').innerText = med.generic || '-';
-   document.getElementById('det-company').innerText = med.company || '-';
-   document.getElementById('det-price').innerText = med.price || '-';
-   document.getElementById('det-side').innerText = med.sideEffects || 'জানা নেই';
+  function openDetails(assignId) {
+   currentEditId = assignId; 
+   const assign = appData.assignments.find(a => a.id === assignId); if (!assign) return;
+   const libMed = appData.library.find(l => l.id === assign.libId); if (!libMed) return;
+
+   document.getElementById('det-name').innerText = buildMedTitle(libMed, assign.unit); 
+   document.getElementById('det-purpose').innerText = libMed.purposeLong || libMed.purposeShort;
+   document.getElementById('det-stock').innerText = libMed.stock; 
+   
+   if(libMed.type === 'inj') {
+       document.getElementById('det-unit-row').style.display = 'block';
+       document.getElementById('det-unit').innerText = assign.unit || libMed.defaultUnit || 0;
+   } else {
+       document.getElementById('det-unit-row').style.display = 'none';
+   }
+
+   document.getElementById('det-generic').innerText = libMed.generic || '-';
+   document.getElementById('det-company').innerText = libMed.company || '-'; 
+   document.getElementById('det-price').innerText = libMed.price || '-';
+   document.getElementById('det-side').innerText = libMed.sideEffects || 'জানা নেই';
    document.getElementById('detailsModal').classList.add('active');
   }
 
-  function closeModal(modalId) {
-   document.getElementById(modalId).classList.remove('active');
+  function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
+
+  function editLibraryMedFromDetails() {
+      const assign = appData.assignments.find(a => a.id === currentEditId);
+      closeModal('detailsModal');
+      openLibraryFormModal(assign.libId);
   }
 
-  function openAddModal() {
-   currentEditId = null;
-   document.getElementById('form-title').innerText = "নতুন ঔষধ";
-   document.getElementById('btn-delete').style.display = 'none';
-   ['f-name', 'f-pshort', 'f-plong', 'f-generic', 'f-company', 'f-price', 'f-stock', 'f-side'].forEach(id => document.getElementById(id).value = '');
-   if (appData.schedules.length > 0) document.getElementById('f-schedule').value = appData.schedules[0].id;
-   document.getElementById('formModal').classList.add('active');
+  // --- MED LOG CHART LOGIC ---
+  function openMedLogModal() { renderMedLogTable(); document.getElementById('medLogModal').classList.add('active'); }
+
+  function renderMedLogTable() {
+      const tbody = document.querySelector('#medLogTableBody tbody'); tbody.innerHTML = '';
+      if(!appData.medLogs) return;
+      const sortedLogs = [...appData.medLogs].reverse();
+      sortedLogs.forEach(log => {
+          const assign = appData.assignments.find(a => a.id === log.assignId);
+          const libMed = assign ? appData.library.find(l => l.id === assign.libId) : null;
+          let timingTxt = (libMed && libMed.timing === 'before') ? 'খাবারের আগে' : ((libMed && libMed.timing === 'after') ? 'খাবারের পরে' : 'যেকোনো সময়');
+          let schTitle = appData.schedules.find(s => s.id === log.schedule)?.title || log.schedule;
+          tbody.innerHTML += `<tr>
+                  <td><strong>${log.dateStr}</strong></td><td style="color:var(--primary); font-weight:bold;">${log.actualTime}</td>
+                  <td>${log.medName}</td><td>${schTitle}</td><td>${timingTxt}</td>
+                  <td>${log.updateCount > 1 ? `<span style="color:var(--danger)">${log.updateCount} বার</span>` : '১ বার'}</td>
+                  <td><button class="btn-del-sm" onclick="deleteMedLog('${log.id}')">✕</button></td>
+              </tr>`;
+      });
   }
 
-  function openEditFromDetails() {
-   closeModal('detailsModal');
-   openEditModal(currentEditId);
+  function deleteMedLog(logId) {
+      if(confirm("এই রেকর্ডটি মুছে ফেলতে চান? ঔষধটি আনচেক হয়ে যাবে এবং স্টক ফিরে আসবে।")) {
+          const log = appData.medLogs.find(l => l.id === logId);
+          if(log) {
+              const assign = appData.assignments.find(a => a.id === log.assignId);
+              const todayStr = new Date().toLocaleDateString('en-GB');
+              if(assign && assign.takenToday && log.dateStr === todayStr) {
+                  assign.takenToday = false;
+                  const libMed = appData.library.find(l => l.id === assign.libId);
+                  if(libMed) libMed.stock += 1;
+              }
+              appData.medLogs = appData.medLogs.filter(l => l.id !== logId);
+              saveToLocal(); renderMedLogTable(); render(); showToast("রেকর্ড মুছে ফেলা হয়েছে!");
+          }
+      }
   }
 
-  function openEditModal(id) {
-   currentEditId = id;
-   const med = appData.medications.find(m => m.id === id);
-   if (!med) return;
-   document.getElementById('form-title').innerText = "এডিট করুন";
-   document.getElementById('btn-delete').style.display = 'block';
-   document.getElementById('f-name').value = med.name;
-   document.getElementById('f-schedule').value = med.schedule;
-   document.getElementById('f-timing').value = med.timing;
-   document.getElementById('f-pshort').value = med.purposeShort;
-   document.getElementById('f-plong').value = med.purposeLong || "";
-   document.getElementById('f-generic').value = med.generic || "";
-   document.getElementById('f-company').value = med.company || "";
-   document.getElementById('f-price').value = med.price || "";
-   document.getElementById('f-stock').value = med.stock;
-   document.getElementById('f-side').value = med.sideEffects || "";
-   document.getElementById('formModal').classList.add('active');
-  }
-
-  function saveMed() {
-   const name = document.getElementById('f-name').value.trim();
-   if (!name) return alert("নাম আবশ্যক!");
-   const medObj = {
-    id: currentEditId || generateId(),
-    name: name,
-    schedule: document.getElementById('f-schedule').value,
-    timing: document.getElementById('f-timing').value,
-    purposeShort: document.getElementById('f-pshort').value,
-    purposeLong: document.getElementById('f-plong').value,
-    generic: document.getElementById('f-generic').value,
-    company: document.getElementById('f-company').value,
-    price: document.getElementById('f-price').value,
-    stock: parseInt(document.getElementById('f-stock').value) || 0,
-    sideEffects: document.getElementById('f-side').value,
-    takenToday: false
-   };
-   if (currentEditId) {
-    const index = appData.medications.findIndex(m => m.id === currentEditId);
-    medObj.takenToday = appData.medications[index].takenToday;
-    appData.medications[index] = medObj;
-   } else {
-    appData.medications.push(medObj);
+  function openMedExportModal() {
+   let tsvContent = "Date\tTime Taken\tMedicine Name\tSchedule\tUpdate Count\n";
+   if (appData.medLogs) {
+       [...appData.medLogs].reverse().forEach(log => {
+           let schTitle = appData.schedules.find(s => s.id === log.schedule)?.title || log.schedule;
+           tsvContent += `${log.dateStr}\t${log.actualTime}\t${log.medName}\t${schTitle}\t${log.updateCount}\n`;
+       });
    }
-   saveToLocal();
-   closeModal('formModal');
-   showToast("Saved!");
+   document.getElementById('exportModalTitle').innerText = "Export Medicine Logs"; document.getElementById('exportTextarea').value = tsvContent; document.getElementById('exportModal').classList.add('active');
   }
 
-  function deleteMed() {
-   if (confirm("মুছে ফেলতে চান?")) {
-    appData.medications = appData.medications.filter(m => m.id !== currentEditId);
-    saveToLocal();
-    closeModal('formModal');
-    showToast("Deleted!");
+  // --- HEALTH CHART LOGIC (SMART SORT & MERGE) ---
+  function openHealthModal() { renderHealthTable(); document.getElementById('healthModal').classList.add('active'); }
+
+  function renderHealthTable() {
+   const tbody = document.querySelector('#healthTableBody tbody'); tbody.innerHTML = '';
+   if (!appData.healthLogs) return;
+   
+   const orderMap = { "morning": 1, "সকাল": 1, "noon": 2, "দুপুর": 2, "night": 3, "রাত": 3 };
+
+   const sortedHealthLogs = [...appData.healthLogs].sort((a,b) => {
+       const dateA = new Date(a.date); const dateB = new Date(b.date);
+       if (dateA.getTime() !== dateB.getTime()) { return dateB - dateA; }
+       const valA = orderMap[a.scheduleId] || orderMap[a.timeOfDay] || 99;
+       const valB = orderMap[b.scheduleId] || orderMap[b.timeOfDay] || 99;
+       return valA - valB;
+   });
+
+   sortedHealthLogs.forEach(log => {
+       let schTitle = appData.schedules.find(s => s.id === log.scheduleId)?.title || log.scheduleId || log.timeOfDay;
+       let insHTML = '-';
+       if(log.insulinData && Object.keys(log.insulinData).length > 0) {
+           insHTML = Object.values(log.insulinData).join('<br>');
+       }
+       tbody.innerHTML += `<tr>
+            <td><strong>${log.date}</strong></td><td>${schTitle}</td>
+            <td style="color:var(--primary); font-weight:bold;">${log.glucose}</td>
+            <td>${log.glucoseType}</td><td>${insHTML}</td>
+            <td>${log.bp || '-'}</td><td>${log.food || '-'}</td>
+            <td><button class="btn-del-sm" onclick="deleteHealthLog('${log.id}')">✕</button></td>
+        </tr>`;
+   });
+  }
+
+  function saveHealthLogSmartMerge(date, scheduleId, glucose, glucoseType, insName, insDose, insKey, bp, food) {
+      let existing = appData.healthLogs.find(h => h.date === date && h.scheduleId === scheduleId);
+      let insString = null;
+      if(insName && insName !== '-') {
+          insString = insDose && insDose !== '-' ? `${insName} (${insDose} Unit)` : insName;
+      }
+
+      if (existing) {
+          if(glucose) existing.glucose = glucose;
+          if(glucoseType && glucoseType !== '-' && glucoseType !== '') existing.glucoseType = glucoseType;
+          if(bp) existing.bp = bp;
+          if(food) existing.food = (existing.food && existing.food !== '-') ? existing.food + ', ' + food : food;
+          
+          if(insString) {
+              if(!existing.insulinData) existing.insulinData = {};
+              existing.insulinData[insKey] = insString;
+          }
+      } else {
+          let newData = {
+              id: 'h' + generateId(), date: date, scheduleId: scheduleId,
+              glucose: glucose || "-", glucoseType: glucoseType || "-",
+              bp: bp || "-", food: food || "-", insulinData: {}
+          };
+          if(insString) newData.insulinData[insKey] = insString;
+          appData.healthLogs.unshift(newData);
+      }
+  }
+
+  function saveHealthLogManual() {
+   const date = document.getElementById('h-date').value;
+   const schId = document.getElementById('h-time').value;
+   const glucose = document.getElementById('h-glucose').value;
+   const bp = document.getElementById('h-bp').value;
+   const insName = document.getElementById('h-ins-name').value;
+   const insDose = document.getElementById('h-ins-dose').value;
+
+   if (!glucose && !bp && !insName && !insDose) { alert('যেকোনো একটি ডাটা ইনপুট দিন!'); return; }
+
+   saveHealthLogSmartMerge(
+       date, schId, glucose, (document.getElementById('h-type').value || "-"), 
+       insName, insDose, 'manual_' + Date.now(), bp, document.getElementById('h-food').value
+   );
+   
+   saveToLocal(); renderHealthTable(); render(); showToast('হেলথ চার্ট আপডেট হয়েছে!');
+   ['h-glucose', 'h-ins-name', 'h-ins-dose', 'h-bp', 'h-food'].forEach(id => document.getElementById(id).value = '');
+   document.getElementById('h-type').value = "";
+  }
+
+  function deleteHealthLog(id) { if (confirm("এই ডাটাটি মুছে ফেলতে চান?")) { appData.healthLogs = appData.healthLogs.filter(h => h.id !== id); saveToLocal(); renderHealthTable(); render(); } }
+
+  function openExportModal() {
+   let tsvContent = "Date\tTime\tGlucose\tType\tInsulin\tBlood Pressure\tFood\n";
+   if (appData.healthLogs) {
+    const orderMap = { "morning": 1, "সকাল": 1, "noon": 2, "দুপুর": 2, "night": 3, "রাত": 3 };
+    const sortedHealthLogs = [...appData.healthLogs].sort((a,b) => {
+        const dateA = new Date(a.date); const dateB = new Date(b.date);
+        if (dateA.getTime() !== dateB.getTime()) { return dateB - dateA; }
+        const valA = orderMap[a.scheduleId] || orderMap[a.timeOfDay] || 99; const valB = orderMap[b.scheduleId] || orderMap[b.timeOfDay] || 99; return valA - valB;
+    });
+
+    sortedHealthLogs.forEach(log => {
+        let schTitle = appData.schedules.find(s => s.id === log.scheduleId)?.title || log.scheduleId || log.timeOfDay;
+        let insStr = log.insulinData ? Object.values(log.insulinData).join(' & ') : '-';
+        tsvContent += `${log.date}\t${schTitle}\t${log.glucose}\t${log.glucoseType}\t${insStr}\t${log.bp}\t${log.food}\n`; 
+    });
    }
+   document.getElementById('exportModalTitle').innerText = "Export Health Data"; document.getElementById('exportTextarea').value = tsvContent; document.getElementById('exportModal').classList.add('active');
   }
 
-  function updatePatientName() {
-   const newName = document.getElementById('settingPatientName').value.trim();
-   if (newName) {
-    appData.patientName = newName;
-    saveToLocal();
-    const today = new Date().toLocaleDateString('en-GB');
-    document.getElementById('dateDisplay').innerText = `Patient: ${newName} | ${today}`;
-    showToast("নাম আপডেট হয়েছে!");
-   }
-  }
+  function copyToClipboard() { const copyText = document.getElementById('exportTextarea'); copyText.select(); copyText.setSelectionRange(0, 99999); navigator.clipboard.writeText(copyText.value).then(() => { showToast("কপি হয়েছে! Excel এ Paste করুন।"); closeModal('exportModal'); }); }
 
-  function showToast(msg) {
-   const t = document.getElementById('toastBox');
-   t.innerText = msg;
-   t.classList.add('show');
-   setTimeout(() => t.classList.remove('show'), 3000);
-  }
-
-  function toggleTheme() {
-   const body = document.documentElement;
-   const target = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-   body.setAttribute('data-theme', target);
-   localStorage.setItem('ParvinTheme_v5', target);
-  }
-
-  const savedTheme = localStorage.getItem('ParvinTheme_v5');
+  // --- MASTER SETTINGS MANAGER ---
+  function openMasterSettingsModal() { renderMasterScheduleManager(); document.getElementById('masterSettingsModal').classList.add('active'); document.getElementById('settingPatientName').value = appData.patientName || 'Parvin Akter'; }
+  function renderMasterScheduleManager() { document.getElementById('masterScheduleManagerList').innerHTML = appData.schedules.map(s => `<div class="list-item"><span>${s.title}</span><button class="btn-text-danger" onclick="deleteMasterSchedule('${s.id}')">Remove</button></div>`).join(''); }
+  function addSchedule() { const title = document.getElementById('newScheduleName').value.trim(); if (title) { appData.schedules.push({ id: 'sch'+generateId(), title: title }); document.getElementById('newScheduleName').value = ''; saveToLocal(); renderMasterScheduleManager(); render(); } }
+  function deleteMasterSchedule(id) { if (confirm("এই বেলাটি মুছলে এর ভেতরের সব ঔষধ মুছে যাবে। নিশ্চিত?")) { appData.schedules = appData.schedules.filter(s => s.id !== id); appData.assignments = appData.assignments.filter(a => a.schedule !== id); saveToLocal(); renderMasterScheduleManager(); render(); } }
+  function updatePatientName() { const newName = document.getElementById('settingPatientName').value.trim(); if (newName) { appData.patientName = newName; saveToLocal(); const today = new Date().toLocaleDateString('en-GB'); document.getElementById('dateDisplay').innerText = `Patient: ${newName} | ${today}`; showToast("নাম আপডেট হয়েছে!"); } }
+  function showToast(msg) { const t = document.getElementById('toastBox'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+  function toggleTheme() { const body = document.documentElement; const target = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; body.setAttribute('data-theme', target); localStorage.setItem('ParvinTheme_v6', target); }
+  
+  const savedTheme = localStorage.getItem('ParvinTheme_v6');
   if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
-
+  
   initData();
   setInterval(render, 60000);
 
  </script>
 </body>
-
 </html>
