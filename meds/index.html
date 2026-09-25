@@ -667,6 +667,7 @@
         <th>নাম</th>
         <th>প্রকার</th>
         <th>স্টক</th>
+        <th>দাম</th>
         <th>জেনেরিক</th>
         <th>অ্যাকশন</th>
        </tr>
@@ -1139,41 +1140,41 @@
 
    const healthStatText = document.getElementById('stat-glucose');
    if (appData.healthLogs && appData.healthLogs.length > 0) {
-       const sortedLogs = [...appData.healthLogs].sort((a, b) => new Date(b.date) - new Date(a.date));
-       
-       let latestGlucose = null;
-       let latestBP = null;
-       
-       // পুরো চার্ট খুঁজে সর্বশেষ ভ্যালিড সুগার এবং BP বের করার লুপ
-       for (let log of sortedLogs) {
-           if (!latestGlucose && log.glucose && log.glucose !== "-") {
-               latestGlucose = log.glucose;
-           }
-           if (!latestBP && log.bp && log.bp !== "-") {
-               latestBP = log.bp;
-           }
-           if (latestGlucose && latestBP) break; // দুটোই পেয়ে গেলে লুপ বন্ধ করবে
-       }
+    const sortedLogs = [...appData.healthLogs].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-       let displayTxt = "";
-       if (latestGlucose && latestBP) {
-           displayTxt = `${latestGlucose} | ${latestBP}`;
-       } else if (latestGlucose) {
-           displayTxt = `${latestGlucose}`;
-       } else if (latestBP) {
-           displayTxt = `${latestBP}`;
-       }
+    let latestGlucose = null;
+    let latestBP = null;
 
-       if (displayTxt) {
-           healthStatText.innerText = displayTxt;
-           healthStatText.style.color = "var(--primary)";
-       } else {
-           healthStatText.innerText = "ডাটা নেই";
-           healthStatText.style.color = "var(--text-muted)";
-       }
+    // পুরো চার্ট খুঁজে সর্বশেষ ভ্যালিড সুগার এবং BP বের করার লুপ
+    for (let log of sortedLogs) {
+     if (!latestGlucose && log.glucose && log.glucose !== "-") {
+      latestGlucose = log.glucose;
+     }
+     if (!latestBP && log.bp && log.bp !== "-") {
+      latestBP = log.bp;
+     }
+     if (latestGlucose && latestBP) break; // দুটোই পেয়ে গেলে লুপ বন্ধ করবে
+    }
+
+    let displayTxt = "";
+    if (latestGlucose && latestBP) {
+     displayTxt = `${latestGlucose} | ${latestBP}`;
+    } else if (latestGlucose) {
+     displayTxt = `${latestGlucose}`;
+    } else if (latestBP) {
+     displayTxt = `${latestBP}`;
+    }
+
+    if (displayTxt) {
+     healthStatText.innerText = displayTxt;
+     healthStatText.style.color = "var(--primary)";
+    } else {
+     healthStatText.innerText = "ডাটা নেই";
+     healthStatText.style.color = "var(--text-muted)";
+    }
    } else {
-       healthStatText.innerText = "ডাটা নেই";
-       healthStatText.style.color = "var(--text-muted)";
+    healthStatText.innerText = "ডাটা নেই";
+    healthStatText.style.color = "var(--text-muted)";
    }
 
    const container = document.getElementById('medicine-container');
@@ -1249,6 +1250,7 @@
               </td>
               <td>${med.type.toUpperCase()}</td>
               <td style="${med.stock <= 5 ? 'color:red;font-weight:bold;' : ''}">${med.stock}</td>
+              <td>${med.price}</td>
               <td>${med.generic}</td>
               <td><button class="btn-outline" style="padding:2px 8px;font-size:0.8rem;" onclick="openLibraryFormModal('${med.id}')">Edit</button></td>
           </tr>`;
@@ -1854,7 +1856,6 @@
 
   initData();
   setInterval(render, 60000);
-
 
  </script>
 </body>
