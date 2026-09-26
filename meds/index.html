@@ -582,6 +582,28 @@
    background: var(--bg-base);
   }
 
+  /* VISITOR COUNTER */
+  .visitor-footer {
+   background: var(--bg-surface);
+   text-align: center;
+   padding: 10px;
+   font-size: 0.85rem;
+   font-weight: 700;
+   color: var(--text-muted);
+   cursor: pointer;
+   margin: 0 auto;
+   width: fit-content;
+   border-radius: 10px;
+   margin-top: 50px;
+  }
+
+  .visitor-footer span {
+   color: var(--primary);
+   font-weight: 800;
+   margin: 0 4px;
+  }
+
+
   /* TOAST */
   .toast {
    position: fixed;
@@ -951,6 +973,38 @@
    <div class="modal-footer">
     <button class="btn-outline" onclick="editLibraryMedFromDetails()">✏️ Edit in Library</button>
     <button class="btn-primary" onclick="closeModal('detailsModal')">Close</button>
+   </div>
+  </div>
+ </div>
+
+ <!-- VISITOR COUNTER FOOTER -->
+ <div class="visitor-footer" onclick="openVisitorModal()">
+  Visitor Counter <br>📊 Live: <span id="liveCount">0</span> | Today: <span id="todayCount">0</span> | Total: <span id="totalCount">0</span>
+ </div>
+
+ <!-- VISITOR DETAILS MODAL -->
+ <div class="modal-overlay" id="visitorModal">
+  <div class="modal-content large-modal">
+   <div class="modal-header">
+    <h2>🌐 Visitor tracking details</h2>
+    <button class="close-btn" onclick="closeModal('visitorModal')">×</button>
+   </div>
+   <div class="modal-body">
+    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+     <table class="data-table" id="visitorTableBody">
+      <thead>
+       <tr>
+        <th>Date &amp; Time</th>
+        <th>Location</th>
+        <th>Device</th>
+        <th>OS</th>
+        <th>Browser</th>
+        <th>Screen Size</th>
+       </tr>
+      </thead>
+      <tbody></tbody>
+     </table>
+    </div>
    </div>
   </div>
  </div>
@@ -1856,6 +1910,145 @@
 
   initData();
   setInterval(render, 60000);
+
+  // --- VISITOR TRACKING SYSTEM ---
+  function initVisitorTracking() {
+   const visitorsRef = db.ref('ParvinVisitorData');
+   const liveRef = visitorsRef.child('live');
+   const statsRef = visitorsRef.child('stats');
+   const logsRef = visitorsRef.child('logs');
+
+   // 1. Live Presence System
+   const connectedRef = db.ref('.info/connected');
+   connectedRef.on('value', (snap) => {
+    if (snap.val() === true) {
+     const myConnectionRef = liveRef.push();
+     myConnectionRef.onDisconnect().remove(); // ট্যাব কাটলে লাইভ থেকে রিমুভ হবে
+     myConnectionRef.set(true);
+    }
+   });
+
+   // 2. Listen to Counts
+   liveRef.on('value', (snap) => {
+    document.getElementById('liveCount').innerText = snap.numChildren();
+   });
+   statsRef.on('value', (snap) => {
+    let st = snap.val() || {
+     total: 0,
+     today: 0,
+     date: getLocalDateISO()
+    };
+    if (st.date !== getLocalDateISO()) {
+     st.today = 0;
+     st.date = getLocalDateISO();
+     statsRef.set(st);
+    }
+    document.getElementById('todayCount').innerText = st.today;
+    document.getElementById('totalCount').innerText = st.total;
+   });
+
+   // 3. Log New Visit (এক সেশনে একবারই কাউন্ট হবে)
+   if (!sessionStorage.getItem('visitLogged')) {
+    logNewVisit(statsRef, logsRef);
+    sessionStorage.setItem('visitLogged', 'true');
+   }
+  }
+
+  async function logNewVisit(statsRef, logsRef) {
+   try {
+    let location = "Unknown";
+    try {
+     let geoRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
+     let geo = await geoRes.json();
+     location = (geo.city ? geo.city + ", " : "") + (geo.country || "Unknown");
+    } catch (e) {}
+
+    let ua = navigator.userAgent;
+    let browser = "Unknown",
+     os = "Unknown";
+
+    if (ua.includes("Firefox")) browser = "Firefox";
+    else if (ua.includes("SamsungBrowser")) browser = "Samsung Browser";
+    else if (ua.includes("Opera") || ua.includes("OPR")) browser = "Opera";
+    else if (ua.includes("Edge") || ua.includes("Edg")) browser = "Edge";
+    else if (ua.includes("Chrome")) browser = "Chrome";
+    else if (ua.includes("Safari")) browser = "Safari";
+
+    if (ua.includes("Win")) os = "Windows";
+    else if (ua.includes("Android")) os = "Android";
+    else if (ua.includes("Mac") && 'ontouchend' in document) os = "iOS";
+    else if (ua.includes("Mac")) os = "macOS";
+    else if (ua.includes("Linux")) os = "Linux";
+    else if (ua.includes("iPhone") || ua.includes("iPad")) os = "iOS";
+
+    let device = /Mobi|Android|iPhone/i.test(ua) ? "Mobile" : "Desktop";
+    let screenRes = window.screen.width + "x" + window.screen.height;
+    let dateStr = new Date().toLocaleDateString('en-GB');
+    let timeStr = new Date().toLocaleTimeString('en-GB', {
+     hour: '2-digit',
+     minute: '2-digit',
+     hour12: true
+    });
+
+    // Increase Count
+    statsRef.transaction((st) => {
+     if (!st) st = {
+      total: 0,
+      today: 0,
+      date: getLocalDateISO()
+     };
+     if (st.date !== getLocalDateISO()) {
+      st.today = 1;
+      st.date = getLocalDateISO();
+     } else {
+      st.today++;
+     }
+     st.total++;
+     return st;
+    });
+
+    // Save Log
+    logsRef.push({
+     date: dateStr,
+     time: timeStr,
+     location: location,
+     device: device,
+     os: os,
+     browser: browser,
+     screen: screenRes,
+     timestamp: firebase.database.ServerValue.TIMESTAMP
+    });
+   } catch (e) {
+    console.error("Tracking Error:", e);
+   }
+  }
+
+  function openVisitorModal() {
+   const tbody = document.querySelector('#visitorTableBody tbody');
+   tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
+   document.getElementById('visitorModal').classList.add('active');
+
+   db.ref('ParvinVisitorData/logs').orderByChild('timestamp').limitToLast(100).once('value', (snap) => {
+    tbody.innerHTML = '';
+    if (snap.exists()) {
+     let logs = [];
+     snap.forEach(c => {
+      logs.push(c.val());
+     });
+     logs.reverse().forEach(log => {
+      tbody.innerHTML += `<tr>
+                      <td><strong>${log.date}</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">${log.time}</span></td>
+                      <td>${log.location}</td><td>${log.device}</td><td>${log.os}</td><td>${log.browser}</td><td>${log.screen}</td>
+                  </tr>`;
+     });
+    } else {
+     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No data found</td></tr>';
+    }
+   });
+  }
+
+  // Start Tracker
+  initVisitorTracking();
 
  </script>
 </body>
