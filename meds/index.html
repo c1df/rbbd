@@ -690,6 +690,7 @@
         <th>প্রকার</th>
         <th>স্টক</th>
         <th>দাম</th>
+        <th>কাজ</th>
         <th>জেনেরিক</th>
         <th>অ্যাকশন</th>
        </tr>
@@ -1284,8 +1285,6 @@
    }
   }
 
-  // --- LIBRARY MANAGEMENT ---
-
   // --- LIBRARY MANAGEMENT (WITH DRAG & DROP) ---
   function openLibraryModal() {
    renderLibraryTable();
@@ -1305,6 +1304,7 @@
               <td>${med.type.toUpperCase()}</td>
               <td style="${med.stock <= 5 ? 'color:red;font-weight:bold;' : ''}">${med.stock}</td>
               <td>${med.price}</td>
+              <td>${med.purposeShort}</td>
               <td>${med.generic}</td>
               <td><button class="btn-outline" style="padding:2px 8px;font-size:0.8rem;" onclick="openLibraryFormModal('${med.id}')">Edit</button></td>
           </tr>`;
