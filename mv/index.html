@@ -6,7 +6,7 @@
 <title>Mandala Vision</title>
 <style>
   :root {
-    --bg-color: #000000;
+    --bg-color: #f5f5f7;
     --dot-color: #d2d2d7;
     --text-color: #1d1d1f;
     --cell-bg: #ffffff;
@@ -22,15 +22,15 @@
   }
   
   [data-theme="dark"] {
-    /* Apple UI Ash Dark Mode colors */
-    --bg-color: #1e1e1e; 
-    --dot-color: #3a3a3c;
+    /* Pure Black Background with Ash elements */
+    --bg-color: #000000; 
+    --dot-color: #2c2c2e;
     --text-color: #f2f2f7;
-    --cell-bg: #2c2c2e;
-    --border-color: #48484a;
+    --cell-bg: #1c1c1e;
+    --border-color: #3a3a3c;
     --center-bg: #8a7322;
     --sub-center-bg: #50441a;
-    --card-bg: rgba(44, 44, 46, 0.85);
+    --card-bg: rgba(28, 28, 30, 0.85);
   }
 
   body, html {
@@ -91,11 +91,11 @@
 
   /* Mandala Node */
   .mandala-node {
-    position: absolute; background: var(--bg-color); padding: 16px; border-radius: 16px;
+    position: absolute; background: var(--cell-bg); padding: 16px; border-radius: 16px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.15); width: var(--node-width); cursor: grab;
     border: 1px solid var(--border-color); transition: width 0.3s ease;
   }
-  .mandala-node:active { cursor: grabbing; box-shadow: 0 25px 50px rgba(0,0,0,0.2); }
+  .mandala-node:active { cursor: grabbing; box-shadow: 0 25px 50px rgba(0,0,0,0.25); }
 
   .node-header {
     text-align: center; margin-bottom: 12px; font-size: 17px; font-weight: 600;
@@ -211,7 +211,7 @@
     <button onclick="window.changeFontSize(1)">➕</button>
   </div>
 
-  <button onclick="window.resetView()">🎯 <span class="btn-text">Center</span></button>
+  <button onclick="window.organizeBoards()">🎯 <span class="btn-text">Organize</span></button>
   <button onclick="window.toggleTheme()">🌙 <span class="btn-text">Theme</span></button>
 </div>
 
@@ -245,14 +245,20 @@
   // Global State
   window.goals = {};
   window.transform = { x: 0, y: 0, scale: 1 };
-  window.isTyping = false;
-  window.needsRender = false;
   
   let dbRef = ref(db, 'artboardData'); 
   let syncTimeout;
   let isFirebaseLoaded = false;
+  let lastLocalSaveTime = 0; // Fixes the glitch/lag
 
   onValue(dbRef, (snapshot) => {
+    // FIX: Ignore the Firebase Echo if we just saved locally recently. 
+    // This stops the board from glitching/freezing while moving or typing!
+    if (Date.now() - lastLocalSaveTime < 2000) {
+       updateStatus('synced', 'Saved');
+       return; 
+    }
+
     const data = snapshot.val();
     if (data) {
       window.goals = data.goals || {};
@@ -263,22 +269,19 @@
     isFirebaseLoaded = true;
     updateStatus('synced', 'Saved');
     
-    // FIX for cursor lost bug: Don't re-render entire HTML if user is currently typing
-    if (window.isTyping) {
-       window.needsRender = true;
-    } else {
-       window.renderAllGoals();
-       if(document.getElementById('goal-modal').style.display === 'flex') {
-           window.populateGoalManager();
-       }
-       window.updateTransform();
+    window.renderAllGoals();
+    if(document.getElementById('goal-modal').style.display === 'flex') {
+       window.populateGoalManager();
     }
+    window.updateTransform();
   }, (error) => {
     updateStatus('error', 'Sync Error');
   });
 
   window.saveData = function() {
     updateStatus('syncing', 'Saving...');
+    lastLocalSaveTime = Date.now(); // Mark time of local save
+    
     clearTimeout(syncTimeout);
     syncTimeout = setTimeout(() => {
       set(dbRef, {
@@ -289,7 +292,7 @@
       }).catch((e) => {
         updateStatus('error', 'Save Failed');
       });
-    }, 1000);
+    }, 500); // 500ms delay for snappier saves without overloading
   }
 
   function updateStatus(state, text) {
@@ -370,9 +373,63 @@
     if(window.saveData) window.saveData();
   }, { passive: true });
 
-  window.resetView = function() {
-    window.transform = { x: 0, y: 0, scale: 1 };
+  // The Magic Organize Function
+  window.organizeBoards = function() {
+    const keys = Object.keys(window.goals);
+    if (keys.length === 0) {
+      window.transform = { x: 0, y: 0, scale: 1 };
+      window.updateTransform();
+      return;
+    }
+
+    const gap = 100; // 100px space between boards
+    const cols = Math.ceil(Math.sqrt(keys.length)); // Make a perfect grid layout
+    
+    keys.forEach((id, index) => {
+      const col = index % cols;
+      const row = Math.floor(index / cols);
+      
+      const newX = col * (currentBoxSize + gap);
+      const newY = row * (currentBoxSize + gap);
+      
+      window.goals[id].x = newX;
+      window.goals[id].y = newY;
+      
+      const node = document.getElementById(id);
+      if (node) {
+        // Add smooth animation specifically for this movement
+        node.style.transition = 'width 0.3s ease, left 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), top 0.5s cubic-bezier(0.25, 0.8, 0.25, 1)';
+        node.style.left = newX + 'px';
+        node.style.top = newY + 'px';
+        // Remove the transition after animation so dragging remains instant
+        setTimeout(() => { if(node) node.style.transition = 'width 0.3s ease'; }, 550);
+      }
+    });
+
+    // Calculate dimensions of the entire organized grid
+    const totalWidth = cols * currentBoxSize + (cols - 1) * gap;
+    const rows = Math.ceil(keys.length / cols);
+    const totalHeight = rows * currentBoxSize + (rows - 1) * gap;
+
+    // Calculate optimal scale to fit everything on screen (with 20% padding)
+    const paddingMultiplier = 0.8;
+    const scaleX = (window.innerWidth * paddingMultiplier) / totalWidth;
+    const scaleY = (window.innerHeight * paddingMultiplier) / totalHeight;
+    
+    let newScale = Math.min(scaleX, scaleY, 1); // Don't zoom in more than 100%
+    if (newScale < 0.1) newScale = 0.1;
+
+    window.transform.scale = newScale;
+    
+    // Center the camera over the grid
+    window.transform.x = (window.innerWidth - (totalWidth * window.transform.scale)) / 2;
+    window.transform.y = (window.innerHeight - (totalHeight * window.transform.scale)) / 2;
+
+    // Smoothly animate the camera viewport
+    artboard.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1)';
     window.updateTransform();
+    setTimeout(() => { artboard.style.transition = ''; }, 600);
+
     if(window.saveData) window.saveData();
   }
 
@@ -454,13 +511,6 @@
         textarea.value = data.grid[i][j] || "";
         textarea.placeholder = (i === 4 && j === 4) ? "Goal" : "";
         
-        // Handle Typing State
-        textarea.addEventListener('focus', () => { window.isTyping = true; });
-        textarea.addEventListener('blur', () => { 
-           window.isTyping = false; 
-           if(window.needsRender) { window.renderAllGoals(); window.needsRender = false; }
-        });
-        
         if (i === 4 && j === 4) {
           if(data.image) { cell.style.backgroundImage = `url('${data.image}')`; }
           const imgBtn = document.createElement('button');
@@ -537,8 +587,6 @@
       
       const input = document.createElement('input');
       input.value = window.goals[id].title || "Vision Board";
-      input.addEventListener('focus', () => { window.isTyping = true; });
-      input.addEventListener('blur', () => { window.isTyping = false; });
       input.onchange = (e) => {
         window.goals[id].title = e.target.value;
         if(window.saveData) window.saveData();
@@ -570,7 +618,11 @@
     const goal = window.goals[id];
     window.transform.x = -(goal.x * window.transform.scale) + (window.innerWidth / 2) - (currentBoxSize * window.transform.scale / 2);
     window.transform.y = -(goal.y * window.transform.scale) + (window.innerHeight / 2) - (currentBoxSize * window.transform.scale / 2);
+    
+    artboard.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1)';
     window.updateTransform();
+    setTimeout(() => { artboard.style.transition = ''; }, 500);
+
     if(window.saveData) window.saveData();
     window.closeGoalManager();
   }
