@@ -10,11 +10,16 @@
     --dot-color: #d2d2d7;
     --text-color: #1d1d1f;
     --cell-bg: #ffffff;
-    --border-color: #d2d2d7;
+    --border-color: #f0f0f0;
     --center-bg: #f5e1a4;
     --sub-center-bg: #fdf5d3;
-    --card-bg: rgba(255, 255, 255, 0.85);
-    --blur: blur(20px);
+    
+    /* Apple UI Glass Effect (Light) */
+    --card-bg: rgba(255, 255, 255, 0);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.4);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --blur: blur(3px);
+    
     --node-width: 600px;
     --cell-font-size: 11px;
     --accent: #0071e3;
@@ -22,15 +27,18 @@
   }
   
   [data-theme="dark"] {
-    /* Pure Black Background with Ash elements */
     --bg-color: #000000; 
     --dot-color: #2c2c2e;
     --text-color: #f2f2f7;
-    --cell-bg: #1c1c1e;
-    --border-color: #3a3a3c;
+    --cell-bg: #222222;
+    --border-color: #181818;
     --center-bg: #8a7322;
     --sub-center-bg: #50441a;
-    --card-bg: rgba(28, 28, 30, 0.85);
+    
+    /* Apple UI Glass Effect (Dark) */
+    --card-bg: rgba(28, 28, 30, 0.55);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   }
 
   body, html {
@@ -45,22 +53,25 @@
     transition: background-color 0.3s ease;
   }
 
-  /* Top Title */
+  /* Top Title - Centered & Glass */
   .app-title {
     position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
-    font-size: 20px; font-weight: 600; letter-spacing: 1px;
+    font-size: 13px; font-weight: 600; letter-spacing: 1px;
     color: var(--text-color); background: var(--card-bg);
     backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
-    padding: 8px 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    padding: 8px 20px; border-radius: 20px; 
+    box-shadow: var(--glass-shadow); border: var(--glass-border);
     z-index: 1000; pointer-events: none;
+    white-space: nowrap; text-align: center; max-width: 90%;
   }
 
-  /* Toolbar */
+  /* Toolbar - Glass Effect */
   .toolbar {
     position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
     background: var(--card-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
-    padding: 10px 15px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    display: flex; align-items: center; gap: 12px; z-index: 1000; border: 1px solid rgba(128,128,128,0.1);
+    padding: 10px 15px; border-radius: 30px; 
+    box-shadow: var(--glass-shadow); border: var(--glass-border);
+    display: flex; align-items: center; gap: 12px; z-index: 1000;
   }
 
   .toolbar button {
@@ -72,7 +83,7 @@
   .toolbar button:hover { background: rgba(128, 128, 128, 0.1); }
   
   .tool-group {
-    display: flex; align-items: center; background: rgba(128, 128, 128, 0.08);
+    display: flex; align-items: center; background: rgba(128, 128, 128, 0.15);
     border-radius: 20px; padding: 2px 10px; gap: 5px;
   }
   .tool-group span { font-size: 12px; font-weight: 500; opacity: 0.7; }
@@ -85,15 +96,16 @@
   }
 
   /* Infinite Canvas */
-  #artboard-viewport { width: 100%; height: 100%; position: absolute; top: 0; left: 0; cursor: grab; }
+  #artboard-viewport { width: 100%; height: 100%; position: absolute; top: 0; left: 0; cursor: grab; touch-action: none; }
   #artboard-viewport:active { cursor: grabbing; }
   #artboard { transform-origin: 0 0; position: absolute; top: 0; left: 0; }
 
   /* Mandala Node */
   .mandala-node {
-    position: absolute; background: var(--cell-bg); padding: 16px; border-radius: 16px;
+    position: absolute; background: var(--card-bg); padding: 16px; border-radius: 16px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.15); width: var(--node-width); cursor: grab;
-    border: 1px solid var(--border-color); transition: width 0.3s ease;
+    border: 1px solid var(--border-color); transition: width 0.3s ease; touch-action: none;backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);box-shadow: var(--glass-shadow);border: var(--glass-border);
   }
   .mandala-node:active { cursor: grabbing; box-shadow: 0 25px 50px rgba(0,0,0,0.25); }
 
@@ -113,7 +125,7 @@
   textarea {
     width: 100%; height: 100%; border: none; background: transparent; color: var(--text-color);
     text-align: center; resize: none; font-family: inherit; font-size: var(--cell-font-size);
-    line-height: 1.3; outline: none; padding: 2px; user-select: text; cursor: text;
+    line-height: 1.3; outline: none; padding: 2px; user-select: text; cursor: text; touch-action: auto;
   }
 
   .inner-grid:nth-child(5) .cell textarea { background-color: var(--sub-center-bg); color: #000; font-weight: 600; }
@@ -131,17 +143,17 @@
   [data-theme="dark"] .inner-grid:nth-child(5) .cell:nth-child(5) textarea { color: #f2f2f7; background-color: rgba(0, 0, 0, 0.4); }
   [data-theme="dark"] .sub-center { color: #f2f2f7 !important; }
 
-  /* UI Overlays */
+  /* UI Overlays - Glass Effect */
   #zoom-indicator {
     position: fixed; top: 20px; right: 20px; background: var(--card-bg); backdrop-filter: var(--blur);
     -webkit-backdrop-filter: var(--blur); padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 13px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05); z-index: 1000; border: 1px solid rgba(128,128,128,0.1);
+    box-shadow: var(--glass-shadow); border: var(--glass-border); z-index: 1000;
   }
   
   #sync-status {
     position: fixed; top: 20px; left: 20px; background: var(--card-bg); backdrop-filter: var(--blur);
     -webkit-backdrop-filter: var(--blur); padding: 6px 14px; border-radius: 20px; font-weight: 500; font-size: 13px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05); z-index: 1000; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(128,128,128,0.1);
+    box-shadow: var(--glass-shadow); border: var(--glass-border); z-index: 1000; display: flex; align-items: center; gap: 8px;
   }
   .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ffcc00; }
   .status-dot.synced { background: #34c759; }
@@ -249,11 +261,9 @@
   let dbRef = ref(db, 'artboardData'); 
   let syncTimeout;
   let isFirebaseLoaded = false;
-  let lastLocalSaveTime = 0; // Fixes the glitch/lag
+  let lastLocalSaveTime = 0; 
 
   onValue(dbRef, (snapshot) => {
-    // FIX: Ignore the Firebase Echo if we just saved locally recently. 
-    // This stops the board from glitching/freezing while moving or typing!
     if (Date.now() - lastLocalSaveTime < 2000) {
        updateStatus('synced', 'Saved');
        return; 
@@ -280,7 +290,7 @@
 
   window.saveData = function() {
     updateStatus('syncing', 'Saving...');
-    lastLocalSaveTime = Date.now(); // Mark time of local save
+    lastLocalSaveTime = Date.now();
     
     clearTimeout(syncTimeout);
     syncTimeout = setTimeout(() => {
@@ -292,7 +302,7 @@
       }).catch((e) => {
         updateStatus('error', 'Save Failed');
       });
-    }, 500); // 500ms delay for snappier saves without overloading
+    }, 500); 
   }
 
   function updateStatus(state, text) {
@@ -326,12 +336,25 @@
 
   let isPanning = false;
   let startPanX = 0, startPanY = 0;
+  
+  // Touch / Mobile States
+  let isPinching = false;
+  let initialPinchDist = 0;
+  let initialPinchCenter = {x: 0, y: 0};
+  window.startScale = 1;
+  window.startPan = {x: 0, y: 0};
+  
+  // Node Dragging States
+  window.activeDragNodeId = null;
+  window.nodeStartX = 0;
+  window.nodeStartY = 0;
 
   window.updateTransform = function() {
     artboard.style.transform = `translate(${window.transform.x}px, ${window.transform.y}px) scale(${window.transform.scale})`;
     zoomIndicator.innerText = Math.round(window.transform.scale * 100) + '%';
   }
 
+  // ---- DESKTOP MOUSE EVENTS ----
   viewport.addEventListener('mousedown', (e) => {
     if (e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') { e.preventDefault(); }
     if (e.target === viewport || e.target === artboard) {
@@ -342,6 +365,13 @@
   });
 
   window.addEventListener('mousemove', (e) => {
+    if (window.activeDragNodeId) {
+      window.goals[window.activeDragNodeId].x = e.clientX / window.transform.scale - window.nodeStartX;
+      window.goals[window.activeDragNodeId].y = e.clientY / window.transform.scale - window.nodeStartY;
+      const n = document.getElementById(window.activeDragNodeId);
+      if(n) { n.style.left = window.goals[window.activeDragNodeId].x + 'px'; n.style.top = window.goals[window.activeDragNodeId].y + 'px'; }
+      return;
+    }
     if (!isPanning) return;
     window.transform.x = e.clientX - startPanX;
     window.transform.y = e.clientY - startPanY;
@@ -349,13 +379,13 @@
   });
 
   window.addEventListener('mouseup', () => { 
+    if(window.activeDragNodeId) { window.activeDragNodeId = null; if(window.saveData) window.saveData(); }
     if(isPanning) { isPanning = false; if(window.saveData) window.saveData(); }
   });
 
   viewport.addEventListener('wheel', (e) => {
     const zoomIntensity = 0.05;
     const wheel = e.deltaY < 0 ? 1 : -1;
-    
     const mouseX = e.clientX;
     const mouseY = e.clientY;
     
@@ -373,7 +403,69 @@
     if(window.saveData) window.saveData();
   }, { passive: true });
 
-  // The Magic Organize Function
+  // ---- MOBILE TOUCH EVENTS (Pinch & Pan) ----
+  viewport.addEventListener('touchstart', (e) => {
+    if (e.target === viewport || e.target === artboard) {
+      if (e.touches.length === 1) {
+        isPanning = true;
+        startPanX = e.touches[0].clientX - window.transform.x;
+        startPanY = e.touches[0].clientY - window.transform.y;
+      } else if (e.touches.length === 2) {
+        isPinching = true;
+        isPanning = false;
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        initialPinchDist = Math.hypot(dx, dy);
+        initialPinchCenter = {
+            x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+            y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+        };
+        window.startScale = window.transform.scale;
+        window.startPan = {x: window.transform.x, y: window.transform.y};
+      }
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (e) => {
+    if (window.activeDragNodeId && e.touches.length === 1) {
+      window.goals[window.activeDragNodeId].x = e.touches[0].clientX / window.transform.scale - window.nodeStartX;
+      window.goals[window.activeDragNodeId].y = e.touches[0].clientY / window.transform.scale - window.nodeStartY;
+      const n = document.getElementById(window.activeDragNodeId);
+      if(n) { n.style.left = window.goals[window.activeDragNodeId].x + 'px'; n.style.top = window.goals[window.activeDragNodeId].y + 'px'; }
+      return;
+    }
+    if (isPinching && e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.hypot(dx, dy);
+      
+      let newScale = window.startScale * (dist / initialPinchDist);
+      newScale = Math.min(Math.max(0.1, newScale), 3);
+
+      const localX = (initialPinchCenter.x - window.startPan.x) / window.startScale;
+      const localY = (initialPinchCenter.y - window.startPan.y) / window.startScale;
+
+      window.transform.scale = newScale;
+      window.transform.x = initialPinchCenter.x - localX * newScale;
+      window.transform.y = initialPinchCenter.y - localY * newScale;
+      window.updateTransform();
+      return;
+    }
+
+    if (isPanning && e.touches.length === 1) {
+      window.transform.x = e.touches[0].clientX - startPanX;
+      window.transform.y = e.touches[0].clientY - startPanY;
+      window.updateTransform();
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchend', (e) => {
+    if (window.activeDragNodeId && e.touches.length === 0) { window.activeDragNodeId = null; if(window.saveData) window.saveData(); }
+    if (isPinching && e.touches.length < 2) { isPinching = false; if(window.saveData) window.saveData(); }
+    if (isPanning && e.touches.length === 0) { isPanning = false; if(window.saveData) window.saveData(); }
+  });
+
+
   window.organizeBoards = function() {
     const keys = Object.keys(window.goals);
     if (keys.length === 0) {
@@ -382,8 +474,8 @@
       return;
     }
 
-    const gap = 100; // 100px space between boards
-    const cols = Math.ceil(Math.sqrt(keys.length)); // Make a perfect grid layout
+    const gap = 100; 
+    const cols = Math.ceil(Math.sqrt(keys.length)); 
     
     keys.forEach((id, index) => {
       const col = index % cols;
@@ -397,35 +489,29 @@
       
       const node = document.getElementById(id);
       if (node) {
-        // Add smooth animation specifically for this movement
         node.style.transition = 'width 0.3s ease, left 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), top 0.5s cubic-bezier(0.25, 0.8, 0.25, 1)';
         node.style.left = newX + 'px';
         node.style.top = newY + 'px';
-        // Remove the transition after animation so dragging remains instant
         setTimeout(() => { if(node) node.style.transition = 'width 0.3s ease'; }, 550);
       }
     });
 
-    // Calculate dimensions of the entire organized grid
     const totalWidth = cols * currentBoxSize + (cols - 1) * gap;
     const rows = Math.ceil(keys.length / cols);
     const totalHeight = rows * currentBoxSize + (rows - 1) * gap;
 
-    // Calculate optimal scale to fit everything on screen (with 20% padding)
     const paddingMultiplier = 0.8;
     const scaleX = (window.innerWidth * paddingMultiplier) / totalWidth;
     const scaleY = (window.innerHeight * paddingMultiplier) / totalHeight;
     
-    let newScale = Math.min(scaleX, scaleY, 1); // Don't zoom in more than 100%
+    let newScale = Math.min(scaleX, scaleY, 1); 
     if (newScale < 0.1) newScale = 0.1;
 
     window.transform.scale = newScale;
     
-    // Center the camera over the grid
     window.transform.x = (window.innerWidth - (totalWidth * window.transform.scale)) / 2;
     window.transform.y = (window.innerHeight - (totalHeight * window.transform.scale)) / 2;
 
-    // Smoothly animate the camera viewport
     artboard.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1)';
     window.updateTransform();
     setTimeout(() => { artboard.style.transition = ''; }, 600);
@@ -473,28 +559,25 @@
     header.className = 'node-header';
     header.innerText = data.title || "Vision Board";
 
-    let isDraggingNode = false;
-    let nodeStartX, nodeStartY;
-
+    // -- Desktop Node Dragging Setup --
     node.addEventListener('mousedown', (e) => {
       if(e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
-      isDraggingNode = true;
+      window.activeDragNodeId = id;
       e.stopPropagation(); 
-      nodeStartX = e.clientX / window.transform.scale - window.goals[id].x;
-      nodeStartY = e.clientY / window.transform.scale - window.goals[id].y;
+      window.nodeStartX = e.clientX / window.transform.scale - window.goals[id].x;
+      window.nodeStartY = e.clientY / window.transform.scale - window.goals[id].y;
     });
 
-    window.addEventListener('mousemove', (e) => {
-      if (!isDraggingNode) return;
-      window.goals[id].x = e.clientX / window.transform.scale - nodeStartX;
-      window.goals[id].y = e.clientY / window.transform.scale - nodeStartY;
-      node.style.left = window.goals[id].x + 'px';
-      node.style.top = window.goals[id].y + 'px';
-    });
-
-    window.addEventListener('mouseup', () => { 
-      if (isDraggingNode) { isDraggingNode = false; if(window.saveData) window.saveData(); }
-    });
+    // -- Mobile Node Dragging Setup --
+    node.addEventListener('touchstart', (e) => {
+      if(e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
+      if (e.touches.length === 1) {
+        window.activeDragNodeId = id;
+        e.stopPropagation(); 
+        window.nodeStartX = e.touches[0].clientX / window.transform.scale - window.goals[id].x;
+        window.nodeStartY = e.touches[0].clientY / window.transform.scale - window.goals[id].y;
+      }
+    }, { passive: true });
 
     const gridContainer = document.createElement('div');
     gridContainer.className = 'mandala-container';
@@ -510,6 +593,12 @@
         const textarea = document.createElement('textarea');
         textarea.value = data.grid[i][j] || "";
         textarea.placeholder = (i === 4 && j === 4) ? "Goal" : "";
+        
+        // Handle Typing State
+        textarea.addEventListener('focus', () => { window.isTyping = true; });
+        textarea.addEventListener('blur', () => { 
+           window.isTyping = false; 
+        });
         
         if (i === 4 && j === 4) {
           if(data.image) { cell.style.backgroundImage = `url('${data.image}')`; }
@@ -555,7 +644,7 @@
     if(window.saveData) window.saveData();
   }
 
-  // Goal Management Modal (Fixed Freeze Issue)
+  // Goal Management Modal
   window.openGoalManager = function() {
     const modalOverlay = document.getElementById('goal-modal');
     const modalContent = document.getElementById('goal-modal-content');
@@ -587,6 +676,8 @@
       
       const input = document.createElement('input');
       input.value = window.goals[id].title || "Vision Board";
+      input.addEventListener('focus', () => { window.isTyping = true; });
+      input.addEventListener('blur', () => { window.isTyping = false; });
       input.onchange = (e) => {
         window.goals[id].title = e.target.value;
         if(window.saveData) window.saveData();
