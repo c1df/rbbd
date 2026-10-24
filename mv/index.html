@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mandala Vision</title>
+<style>
+  :root {
+    --bg-color: #f5f5f7;
+    --dot-color: #d2d2d7;
+    --text-color: #1d1d1f;
+    --cell-bg: #ffffff;
+    --border-color: #d2d2d7;
+    --center-bg: #f5e1a4;
+    --sub-center-bg: #fdf5d3;
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --blur: blur(20px);
+    --node-width: 600px;
+    --cell-font-size: 11px;
+    --accent: #0071e3;
+    --danger: #ff3b30;
+  }
+  
+  [data-theme="dark"] {
+    /* Apple UI Ash Dark Mode colors */
+    --bg-color: #1e1e1e; 
+    --dot-color: #3a3a3c;
+    --text-color: #f2f2f7;
+    --cell-bg: #2c2c2e;
+    --border-color: #48484a;
+    --center-bg: #8a7322;
+    --sub-center-bg: #50441a;
+    --card-bg: rgba(44, 44, 46, 0.85);
+  }
+
+  body, html {
+    margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: var(--text-color);
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease;
+  }
+
+  /* Top Title */
+  .app-title {
+    position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
+    font-size: 20px; font-weight: 600; letter-spacing: 1px;
+    color: var(--text-color); background: var(--card-bg);
+    backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    padding: 8px 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    z-index: 1000; pointer-events: none;
+  }
+
+  /* Toolbar */
+  .toolbar {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    background: var(--card-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    padding: 10px 15px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    display: flex; align-items: center; gap: 12px; z-index: 1000; border: 1px solid rgba(128,128,128,0.1);
+  }
+
+  .toolbar button {
+    background: transparent; color: var(--text-color); border: none; padding: 8px 12px;
+    border-radius: 20px; cursor: pointer; font-weight: 500; font-size: 14px;
+    display: flex; align-items: center; gap: 6px; transition: background 0.2s, transform 0.1s;
+  }
+  .toolbar button:active { transform: scale(0.95); }
+  .toolbar button:hover { background: rgba(128, 128, 128, 0.1); }
+  
+  .tool-group {
+    display: flex; align-items: center; background: rgba(128, 128, 128, 0.08);
+    border-radius: 20px; padding: 2px 10px; gap: 5px;
+  }
+  .tool-group span { font-size: 12px; font-weight: 500; opacity: 0.7; }
+  .tool-group button { padding: 4px 8px; border-radius: 10px; }
+
+  @media (max-width: 768px) {
+    .btn-text { display: none; }
+    .tool-group span { display: none; }
+    .toolbar { gap: 5px; padding: 8px 10px; }
+  }
+
+  /* Infinite Canvas */
+  #artboard-viewport { width: 100%; height: 100%; position: absolute; top: 0; left: 0; cursor: grab; }
+  #artboard-viewport:active { cursor: grabbing; }
+  #artboard { transform-origin: 0 0; position: absolute; top: 0; left: 0; }
+
+  /* Mandala Node */
+  .mandala-node {
+    position: absolute; background: var(--bg-color); padding: 16px; border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15); width: var(--node-width); cursor: grab;
+    border: 1px solid var(--border-color); transition: width 0.3s ease;
+  }
+  .mandala-node:active { cursor: grabbing; box-shadow: 0 25px 50px rgba(0,0,0,0.2); }
+
+  .node-header {
+    text-align: center; margin-bottom: 12px; font-size: 17px; font-weight: 600;
+    pointer-events: none; opacity: 0.8; color: var(--text-color);
+  }
+
+  /* Grid System */
+  .mandala-container {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    background-color: var(--border-color); padding: 6px; border-radius: 10px; aspect-ratio: 1/1; cursor: default;
+  }
+  .inner-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background-color: var(--border-color); }
+  .cell { background-color: var(--cell-bg); display: flex; align-items: center; justify-content: center; padding: 3px; position: relative; transition: background-color 0.3s; }
+
+  textarea {
+    width: 100%; height: 100%; border: none; background: transparent; color: var(--text-color);
+    text-align: center; resize: none; font-family: inherit; font-size: var(--cell-font-size);
+    line-height: 1.3; outline: none; padding: 2px; user-select: text; cursor: text;
+  }
+
+  .inner-grid:nth-child(5) .cell textarea { background-color: var(--sub-center-bg); color: #000; font-weight: 600; }
+  .inner-grid:nth-child(5) .cell:nth-child(5) { background-color: var(--center-bg); background-size: cover; background-position: center; }
+  .inner-grid:nth-child(5) .cell:nth-child(5) textarea { background-color: rgba(255, 255, 255, 0.5); font-weight: bold; font-size: calc(var(--cell-font-size) + 2px); color: #000; }
+  .sub-center { background-color: var(--sub-center-bg) !important; color: #000 !important; font-weight: 600; }
+
+  .add-img-btn {
+    position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+    color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 10px;
+    cursor: pointer; display: none; z-index: 10;
+  }
+  .inner-grid:nth-child(5) .cell:nth-child(5):hover .add-img-btn { display: block; }
+  [data-theme="dark"] .inner-grid:nth-child(5) .cell textarea { color: #f2f2f7; }
+  [data-theme="dark"] .inner-grid:nth-child(5) .cell:nth-child(5) textarea { color: #f2f2f7; background-color: rgba(0, 0, 0, 0.4); }
+  [data-theme="dark"] .sub-center { color: #f2f2f7 !important; }
+
+  /* UI Overlays */
+  #zoom-indicator {
+    position: fixed; top: 20px; right: 20px; background: var(--card-bg); backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur); padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 13px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); z-index: 1000; border: 1px solid rgba(128,128,128,0.1);
+  }
+  
+  #sync-status {
+    position: fixed; top: 20px; left: 20px; background: var(--card-bg); backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur); padding: 6px 14px; border-radius: 20px; font-weight: 500; font-size: 13px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); z-index: 1000; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(128,128,128,0.1);
+  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ffcc00; }
+  .status-dot.synced { background: #34c759; }
+  .status-dot.error { background: var(--danger); }
+
+  /* Apple Style Modals */
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.2s;
+  }
+  .modal {
+    background: var(--bg-color); padding: 30px; border-radius: 20px; width: 400px; max-width: 90%;
+    max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    transform: scale(0.95); transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  .modal h2 { margin-top: 0; margin-bottom: 20px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; font-size: 20px;}
+  .close-modal { background: rgba(128,128,128,0.1); color: var(--text-color); border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; }
+  
+  .goal-list-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--cell-bg); padding: 12px 15px; margin-bottom: 12px; border-radius: 12px;
+    border: 1px solid var(--border-color);
+  }
+  .goal-list-item input {
+    background: transparent; border: none; color: var(--text-color);
+    font-size: 15px; font-weight: 500; outline: none; width: 60%;
+  }
+  .goal-actions { display: flex; gap: 8px; }
+  .goal-actions button {
+    border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px;
+  }
+  .btn-jump { background: var(--accent); color: white; }
+  .btn-del { background: rgba(255, 59, 48, 0.1); color: var(--danger); }
+  .btn-add-new { width: 100%; padding: 14px; background: var(--text-color); color: var(--bg-color); border: none; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: pointer; margin-top: 10px; transition: opacity 0.2s;}
+  .btn-add-new:hover { opacity: 0.9; }
+</style>
+</head>
+<body>
+
+<div class="app-title">Mandala Vision</div>
+
+<div id="sync-status">
+  <div class="status-dot" id="status-dot"></div>
+  <span id="status-text">Connecting...</span>
+</div>
+<div id="zoom-indicator">100%</div>
+
+<!-- Artboard Viewport -->
+<div id="artboard-viewport">
+  <div id="artboard"></div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar" id="toolbar">
+  <button onclick="window.openGoalManager()">⚙️ <span class="btn-text">Manage</span></button>
+  
+  <div class="tool-group">
+    <span>Box</span>
+    <button onclick="window.changeBoxSize(-50)">➖</button>
+    <button onclick="window.changeBoxSize(50)">➕</button>
+  </div>
+  
+  <div class="tool-group">
+    <span>Font</span>
+    <button onclick="window.changeFontSize(-1)">➖</button>
+    <button onclick="window.changeFontSize(1)">➕</button>
+  </div>
+
+  <button onclick="window.resetView()">🎯 <span class="btn-text">Center</span></button>
+  <button onclick="window.toggleTheme()">🌙 <span class="btn-text">Theme</span></button>
+</div>
+
+<!-- Goal Management Modal -->
+<div class="modal-overlay" id="goal-modal">
+  <div class="modal" id="goal-modal-content">
+    <h2>Goals <button class="close-modal" onclick="window.closeGoalManager()">✕</button></h2>
+    <div id="goal-list"></div>
+    <button class="btn-add-new" onclick="window.addNewGoal()">+ New Mandala</button>
+  </div>
+</div>
+
+<!-- Firebase Module -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDqxO6iKGk4DhOTh3FafMfOGb2Lbm65dLY",
+    authDomain: "mandala-c83b3.firebaseapp.com",
+    databaseURL: "https://mandala-c83b3-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "mandala-c83b3",
+    storageBucket: "mandala-c83b3.firebasestorage.app",
+    messagingSenderId: "933181788977",
+    appId: "1:933181788977:web:20d45a1cdbc1c4396e5610"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Global State
+  window.goals = {};
+  window.transform = { x: 0, y: 0, scale: 1 };
+  window.isTyping = false;
+  window.needsRender = false;
+  
+  let dbRef = ref(db, 'artboardData'); 
+  let syncTimeout;
+  let isFirebaseLoaded = false;
+
+  onValue(dbRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      window.goals = data.goals || {};
+      if(!isFirebaseLoaded) { window.transform = data.transform || { x: 0, y: 0, scale: 1 }; }
+    } else {
+      window.goals = {};
+    }
+    isFirebaseLoaded = true;
+    updateStatus('synced', 'Saved');
+    
+    // FIX for cursor lost bug: Don't re-render entire HTML if user is currently typing
+    if (window.isTyping) {
+       window.needsRender = true;
+    } else {
+       window.renderAllGoals();
+       if(document.getElementById('goal-modal').style.display === 'flex') {
+           window.populateGoalManager();
+       }
+       window.updateTransform();
+    }
+  }, (error) => {
+    updateStatus('error', 'Sync Error');
+  });
+
+  window.saveData = function() {
+    updateStatus('syncing', 'Saving...');
+    clearTimeout(syncTimeout);
+    syncTimeout = setTimeout(() => {
+      set(dbRef, {
+        goals: window.goals,
+        transform: window.transform
+      }).then(() => {
+        updateStatus('synced', 'Saved');
+      }).catch((e) => {
+        updateStatus('error', 'Save Failed');
+      });
+    }, 1000);
+  }
+
+  function updateStatus(state, text) {
+    const dot = document.getElementById('status-dot');
+    const txt = document.getElementById('status-text');
+    dot.className = 'status-dot';
+    if(state === 'synced') dot.classList.add('synced');
+    if(state === 'error') dot.classList.add('error');
+    txt.innerText = text;
+  }
+</script>
+
+<!-- App Logic -->
+<script>
+  let currentBoxSize = 600;
+  let currentFontSize = 11;
+
+  window.changeBoxSize = function(val) {
+    currentBoxSize = Math.max(300, Math.min(1500, currentBoxSize + val));
+    document.documentElement.style.setProperty('--node-width', currentBoxSize + 'px');
+  }
+
+  window.changeFontSize = function(val) {
+    currentFontSize = Math.max(8, Math.min(24, currentFontSize + val));
+    document.documentElement.style.setProperty('--cell-font-size', currentFontSize + 'px');
+  }
+
+  const viewport = document.getElementById('artboard-viewport');
+  const artboard = document.getElementById('artboard');
+  const zoomIndicator = document.getElementById('zoom-indicator');
+
+  let isPanning = false;
+  let startPanX = 0, startPanY = 0;
+
+  window.updateTransform = function() {
+    artboard.style.transform = `translate(${window.transform.x}px, ${window.transform.y}px) scale(${window.transform.scale})`;
+    zoomIndicator.innerText = Math.round(window.transform.scale * 100) + '%';
+  }
+
+  viewport.addEventListener('mousedown', (e) => {
+    if (e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') { e.preventDefault(); }
+    if (e.target === viewport || e.target === artboard) {
+      isPanning = true;
+      startPanX = e.clientX - window.transform.x;
+      startPanY = e.clientY - window.transform.y;
+    }
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isPanning) return;
+    window.transform.x = e.clientX - startPanX;
+    window.transform.y = e.clientY - startPanY;
+    window.updateTransform();
+  });
+
+  window.addEventListener('mouseup', () => { 
+    if(isPanning) { isPanning = false; if(window.saveData) window.saveData(); }
+  });
+
+  viewport.addEventListener('wheel', (e) => {
+    const zoomIntensity = 0.05;
+    const wheel = e.deltaY < 0 ? 1 : -1;
+    
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+    
+    const localX = (mouseX - window.transform.x) / window.transform.scale;
+    const localY = (mouseY - window.transform.y) / window.transform.scale;
+
+    let newScale = window.transform.scale * Math.exp(wheel * zoomIntensity);
+    newScale = Math.min(Math.max(0.1, newScale), 3);
+
+    window.transform.x = mouseX - localX * newScale;
+    window.transform.y = mouseY - localY * newScale;
+    window.transform.scale = newScale;
+
+    window.updateTransform();
+    if(window.saveData) window.saveData();
+  }, { passive: true });
+
+  window.resetView = function() {
+    window.transform = { x: 0, y: 0, scale: 1 };
+    window.updateTransform();
+    if(window.saveData) window.saveData();
+  }
+
+  function generateEmptyGrid() { return Array(9).fill(null).map(() => Array(9).fill("")); }
+
+  window.addNewGoal = function() {
+    const id = 'goal_' + Date.now();
+    const x = (-window.transform.x + window.innerWidth / 2) / window.transform.scale - (currentBoxSize/2); 
+    const y = (-window.transform.y + window.innerHeight / 2) / window.transform.scale - (currentBoxSize/2);
+
+    window.goals[id] = { title: "Vision Board", x: x, y: y, grid: generateEmptyGrid(), image: "" };
+    if(window.saveData) window.saveData();
+    window.renderAllGoals();
+    window.populateGoalManager();
+  }
+
+  window.deleteGoal = function(id) {
+    if(confirm("Delete this Mandala?")) {
+      delete window.goals[id];
+      if(window.saveData) window.saveData();
+      window.renderAllGoals();
+      window.populateGoalManager();
+    }
+  }
+
+  window.renderAllGoals = function() {
+    artboard.innerHTML = '';
+    Object.keys(window.goals).forEach(id => {
+      createGoalNode(id, window.goals[id]);
+    });
+  }
+
+  function createGoalNode(id, data) {
+    const node = document.createElement('div');
+    node.className = 'mandala-node';
+    node.style.left = data.x + 'px';
+    node.style.top = data.y + 'px';
+    node.id = id;
+
+    const header = document.createElement('div');
+    header.className = 'node-header';
+    header.innerText = data.title || "Vision Board";
+
+    let isDraggingNode = false;
+    let nodeStartX, nodeStartY;
+
+    node.addEventListener('mousedown', (e) => {
+      if(e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
+      isDraggingNode = true;
+      e.stopPropagation(); 
+      nodeStartX = e.clientX / window.transform.scale - window.goals[id].x;
+      nodeStartY = e.clientY / window.transform.scale - window.goals[id].y;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDraggingNode) return;
+      window.goals[id].x = e.clientX / window.transform.scale - nodeStartX;
+      window.goals[id].y = e.clientY / window.transform.scale - nodeStartY;
+      node.style.left = window.goals[id].x + 'px';
+      node.style.top = window.goals[id].y + 'px';
+    });
+
+    window.addEventListener('mouseup', () => { 
+      if (isDraggingNode) { isDraggingNode = false; if(window.saveData) window.saveData(); }
+    });
+
+    const gridContainer = document.createElement('div');
+    gridContainer.className = 'mandala-container';
+
+    for (let i = 0; i < 9; i++) {
+      const innerGrid = document.createElement('div');
+      innerGrid.className = 'inner-grid';
+      
+      for (let j = 0; j < 9; j++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        
+        const textarea = document.createElement('textarea');
+        textarea.value = data.grid[i][j] || "";
+        textarea.placeholder = (i === 4 && j === 4) ? "Goal" : "";
+        
+        // Handle Typing State
+        textarea.addEventListener('focus', () => { window.isTyping = true; });
+        textarea.addEventListener('blur', () => { 
+           window.isTyping = false; 
+           if(window.needsRender) { window.renderAllGoals(); window.needsRender = false; }
+        });
+        
+        if (i === 4 && j === 4) {
+          if(data.image) { cell.style.backgroundImage = `url('${data.image}')`; }
+          const imgBtn = document.createElement('button');
+          imgBtn.className = 'add-img-btn';
+          imgBtn.innerText = '🖼';
+          imgBtn.onclick = (e) => {
+            const url = prompt("Paste Image URL:");
+            if(url !== null) { window.goals[id].image = url; if(window.saveData) window.saveData(); window.renderAllGoals(); }
+          };
+          cell.appendChild(imgBtn);
+        }
+
+        if (i !== 4 && j === 4) {
+          textarea.classList.add('sub-center');
+          textarea.readOnly = true; 
+          textarea.value = data.grid[4][i] || ""; 
+        }
+
+        textarea.addEventListener('input', (e) => handleGridInput(e, id, i, j));
+        cell.appendChild(textarea);
+        innerGrid.appendChild(cell);
+      }
+      gridContainer.appendChild(innerGrid);
+    }
+
+    node.appendChild(header);
+    node.appendChild(gridContainer);
+    artboard.appendChild(node);
+  }
+
+  function handleGridInput(e, id, g, c) {
+    const val = e.target.value;
+    window.goals[id].grid[g][c] = val;
+
+    if (g === 4 && c !== 4) {
+      window.goals[id].grid[c][4] = val; 
+      const node = document.getElementById(id);
+      if(node) {
+        node.children[1].children[c].children[4].querySelector('textarea').value = val;
+      }
+    }
+    if(window.saveData) window.saveData();
+  }
+
+  // Goal Management Modal (Fixed Freeze Issue)
+  window.openGoalManager = function() {
+    const modalOverlay = document.getElementById('goal-modal');
+    const modalContent = document.getElementById('goal-modal-content');
+    window.populateGoalManager();
+    
+    modalOverlay.style.display = 'flex';
+    setTimeout(() => { 
+      modalOverlay.style.opacity = '1'; 
+      modalContent.style.transform = 'scale(1)'; 
+    }, 10);
+  }
+  
+  window.closeGoalManager = function() {
+    const modalOverlay = document.getElementById('goal-modal');
+    const modalContent = document.getElementById('goal-modal-content');
+    
+    modalOverlay.style.opacity = '0'; 
+    modalContent.style.transform = 'scale(0.95)';
+    setTimeout(() => { modalOverlay.style.display = 'none'; }, 200);
+  }
+
+  window.populateGoalManager = function() {
+    const list = document.getElementById('goal-list');
+    list.innerHTML = '';
+    
+    Object.keys(window.goals).forEach(id => {
+      const item = document.createElement('div');
+      item.className = 'goal-list-item';
+      
+      const input = document.createElement('input');
+      input.value = window.goals[id].title || "Vision Board";
+      input.addEventListener('focus', () => { window.isTyping = true; });
+      input.addEventListener('blur', () => { window.isTyping = false; });
+      input.onchange = (e) => {
+        window.goals[id].title = e.target.value;
+        if(window.saveData) window.saveData();
+        window.renderAllGoals();
+      };
+
+      const actions = document.createElement('div');
+      actions.className = 'goal-actions';
+      
+      const jumpBtn = document.createElement('button');
+      jumpBtn.className = 'btn-jump';
+      jumpBtn.innerText = 'Go 🎯';
+      jumpBtn.onclick = () => window.jumpToGoal(id);
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'btn-del';
+      delBtn.innerText = '✕';
+      delBtn.onclick = () => window.deleteGoal(id);
+
+      actions.appendChild(jumpBtn);
+      actions.appendChild(delBtn);
+      item.appendChild(input);
+      item.appendChild(actions);
+      list.appendChild(item);
+    });
+  }
+
+  window.jumpToGoal = function(id) {
+    const goal = window.goals[id];
+    window.transform.x = -(goal.x * window.transform.scale) + (window.innerWidth / 2) - (currentBoxSize * window.transform.scale / 2);
+    window.transform.y = -(goal.y * window.transform.scale) + (window.innerHeight / 2) - (currentBoxSize * window.transform.scale / 2);
+    window.updateTransform();
+    if(window.saveData) window.saveData();
+    window.closeGoalManager();
+  }
+
+  window.toggleTheme = function() {
+    const isDark = document.body.dataset.theme === 'dark';
+    if (isDark) { document.body.removeAttribute('data-theme'); localStorage.setItem('mandalaTheme', 'light'); } 
+    else { document.body.dataset.theme = 'dark'; localStorage.setItem('mandalaTheme', 'dark'); }
+  }
+  if (localStorage.getItem('mandalaTheme') === 'dark') { document.body.dataset.theme = 'dark'; }
+
+</script>
+</body>
+</html>
