@@ -1015,6 +1015,7 @@
  <!-- Firebase Compat SDKs -->
  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+ <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
  <!-- Sortable JS for Drag and Drop -->
  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
@@ -1026,6 +1027,9 @@
    projectId: "medicine-tracker-68b2a"
   };
   firebase.initializeApp(firebaseConfig);
+  firebase.auth().signInAnonymously().catch((error) => {
+      console.error("লগইন ফেইল করেছে:", error.message);
+  });
   const db = firebase.database();
 
   let appData = null;
