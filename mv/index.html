@@ -240,6 +240,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
   import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
+  import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDqxO6iKGk4DhOTh3FafMfOGb2Lbm65dLY",
@@ -252,6 +253,10 @@
   };
 
   const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+signInAnonymously(auth).catch((error) => {
+    console.error("লগইন ফেইল করেছে:", error.message);
+});
   const db = getDatabase(app);
 
   // Global State
